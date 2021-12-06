@@ -63,12 +63,12 @@
   },
   "engines": {
     "node": "14.x",
-    "npm": "5.0.3"
+    "npm": "8.x"
   },
   "lint-staged": {
     "*.+(js|jsx|ts|tsx)": [
       "eslint --fix"
-    ],
+    ],    
     "*.+(js|jsx|ts|tsx|json|css|md|mdx)": [
       "prettier --write"
     ]
