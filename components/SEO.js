@@ -120,11 +120,7 @@ export const BlogSEO = ({ authorDetails, title, summary, date, lastmod, url, ima
 
   return (
     <>
-      <CommonSEO
-        title={title}
-        description={summary}
-        ogType="article"
-      />
+      <CommonSEO title={title} description={summary} ogType="article" />
       <Head>
         {date && <meta property="article:published_time" content={publishedAt} />}
         {lastmod && <meta property="article:modified_time" content={modifiedAt} />}
