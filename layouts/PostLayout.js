@@ -32,7 +32,6 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                   </time>
                 </div>
               </dl>
-
             </div>
           </header>
           <div
