@@ -11,7 +11,7 @@ Hi, welcome to my blog!
 
 **Who Am I?**  
   
-My name is Minjun Seong (or John) and I am currently residing in Edmonton, Alberta. Due to the nature of my current job, where I am living in or what I do can change quite frequently.I am currently a full-time pilot in the Canadian Armed Forces serving with 3 CDSB Signals Squadron. Despite my passion in aviations, certain circumstances helped me see that software development is truly where my passion is at. I have a bachelor's in Computer Engineering from Royal Military College which helped me get a head start. I am looking to learn about a lot of new technologies and interesting things I can do online!
+My name is Minjun Seong (or John) and I am currently residing in Edmonton, Alberta. Due to the nature of my current job, where I am living in or what I do can change quite frequently. I am currently a full-time pilot in the Canadian Armed Forces serving with 3 CDSB Signals Squadron. Despite my passion in aviations, certain circumstances helped me see that software development is truly where my passion is at. I have a bachelor's in Computer Engineering from Royal Military College which helped me get a head start. I am looking to learn about a lot of new technologies and interesting things I can do online!
 
 **My Story**  
   
