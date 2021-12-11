@@ -1,11 +1,9 @@
 const projectsData = [
   {
-    title: 'A Search Engine',
-    description: `What if you could look up any information in the world? Webpages, images, videos
-    and more. Google has many features to help you find exactly what you're looking
-    for.`,
-    imgSrc: '/static/images/google.png',
-    href: 'https://www.google.com',
+    title: 'Honeyjam',
+    description: `Website development for a local restaurant`,
+    imgSrc: '/static/images/Honeyjam.png',
+    href: 'https://www.honeyjam.ca',
   },
 ]
 

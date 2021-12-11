@@ -6,7 +6,7 @@ const siteMetadata = {
   language: 'en-us',
   siteUrl: 'https://johnseong.vercel.app/',
   siteRepo: 'https://github.com/sandole/nextjs-blog',
-  image: '/static/self.jpg',
+  image: '/static/images/self.jpg',
   email: 'sandole97@gmail.com',
   github: 'https://github.com/sandole',
   facebook: 'https://facebook.com',
