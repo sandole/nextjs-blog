@@ -1,6 +1,3 @@
-import fs from 'fs'
-import PageTitle from '@/components/PageTitle'
-import generateRss from '@/lib/generate-rss'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
 import { formatSlug, getAllFilesFrontMatter, getFileBySlug, getFiles } from '@/lib/mdx'
 
@@ -31,10 +28,6 @@ export async function getStaticProps({ params }) {
   })
   const authorDetails = await Promise.all(authorPromise)
 
-  // rss
-  const rss = generateRss(allPosts)
-  fs.writeFileSync('./public/feed.xml', rss)
-
   return { props: { post, authorDetails, prev, next } }
 }
 
@@ -43,26 +36,15 @@ export default function Blog({ post, authorDetails, prev, next }) {
 
   return (
     <>
-      {frontMatter.draft !== true ? (
-        <MDXLayoutRenderer
-          layout={frontMatter.layout || DEFAULT_LAYOUT}
-          toc={toc}
-          mdxSource={mdxSource}
-          frontMatter={frontMatter}
-          authorDetails={authorDetails}
-          prev={prev}
-          next={next}
-        />
-      ) : (
-        <div className="mt-24 text-center">
-          <PageTitle>
-            Under Construction{' '}
-            <span role="img" aria-label="roadwork sign">
-              🚧
-            </span>
-          </PageTitle>
-        </div>
-      )}
+      <MDXLayoutRenderer
+        layout={frontMatter.layout || DEFAULT_LAYOUT}
+        toc={toc}
+        mdxSource={mdxSource}
+        frontMatter={frontMatter}
+        authorDetails={authorDetails}
+        prev={prev}
+        next={next}
+      />
     </>
   )
 }
