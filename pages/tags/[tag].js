@@ -26,8 +26,9 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const allPosts = await getAllFilesFrontMatter('blog')
   const filteredPosts = allPosts.filter((post) =>
-    post.tags.map((t) => kebabCase(t)).includes(params.tag))
-    
+    post.tags.map((t) => kebabCase(t)).includes(params.tag)
+  )
+
   const rss = generateRss(filteredPosts, `tags/${params.tag}/feed.xml`)
   const rssPath = path.join(root, 'public', 'tags', params.tag)
   fs.mkdirSync(rssPath, { recursive: true })
