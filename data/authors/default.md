@@ -1,6 +1,6 @@
 ---
 name: John Seong
-avatar: /static/images/self.jpg
+avatar: /static/images/hello.png
 company: Canadian Armed Forces
 email: sandole97@gmail.com
 github: https://github.com/sandole
