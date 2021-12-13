@@ -44,7 +44,13 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                 <ul className="flex justify-center space-x-8 xl:block sm:space-x-12 xl:space-x-0 xl:space-y-8">
                   {authorDetails.map((author) => (
                     <li className="flex items-center space-x-2" key={author.name}>
-                      <Image src={selfie} width="38px" height="38px" alt="avatar" className="w-10 h-10 rounded-full" />
+                      <Image
+                        src={selfie}
+                        width="38px"
+                        height="38px"
+                        alt="avatar"
+                        className="w-10 h-10 rounded-full"
+                      />
                       <dl className="text-sm font-medium leading-5 whitespace-nowrap">
                         <dd className="text-gray-900 dark:text-gray-100">Author: {author.name}</dd>
                       </dl>
