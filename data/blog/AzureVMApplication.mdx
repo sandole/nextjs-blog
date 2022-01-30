@@ -1,0 +1,32 @@
+---
+title: 'Azure VM for Minecraft Server'
+date: '2022-01-30'
+tags: ['development','game']
+summary: This laboratory was great for many reasons
+---
+
+With all the learning that I have been doing, I finally decided that it is a good time to apply my knowledge into a laboratory of a sort. And I thought a perfect way to do this was to set up a Minecraft server using Azure.
+   
+There is an explanation available on Microsoft documentation: https://docs.microsoft.com/en-us/gaming/azure/reference-architectures/multiplayer-basic-game-server-hosting. However, if you follow this article, you will see it will not turn out as you expected.   
+   
+Here are some things that are wrong with it:
+- many geographic locations do not allow a smmall Azure VM like Standard B2s. Make sure you find alternative locations. (Ex. not US-West2 but US-West3)
+- Windows Server 2016 is not available. Only 2019 version is.
+- Setting up NSG, there is an additional box named "Service".
+- The instruction says click on the "Create new" link right next to this setting. This sounds very vague. What they mean is create new IP address and configure it as static.  
+- Minecraft continues to update its version (1.18 as of this blog). This causes conflicts with server side hosting, Java versions and other softwares that support Minecraft server hosting.  
+- The easiest way to access Azure VM is not RDP which requires Windows 10 Pro license or SSH which requires PuTTY with shaky IP addressing. The best way is using Azure Bastion which uses RDP to directly interact onto the machine.  
+- After inbound port creation on the machine, the instruction tells us to initialize and format the data disk. This was already done on Windows Server 2019 machines. This part does not need to be there.  
+- The link to Java installation misleads the users to download the wrong Java version. The Java you want to download is this version: https://www.oracle.com/java/technologies/downloads/#jdk17-windows.  
+
+Once this is done, setting eula to TRUE will lead us to successfully starting the server! Don't worry if "preparing spawn area" is stuck at 0% for a while. It may take up to around 5-10 minutes to start going. But once it does, it will complete fast.  
+  
+Upon successful implementation, you should see:
+<Image alt="vm_screenshot" src="/static/images/server.png" width={1906} height={915} />
+  
+This laboratory was great for many reasons:  
+- it was my first experience using Azure Bastion to remotely connect to a VM.  
+- Server side Windows machine was interesting and different from a typical Windows 10 Home machine.  
+  
+Next things I would like to work on:  
+- using Docker / containerization for implementing server side VM.  
