@@ -11,7 +11,7 @@ export default function Footer() {
           <Link href="https://www.buymeacoffee.com/sandole97">
             <Image
               alt="Support Me"
-              src="../public/static/images/support.svg"
+              src="../public/static/images/support.png"
               width={235}
               height={50}
             />
