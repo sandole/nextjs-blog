@@ -1,6 +1,6 @@
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
-import Image from './Image'
+import Image from 'next/image'
 
 export default function Footer() {
   return (
@@ -14,8 +14,8 @@ export default function Footer() {
             alt="support"
             src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=🚀&slug=sandole97&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff"
             href="https://www.buymeacoffee.com/sandole97"
-            width="200"
-            height="70"
+            width="235"
+            height="50"
           />
         </div>
         <div className="flex mb-2 space-x-2 text-sm text-gray-500 dark:text-gray-400">
