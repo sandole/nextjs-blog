@@ -1,6 +1,7 @@
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
 import Image from 'next/image'
+import SupportMe from '../public/static/images/support.svg'
 
 export default function Footer() {
   return (
@@ -16,13 +17,15 @@ export default function Footer() {
           <div>{`© ${new Date().getFullYear()}`}</div>
         </div>
         <div className="mb-8">
-          <Image
-            alt="Support Me"
-            src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=🚀&slug=sandole97&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff"
-            width={235}
-            height={50}
-            layout="responsive"
-          />
+          <Link href="https://www.buymeacoffee.com/sandole97">
+            <Image
+              alt="Support Me"
+              src={SupportMe}
+              width={235}
+              height={50}
+              layout="responsive"
+            />
+          </Link>
         </div>
       </div>
     </footer>
