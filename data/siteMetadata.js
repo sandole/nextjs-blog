@@ -9,8 +9,7 @@ const siteMetadata = {
   image: '/static/images/self.jpg',
   email: 'sandole97@gmail.com',
   github: 'https://github.com/sandole',
-  facebook: 'https://facebook.com',
-  linkedin: 'https://www.linkedin.com',
+  facebook: 'https://www.facebook.com/john.damoneymangg/',
   locale: 'en-US',
 }
 
