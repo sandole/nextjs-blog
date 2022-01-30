@@ -14,9 +14,6 @@ const CommonSEO = ({ title, description, ogType, ogImage, twImage }) => {
       <meta property="og:site_name" content={siteMetadata.title} />
       <meta property="og:description" content={description} />
       <meta property="og:title" content={title} />
-      <meta name="twitter:site" content={siteMetadata.twitter} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
     </Head>
   )
 }
