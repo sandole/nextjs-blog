@@ -7,13 +7,13 @@ export default function Footer() {
   return (
     <footer>
       <div className="flex flex-col items-center mt-16">
-        <div className="flex">
+        <div className="flex mb-3">
           <Link href="https://www.buymeacoffee.com/sandole97">
             <Image
               alt="Support Me"
-              src="../public/static/images/support.png"
-              width={235}
-              height={50}
+              src="/../public/static/images/support.png"
+              width={141}
+              height={30}
             />
           </Link>
         </div>
