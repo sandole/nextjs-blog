@@ -16,12 +16,12 @@ export default function Footer() {
           <div>{`© ${new Date().getFullYear()}`}</div>
         </div>
         <div className="mb-8">
-          <Image 
-              alt="Support Me"
-              src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=🚀&slug=sandole97&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff"
-              width={235}
-              height={50}
-              layout="responsive"
+          <Image
+            alt="Support Me"
+            src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=🚀&slug=sandole97&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff"
+            width={235}
+            height={50}
+            layout="responsive"
           />
         </div>
       </div>
