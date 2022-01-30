@@ -22,4 +22,4 @@ I went to a fully subsidized college called Royal Military College of Canada in 
 
 **What is here?**    
   
-As the title suggests, I have implemented a personal blog using NextJS, some React and TailwindCSS. I chose NextJS for the fastest server side rendering and easy template accesses and TailwindCSS for beautiful pre-made components that I felt was easy to imbed into this blog. In this blog, I will write about my journey as a software engineer both professionally and personally. Feel free to reach out via the means available for any advice or job related questions!
+As the title suggests, I have implemented a personal blog using NextJS, React and TailwindCSS. I chose NextJS for the fastest server side rendering and easy template accesses and TailwindCSS for beautiful pre-made components that I felt was easy to imbed into this blog. In this blog, I will write about my journey as a software engineer both professionally and personally. Feel free to reach out to me!
