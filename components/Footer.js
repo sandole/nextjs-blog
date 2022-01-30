@@ -1,7 +1,6 @@
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
 import Image from 'next/image'
-import SupportMe from '../public/static/images/support.svg'
 import Link from './Link'
 
 export default function Footer() {
@@ -21,7 +20,7 @@ export default function Footer() {
           <Link href="https://www.buymeacoffee.com/sandole97">
             <Image
               alt="Support Me"
-              src={SupportMe}
+              src="../public/static/images/support.svg"
               width={235}
               height={50}
               layout="responsive"
