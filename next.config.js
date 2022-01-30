@@ -4,6 +4,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 module.exports = withBundleAnalyzer({
   images: {
+    domains: ["img.buymeacoffee.com"],
     disableStaticImages: true,
   },
   pageExtensions: ['js', 'jsx', 'md', 'mdx'],
