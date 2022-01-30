@@ -11,6 +11,12 @@ const projectsData = [
     imgSrc: '/static/images/TOP.png',
     href: 'https://www.theodinproject.com/',
   },
+  {
+    title: 'Minecraft Server',
+    description: `Minecraft server hosted on Azure VM: join swbzminecraftserver.westus3.cloudapp.azure.com`,
+    imgSrc: '/static/images/minecraft.png',
+    href: 'https://johnseong.vercel.app/blog/AzureVMApplication',
+  },
 ]
 
 export default projectsData
