@@ -2,6 +2,7 @@ import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
 import Image from 'next/image'
 import SupportMe from '../public/static/images/support.svg'
+import Link from './Link'
 
 export default function Footer() {
   return (
