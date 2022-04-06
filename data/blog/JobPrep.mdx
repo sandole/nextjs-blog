@@ -1,0 +1,1402 @@
+---
+title: 'Interview preparation'
+date: '2022-04-05'
+tags: ['development']
+summary: an exhaustive list of preparation I did for technical interview questions
+---
+
+Today, I wanted to share some of the resources that I used to get my cloud engineering job! Cloud engineer is relatively a new term in the software engineering industry and can encompass a lot of things in the actual day-to-day job.
+
+Below summarizes an exhaustive list of preparation I did for technical interview questions. Note that they relate heavily to Azure (Microsoft) with emphasis on security.
+
+<details>
+<summary>Security questions</summary>
+<br>
+Encryption and Authentication
+
+What is a three-way handshake?
+
+TCP 3-way handshake or three-way handshake or TCP 3-way handshake is a process which is used in a TCP/IP network to make a connection between server and client.
+Syn use to initiate and establish a connection
+ACK helps to confirm to the other side that it has received the SYN.
+SYN-ACK is a SYN message from local device and ACK of the earlier packet.
+
+How do cookies work?
+
+HTTP cookies (also called web cookies, Internet cookies, browser cookies, or simply cookies) are small blocks of data created by a web server while a user is browsing a website and placed on the user's computer or other device by the user's web browser.
+
+How do sessions work?
+
+small and temporary storage at web server which is unique for each users. Useful for maintaining states of user and connection.
+
+Explain how OAuth works.
+
+OAuth is an authorization mechanism where services can authorize against each other on your behalf once you’ve given them permission. 
+
+What is a public key infrastructure flow and how would I diagram it?
+
+PKI is the framework of encryption and cybersecurity that protects communications between the server and the client.
+User requests certificate to certificate authority (CA).
+User verifies identity to registration authority (RA).
+RA vouches for user to CA.
+CA issues certificate (X.509?) to user.
+CA stores certificate in certificate repository (CR).
+User uses certficate to digitall sign request to relaying party.
+Relaying party verifies certificate to CR which is validated.
+
+Describe the difference between synchronous and asynchronous encryption.
+
+Symmetrical implies a public key shared between 2 sources to encrypt as a cipher to decrypt the information. Assymetrical implies a public and private key shared between 2 sources for encryption and decryption of the information. Assymetrical by that concept as a cipher method would be more secure as opposed to the latter.
+
+Describe SSL handshake.
+
+Agree on the version of the protocol to use.
+Select cryptographic algorithms.
+Authenticate each other by exchanging and validating digital certificates.
+Use asymmetric encryption techniques to generate a shared secret key, which avoids the key distribution problem. 
+TLS then uses the shared key for the symmetric encryption of messages, which is faster than asymmetric encryption.
+
+How does HMAC work?
+
+HMAC keys are made of cryptographic keys and known hash function.
+
+What is the difference between authentication vs authorization name spaces?
+
+Authentication is the process of identifying someone's identity by assuring that the person is the same as what he is claiming for.
+Authorization is the process of granting someone to do something. It means it a way to check if the user has permission to use a resource or not.
+
+What’s the difference between Diffie-Hellman and RSA?
+
+Both public-key encryption algorithms strong enough for commercial purposes because they are both based on supposedly intractable problems. 
+DH is more robust which means that RSA cannot be used solely without the use of DH with it for secure communication.
+
+How does Kerberos work?
+
+authentication protocol for client/server applications.
+Key Distribution Center: Authentication service, Ticket granting service, Kerberos database
+
+If you're going to compress and encrypt a file, which do you do first and why?
+
+first compress then encrypt. In this way the end result will be very much smaller than first encrypting then compressing the input file.
+
+How do I authenticate you and know you sent the message?
+
+DomainKeys Identified Mail (DKIM) is a signature any sender can apply to their email messages.
+
+Should you encrypt all data at rest?
+
+Only powerful encryption algorithms, such as AES or RSA, should be used for data at rest encryption. 
+When access restrictions such as usernames and passwords fail, encrypted data should stay encrypted. 
+There are many weak methods in use today, including but not limited to: IP security (IPsec), Secure Sockets Layer (SSL), and Transport Layer Security (TLS).
+
+What is Perfect Forward Secrecy?
+
+Perfect Forward Secrecy (PFS), also known as forward secrecy, is a feature of specific key agreement protocols that gives assurances that 
+session keys will not be compromised even if long-term secrets used in the session key exchange are compromised. 
+For HTTPS, the long-term secret is typically the private key of the server.
+
+Network Level and Logging
+
+What are common ports involving security, what are the risks and mitigations?
+
+FTP – File Transport Protocol	20, 21
+SSH – Secure Shell	22
+SFTP – Secure File Transport Protocol (uses SSH)	22
+SCP – Secure Copy (uses SSH)	22
+Telnet	23
+SMTP – Simple Mail Transport Protocol	25
+TACACS – Terminal Access Controller Access-Control System	49
+DNS – Domain Name System	53
+DHCP – Dynamic Host Configuration Protocol	67, 68
+TFTP – Trivial File Transport Protocol	69
+HTTP – Hypertext Transfer Protocol	80
+HTTPS – Hypertext Transfer Protocol Secure	443
+SSL VPN – Secure Sockets Layer virtual private network	443
+Kerberos	88
+POP3 – Post Office Protocol version 3	110
+NNTP – Network News Transfer Protocol	119
+IMAP4 – Internet message access protocol version 4	143
+SNMP – Simple Network Management Protocol	161
+SNMP Trap – Simple Network Management Protocol Trap	162
+LDAP – Lightweight Directory Access Protocol	389
+ISAKMP (VPN) – Internet Security Association and Key Management Protocol (virtual private network)	500
+Syslog	514
+L2TP – Layer 2 Tunneling Protocol	1701
+PPTP – Point-to-Point Tunneling Protocol	1723
+RDP – Remote Desktop Protocol	3389
+
+Describe HTTPs and how it is used.
+
+HTTPS stands for hypertext transfer protocol secure and is the encrypted version of HTTP. 
+It is used for secure communication across the internet or a network. 
+The communication protocol is encrypted using Transport Layer Security (TLS).
+Uses Asymmetric PKI: 
+The private key - this key is controlled by the owner of a website and it’s kept, as the reader may have speculated, private. This key lives on a web server and is used to decrypt information encrypted by the public key.
+The public key - this key is available to everyone who wants to interact with the server in a way that’s secure. Information that’s encrypted by the public key can only be decrypted by the private key.
+
+What is the difference between HTTPS and SSL?
+
+HTTPS encrypts the data that is retrieved by HTTP protocol and also ensures that data that is being transferred between computers and servers cannot be read by any third person.
+SSL certificate is a small text file hosted in a Website's Origin Server and enables a website to convert to HTTPS from HTTP protocol.
+
+How does threat modeling work?
+
+Threat modeling is a proactive strategy for evaluating risks. 
+It involves identifying potential threats, and developing tests or procedures to detect and respond to those threats. 
+This involves understanding how threats may impact systems, classifying threats and applying the appropriate countermeasures.
+Steps: Threat intelligence, Asset identification, Mitigation capabilities, Risk assessment, Threat mapping.
+
+What is a subnet and how is it useful in security?
+
+A subnet is a smaller network within a network that requires a subnet mask.
+By splitting your network into subnets, you can control the flow of traffic using ACLs, QoS, or route-maps, enabling you to identify threats, 
+close points of entry, and target your responses more easily.
+
+What is subnet mask?
+
+IP subnetting is the practice of dividing a network into two or smaller networks to maximize IP addressing efficiency.
+
+Explain what traceroute is.
+
+Traceroute is a command-line interface based tool used to identify the path used by a packet to reach its target.
+
+Write out a Cisco ASA firewall configuration on the white board to allow three networks unfiltered access, 12 networks limited access to different resources on different networks, and 8 networks to be blocked altogether.
+
+ASA in the middle.
+
+Explain TCP/IP concepts.
+
+Conceptually, the TCP/IP protocol stack consists of four layers:
+Application
+Transport
+Internet
+Network access
+
+What is OSI model?
+
+Open Systems Interconnection
+Application Network process to application
+Presentation Data formatting
+Session Sync and send to port
+Transport End to End Connections
+Network Logical addressing
+Data Link Physical addressing
+Physical Access to media
+
+How does a router differ from a switch?
+
+Both Router and Switch are the connecting devices in networking. A router is employed to settle on the littlest path for a packet to achieve its destination. 
+
+The main objective of router is to connect various networks simultaneously and it works in network layer, whereas the main objective of switch is to connect various devices simultaneously and it works in data link layer. 
+Connecting networks vs devices.
+
+Describe the Risk Management Framework process and a project where you successfully implemented compliance with RMF.
+
+Identify the Risk
+Analyze the Risk
+Evaluate or Rank the Risk
+Treat the Risk
+Monitor and Review the Risk
+
+How does a packet travel between two hosts connected in same network?
+
+If the destination host is present in the same network as the source host then the packet will be delivered directly to the destination host using MAC address.
+
+Explain the difference between TCP and UDP.
+
+Transmission Control Protocol. It is a connection-oriented protocol. 
+User Datagram Protocol. It is a connectionless, simple Internet protocol that requires no recovery and error-checking services.
+
+Which is more secure and why?
+
+Neither is more secure although TCP is more reliable. SSL and TLS are based on TCP.
+
+What is the difference between IPSEC Phase 1 and Phase 2?
+
+Phase 1 Security Associations are used to protect IKE (internet key exchange) messages that are exchanged between two IKE peers, or security endpoints.
+Phase 2 Security Associations are used to protect IP traffic, as specified by the security policy for a specific type of traffic, between two data endpoints.
+
+How does an active directory work?
+
+An Active Directory acts as a special-purpose database for Windows computers. 
+The system is not designed as a Windows registry replacement, rather, it is designed to manage large numbers of read and search operations as well as changes and updates.
+ In Active Directory, data is stored as objects, which include users, groups, applications, and devices, and these objects are categorized according to their name and attributes.
+
+Do you know how Single Sign-On works?
+
+Single sign-on (SSO) is an authentication scheme that allows a user to log in with a single ID to any of several related, yet independent, software systems.
+Google is a good example of SSO.
+
+What is a firewall?
+
+Firewall is a network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules
+
+How does it work in cloud computing?
+
+A cloud firewall provides a layer of protection around cloud assets by blocking malicious web traffic. 
+Unlike traditional firewalls, which are hosted on-premise and defend the network perimeter, cloud firewalls are hosted in the cloud and form a virtual security barrier around cloud infrastructure.
+
+Difference between IPS and IDS?
+
+Intrusion Prevention Systems (IPS): live in the same area of the network as a firewall, between the outside world and the internal network. 
+IPS proactively deny network traffic based on a security profile if that packet represents a known security threat.
+
+Intrusion Detection Systems (IDS): analyze and monitor network traffic for signs that indicate attackers are using a known cyberthreat to infiltrate or steal data from your network. 
+IDS systems compare the current network activity to a known threat database to detect several kinds of behaviors like security policy violations, malware, and port scanners.
+
+How do you harden a system?
+
+To improve the security level of a system, we take different types of measures:
+Principe of least privilege
+Segmentation
+Reduction
+
+How to you elevate permissions?
+
+Elevated Privileges
+Built-in Groups, User Rights, File and Folder Access Control List, Active Directory Delegation, Group Policy Delegation
+
+What would do if you discovered an infected host?
+
+Isolate and diagnose.
+
+You got the memory dump of a potentially compromised system, how are you going to approach its analysis?
+
+WinDbg
+
+How would you detect a DDOS attack?
+
+Slow services, traffic sourcing from the same addresses.
+
+How would you go about reverse-engineering a custom protocol packet?
+
+Protocol Reverse Engineering is recovering the protocol specification of the obscure/proprietary protocol whose documentation is unavailable or poorly documented.
+Protocol Reverse Engineering principles, write a protocol dissector by sniffing the connection and looking at the communication flow between the client and the server,capture and re-analyze the traffic to improve the dissector
+
+OWASP Top 10, Pentesting and/or Web Applications
+
+Differentiate XSS from CSRF.
+
+XSS stands for Cross Site Scripting while CSRF stands for Cross Site Request Forgery. 
+XSS: User trusts badly implemeent website that might be compromised.
+XSRF: A badly implemeneted website trusts the user, attacker issues malicious requests via the browser
+
+What do you do if a user brings you a pc that is acting 'weird'? You suspect malware.
+
+Isolate.
+
+What is the difference between tcp dump and FWmonitor?
+
+Tcpdump displays traffic coming or leaving to/from a firewall interface.
+FW monitor would also tell you how the packet is going through the firewall including routing and NAT decisions.
+
+Do you know what XXE is? XXE SSRF
+
+With XML entities, the ‘SYSTEM’ keyword causes an XML parser to read data from a URI and permits it to be substituted in the document. Thus, an attacker can send his own values through the entity and make the application display it. 
+In simple words, an attacker forces the XML parser to access the resource specified by him which could be a file on the system or on any remote system. 
+
+Explain man-in-the-middle attacks.
+
+a type of session hijacking where the attackers pretend to be both legitimate participants.
+
+What is a Server Side Request Forgery attack?
+
+Server-side request forgery (SSRF) vulnerabilities let an attacker send crafted requests from the back-end server of a vulnerable web application. 
+Criminals usually use SSRF attacks to target internal systems that are behind firewalls and are not accessible from the external network.
+XML Parser, Image and File Upload, WebHooks
+
+Describe what are egghunters and their use in exploit development.
+
+Loopholes in structured exception handlers to ultimately conduct code execution.
+Eggs are shell codes that you want egghunters to execute at a later time.
+
+What is Same Origin Policy and CORS?
+
+Same-Origin Policy makes sure a web browser permits scripts, contained in a web page to access data on another web page, but only if both web pages have the same origin.
+CORS defines a set of headers that allow the browser and server to communicate which requests are permitted/prohibited.
+
+Databases
+
+How would you secure a Mongo database?
+
+Create Separate Security Credentials
+Use Role-Based Access Control
+Limit Connections to the Database
+Encrypt Your Data
+Add Extra Encryption for Sensitive Data
+
+What are the 5 aggregate functions of SQL?
+
+AVG (), COUNT (), MIN (), MAX (), and SUM ().
+
+Tools and Games
+
+Have I played CTF?
+
+GoogleCTF / PicoCTF
+
+Would you decrypt a steganography image?
+
+Using stats and open source tools like
+
+What CND tools do you knowledge or experience with?
+
+Computer network defense: 
+ChopShop: NETWORK PROTOCOL ANALYZER FOR CYBER ANALYSTS
+
+What is the difference between nmap -ss and nmap -st?
+
+scan using TCP syn and and connect()
+
+Given a sample packet capture - Identify the protocol, the traffic, and the likelihood of malicious intent.
+
+Packet analysis using wireshark and look for indicators of compromise. Search them on virustotal.com
+
+How would you use CI/CD to improve security?
+
+safely store secrets that you use in your pipelines for connecting to databases and third-party services.
+
+You have a pipeline for Docker images. How would you design everything to ensure the proper security checks?
+
+In a secure pipeline, Docker vulnerability scanning should be a mandatory step of your CI/CD process and any image should be scanned and approved before ever entering “Running” state in the production clusters.
+
+The Docker security scanning process typically includes:
+
+Checking the software packages, binaries, libraries, operative system files, etc. against one or more well known vulnerabilities databases. 
+Some Docker scanning tools have a repository containing the scanning results for common Docker images that can be used as a cache to speed up the process.
+Analyzing the Dockerfile and image metadata to detect security sensitive configurations like running as privileged (root) user, exposing insecure ports, using based images tagged with “latest” rather than specific versions for full traceability, etc.
+User defined policies, or any set of requirements that you want to check for every image, like software packages blacklists, base images whitelists, whether a SUID file has been added, etc.
+
+If you had to set up supply chain attack prevention, how would you do that?
+
+Implement Honeytokens
+Secure Privileged Access Management
+Staff education
+Implement an Identity Access Management
+
+Programming and Code
+
+How would you conduct a security code review?
+
+manual and/or automated review of an application's source code in an attempt to identify security-related weaknesses (flaws) in the code.
+Use online tools (ex. CVE tester)
+
+How can Github webhooks be used in a malicious way?
+
+Change repositories.
+
+Can I write a tool that would search our Github repos for secrets, keys, etc.?
+
+git-secrets scans commits, commit messages, and --no-ff merges to prevent adding secrets into your git repositories
+
+https://arstechnica.com/security/2016/04/hacking-slack-accounts-as-easy-as-searching-github/
+
+Given a CVE, walk us through it and how the solution works.
+
+Compliance
+
+"xoxp." That's the prefix contained in tokens that in many cases allow automated scripts to access a Slack account, even when it's protected by two-factor authentication.
+
+Can you explain SOC 2?
+
+Service Organization Control 2 defines criteria for managing customer data based on five “trust service principles”—security, availability, processing integrity, confidentiality and privacy. 
+
+How is ISO27001 different?
+
+ISO/IEC 27001 is an international standard on how to manage information security. 
+The aim is to help organizations make the information assets they hold more secure
+
+Can you list examples of controls these frameworks require?
+
+SOC 2: Control Environment, Communication and Information, Risk Assessment, Monitoring Activities, Control Activities, Logical and Physical Access Controls, System Operations, Change Management, Risk Mitigation
+ISO 27001: Clause 4: Context of the organization Clause 5: Leadership Clause 6: Planning Clause 7: Support Clause 8: Operation Clause 9: Performance evaluation Clause 10: Improvement
+
+What is the difference between Governance, Risk and Compliance?
+
+Governance, risk and compliance (GRC) refers to a strategy for managing an organization’s overall governance, enterprise risk management and compliance with regulations. 
+GRC is a structured approach to aligning IT with business objectives, while effectively managing risk and meeting compliance requirements.
+
+What does Zero Trust mean?
+
+Zero trust is a cybersecurity strategy wherein security policy is applied based on context established through least-privileged access controls and strict user authentication—not assumed trust.
+
+What is role-based access control (RBAC) and why is it covered by compliance frameworks?
+
+Role-based access control (RBAC) helps simplify identity management, generating an active directory of users and assigning their access level according to role: allowing privileged access to certain privileged users only.
+
+What is the NIST framework and why is it influential?
+
+The NIST framework is based on the existing standards, guidelines, and best practices in security, and promotes the protection of critical infrastructure.
+</details>
+
+<details>
+<summary>More security questions</summary>
+<br>
+Which architecture is more secure? 2 tier or 3 tier
+
+3 tier
+
+Explain SSL Handshake
+
+Specify which version of TLS (TLS 1.0, 1.2, 1.3, etc.) they will use
+Decide on which cipher suites (see below) they will use
+Authenticate the identity of the server via the server’s public key and the SSL certificate authority’s digital signature
+Generate session keys in order to use symmetric encryption after the handshake is complete
+
+Explain Encryption, Hashing, and Encoding
+
+https://systemoverlord.com/2020/07/05/security-101-encryption-hashing-and-encoding.html
+
+Explain hashing and the hashing algorithms?
+
+https://www.tutorialspoint.com/cryptography/cryptography_hash_functions.htm
+https://www.youtube.com/watch?v=b4b8ktEV4Bg
+https://blog.jscrambler.com/hashing-algorithms/
+
+Recommend XXE mitigation for application which requires DTDs to be called because of business requirement
+
+The safest and possibly most effective way to prevent an XXE attack is to disable external entities, also called DTDs, entirely.
+This attack occurs when untrusted XML input containing a reference to an external entity is processed by a weakly configured XML parser.
+
+https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+
+What are some of the common XML parsers?
+
+https://en.wikipedia.org/wiki/Category:XML_parsers
+https://www.educba.com/xml-parsers/
+
+DOM and SAX parsers
+
+Explain CORS and SOP
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+https://www.secjuice.com/crossoriginrequests/
+https://portswigger.net/web-security/cors
+https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy
+https://www.bedefended.com/papers/cors-security-guide
+
+Does SOP mitigate CSRF attacks?
+
+https://security.stackexchange.com/questions/157061/how-does-csrf-correlate-with-same-origin-policy
+
+Exploiting SSRF attacks
+
+https://portswigger.net/web-security/ssrf
+https://www.hackerone.com/blog-How-To-Server-Side-Request-Forgery-SSRF
+https://blog.appsecco.com/an-ssrf-privileged-aws-keys-and-the-capital-one-breach-4c3c2cded3af
+
+web security vulnerability that allows an attacker to induce the server-side application to make requests to an unintended location to leak sensitive data.
+
+What is web cache deception?
+
+https://www.youtube.com/watch?v=3YLFZvxZbRc
+https://portswigger.net/web-security/web-cache-poisoning
+https://blog.cloudflare.com/understanding-our-cache-and-the-web-cache-deception-attack/
+http://omergil.blogspot.com/2017/02/web-cache-deception-attack.html
+https://portswigger.net/research/practical-web-cache-poisoning
+
+It works against sites that sit behind a reverse proxy (like Cloudflare) and are misconfigured in a particular way.
+Lures users to leave sensitive data that should not be cached but enforces it.
+
+What is HTTP request smuggling?
+
+http://projects.webappsec.org/w/page/13246928/HTTP%20Request%20Smuggling
+https://portswigger.net/web-security/request-smuggling
+
+HTTP Request Smuggling is an attack technique that abuses the discrepancy in parsing of non RFC compliant HTTP requests between two HTTP devices (typically a front-end proxy or HTTP-enabled firewall and a back-end web server) to smuggle a request to the second device "through" the first device. 
+This technique enables the attacker to send one set of requests to the second device while the first device sees a different set of requests. 
+In turn, this facilitates several possible exploitations, such as partial cache poisoning, bypassing firewall protection and XSS.
+
+Explain DOM XSS. Can DOM XSS be stored? Can CSP header mitigate dom based XSS
+
+Document Object Model-based Cross-site Scripting
+Possible if web application writes data to the Document Object Model without proper sanitization
+CSP does not stop DOM-based XSS (also known as client-side XSS) if you enable 'unsafe-eval' in your CSP policy.
+
+https://www.html5rocks.com/en/tutorials/internals/howbrowserswork/
+https://html.spec.whatwg.org/multipage/parsing.html
+https://portswigger.net/web-security/cross-site-scripting/dom-based
+https://brutelogic.com.br/blog/dom-based-xss-the-3-sinks/
+https://www.scip.ch/en/?labs.20171214
+
+Content-Security-Policy: An Introduction
+
+Deploying and managing CSP - the browser-side firewall
+
+What will be your testcase for a file upload functionality?
+
+https://medium.com/@satboy.fb/art-of-unrestricted-file-upload-exploitation-92ed28796d0
+https://resources.infosecinstitute.com/file-upload-vulnerabilities/#gref
+https://pentestlab.blog/2012/11/19/abusing-file-upload/
+https://pentestlab.blog/2012/11/29/bypassing-file-upload-restrictions/
+
+LAMP stack is vulnerable to php backdoor installation. 
+
+What is HSTS?
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+
+HTTP Strict-Transport-Security informs browsers that the site should only be accessed using HTTPS, and that any future attempts to access it using HTTP should automatically be converted to HTTPS.
+
+Explain SSL Stripping
+
+https://blog.cloudflare.com/performing-preventing-ssl-stripping-a-plain-english-primer/
+
+Reroutes to HTTPS is intercepted.
+
+If you have API calls which need to fetch credentials, what will be the secure way to store secrets and making them available for API calls?
+
+https://medium.com/hackernoon/where-do-you-keep-credentials-for-your-lambda-functions-cac746048480
+
+How does file compression work?
+
+LZ77: use key for repetition for text and lossy compression for image and video compression.
+
+What is SPF, DKIM and DMARC?
+
+https://www.smartertools.com/blog/2019/04/09-understanding-spf-dkim-dmarc
+https://www.endpoint.com/blog/2014/04/15/spf-dkim-and-dmarc-brief-explanation
+https://www.reddit.com/r/sysadmin/comments/aph6ee/lets_talk_about_email_spoofing_and_prevention_alt/
+
+SPF, DKIM, and DMARC are email authentication protocols designed to prevent social engineering attacks and spam. The three protocols are complementary, and together they offer confidence in email origin and email content integrity.
+
+Why BlackList < WhiteList
+
+https://mike-n1.github.io/ExtensionsOverview
+
+Explain DNS Exfiltration
+
+DNS exfiltration uses DNS requests to send data and can be used in rare situations where “normal” Internet traffic is either blocked or filtered.
+As DNS requests can propagate through DNS resolvers, even if the system requesting the domain name cannot reach the DNS server directly, it might still be possible to extract data through this channel.
+
+Explain Log Poisoning using LFI/RFI
+
+https://www.hackingarticles.in/apache-log-poisoning-through-lfi/
+https://www.hackingarticles.in/rce-with-lfi-and-ssh-log-poisoning/
+https://highon.coffee/blog/lfi-cheat-sheet/
+
+comment execution
+
+Do the HttpOnly cookie and X-XSS-Protection header mitigate cross-site scripting attacks?
+
+HttpOnly attribute is an optional attribute of the Set-Cookie HTTP response header that is being sent by the web server along with the web page to the web browser in an HTTP response. 
+
+How do you exploit XSS in a post request?
+
+https://portswigger.net/blog/exploiting-xss-in-post-requests
+Difference: IDOR, Missing function level access control and privilege escalation
+
+How does burp suite work with HTTPs requests?
+
+https://krash.dev/how-does-burp-proxy-work/
+https://www.quora.com/How-is-it-possible-that-a-proxy-tool-like-Burp-Suite-is-able-to-decrypt-HTTPS-communication-like-plain-text-credentials
+https://portswigger.net/burp/documentation/desktop/tools/proxy/using
+Is the DNS service’s communication encrypted?
+
+Yes
+
+Security implications in DNS
+
+DNS over HTTPs
+
+https://hacks.mozilla.org/2018/05/a-cartoon-intro-to-dns-over-https/
+https://www.chromium.org/developers/dns-over-https
+
+How does ssh authentication work?
+
+https://www.digitalocean.com/community/tutorials/understanding-the-ssh-encryption-and-connection-process
+https://gravitational.com/blog/ssh-handshake-explained/
+
+client-server model to authenticate two parties and encrypt the data between them.
+When a TCP connection is made by a client, the server responds with the protocol versions it supports. 
+If the client can match one of the acceptable protocol versions, the connection continues. 
+The server also provides its public host key, which the client can use to check whether this was the intended host.
+
+How to verify if a database is encrypted?
+
+If you query sys.dm_database_encryption_keys, the encryption state column will tell you whether database is encrypted or not. 
+
+Explain SDLC
+
+In which phase of SDLC should security be integrated?
+
+Use SSDLC
+
+Can you briefly discuss the role of information security in each phase of the software development lifecycle?
+
+Planning, Defining, Designing, Building, Testing and Deployment.
+
+Explain encryption in Wifi network communication.
+
+WEP, WPA, WPS
+
+What are stateless and stateful requests?
+
+https://www.geeksforgeeks.org/difference-between-stateless-and-stateful-protocol/
+
+HTTP (Hypertext Transfer Protocol), UDP (User Datagram Protocol), DNS (Domain Name System) are the example of Stateless Protocol. 
+FTP (File Transfer Protocol), Telnet are the example of Stateful Protocol.
+
+What data does the shadow file contains?
+
+https://www.cyberciti.biz/faq/understanding-etcshadow-file/
+
+The /etc/shadow file stores actual password in encrypted format (more like the hash of the password) for user’s account with additional properties related to user password.
+
+What is salt and pepper in cryptography?
+
+https://www.youtube.com/watch?v=YLCoDK0OwYM
+
+Salt and pepper make cryptographic hash functions more difficult to reverse. Both salt and pepper may be added to data before hashing it.
+
+What is Double-Submit Cookie and SameSite Cookie Attribute?
+
+https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#double-submit-cookie
+https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#defense-in-depth-techniques
+
+Double Submit Cookie
+
+send a random value in both a cookie and as a request parameter, server verifying if the cookie value and request value match.
+
+SameSite Cookie Attribute
+
+SameSite is a cookie attribute (similar to HTTPOnly, Secure etc.) which aims to mitigate CSRF attacks.
+This attribute helps the browser decide whether to send cookies along with cross-site requests
+
+What is Preflight request?
+
+https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request
+
+A CORS preflight request is a CORS request that checks to see if the CORS protocol is understood and a server is aware using specific methods and headers
+
+What are Certificate Transparency Logs?
+
+Certificate Transparency logs are "append-only" and publicly-auditable ledgers of certificates being created, updated, and expired.
+
+</details>
+
+<details>
+<summary>Common KQL queries</summary>
+<br>
+All Security Alerts to Sentinel by Product 
+ 
+// Alerts reported by all log feeds to Sentinel 
+SecurityAlert 
+| summarize count() by ProviderName, ProductName 
+ 
+ 
+Azure Portal Logins 
+ 
+// show all successful logins in the Azure portal divided by 30 minute intervals 
+SigninLogs 
+| where AppDisplayName == "Azure Portal" 
+and ResultType == 0 
+| summarize count() by Identity, bin(TimeGenerated, 30m) 
+| render columnchart kind=unstacked  
+ 
+Conditional Access Policies in-use 
+ 
+SigninLogs 
+| where tostring(ConditionalAccessPolicies.[0].displayName) !="" 
+| where ConditionalAccessStatus == "success" 
+| summarize count() by //TimeGenerated, 
+CAPolicyName = tostring(ConditionalAccessPolicies.[0].displayName), ConditionalAccessStatus 
+ 
+Exchange Activity Over 2 Week Period 
+ 
+OfficeActivity 
+| where TimeGenerated > ago(14d) 
+// Device - Exchange 
+| where OfficeWorkload == "Exchange" 
+| summarize Count=count() by bin(TimeGenerated, 1d) 
+| render timechart 
+ 
+File Activity For OneDrive and SharePoint For All forces.gc.ca 
+ 
+OfficeActivity 
+| where TimeGenerated > ago(1h) 
+// Any Forces accounts 
+| where (UserId endswith ".forces.gc.ca") 
+// Device - OneDrive and SharePoint 
+| where OfficeWorkload in ("OneDrive", "SharePoint") 
+// Sort by activity 
+| summarize Count=count () by UserId, Activity=Operation, Device=OfficeWorkload, Filename=SourceFileName 
+| sort by Count desc 
+ 
+File Uplodaed Activity Over 2 Week Period 
+ 
+OfficeActivity 
+| where TimeGenerated > ago(14d) 
+| where Operation contains "FileUploaded" 
+// | summarize FileUploaded = count() by UserId 
+| summarize FileUploaded =count() by bin(TimeGenerated, 1d) 
+| render timechart 
+ 
+FileUploaded by users Greater than 100 Over 2 Week Period  
+ 
+OfficeActivity 
+| where TimeGenerated > ago(14d) 
+| extend day = UserId(TimeGenerated % 1d , 1d) 
+| where Operation contains "FileUploaded" 
+| summarize Count=count() by User=UserId 
+| where Count > 100 
+| sort by Count desc 
+| render columnchart 
+ 
+Find File Details 
+ 
+OfficeActivity 
+| where SourceFileName contains "DAG - OP LASER - OP LENTUS" 
+| project TimeGenerated, UserId , Operation , SourceRelativeUrl , Site_Url  
+| summarize UniqueNumber = count() by Operation  
+| sort by UniqueNumber asc  
+ 
+List Exchange Activity for all forces.gc.ca 
+ 
+OfficeActivity 
+| where TimeGenerated > ago(1h) 
+// Any Forces accounts 
+| where (UserId endswith ".forces.gc.ca") 
+// Device - Exchange 
+| where OfficeWorkload == "Exchange" 
+// Get the email subject 
+| extend Subject = tostring(parse_json(AffectedItems)[0].Subject) 
+// Sort by activity 
+| summarize Count=count () by Subject, Mailbox=UserId, Activity=Operation, Device=OfficeWorkload, Result=ResultStatus 
+| sort by Count desc  
+ 
+List of Unusual File Extensions Over 24 Hours 
+ 
+OfficeActivity 
+| where TimeGenerated > ago(1d) 
+| where ItemType == "File" 
+| where isnotempty(SourceFileExtension) 
+| where tolower(SourceFileExtension) in ("exe", "zip", "7zip") 
+| sort by TimeGenerated, SourceFileExtension 
+| summarize Count=count() by Operation, Device=OfficeWorkload, Source=EventSource, Filename=SourceFileName 
+| render columnchart 
+ 
+Mailbox Rule Created to Forward to an External Domain 
+ 
+// let timeframe = 2d; 
+OfficeActivity 
+| where (Operation =~ "Set-Mailbox" and Parameters contains 'ForwardingSmtpAddress')  
+or (Operation =~ 'New-InboxRule' and Parameters contains 'ForwardTo') 
+| extend parsed=parse_json(Parameters) 
+| extend fwdingDestination_initial = (iif(Operation=~"Set-Mailbox", tostring(parsed[1].Value), tostring(parsed[2].Value))) 
+| where isnotempty(fwdingDestination_initial) 
+| extend fwdingDestination = iff(fwdingDestination_initial has "smtp", (split(fwdingDestination_initial,":")[1]), fwdingDestination_initial ) 
+| parse fwdingDestination with * '@' ForwardedtoDomain  
+| parse UserId with *'@' UserDomain 
+| extend subDomain = ((split(strcat(tostring(split(UserDomain, '.')[-2]),'.',tostring(split(UserDomain, '.')[-1])), '.') [0])) 
+| where ForwardedtoDomain !contains subDomain 
+| extend Result = iff( ForwardedtoDomain != UserDomain ,"Mailbox rule created to forward to External Domain", "Forward rule for Internal domain") 
+| extend ClientIPAddress = case( ClientIP has ".", tostring(split(ClientIP,":")[0]), ClientIP has "[", tostring(trim_start(@'[[]',tostring(split(ClientIP,"]")[0]))), ClientIP ) 
+| extend Port = case( 
+ClientIP has ".", (split(ClientIP,":")[1]), 
+ClientIP has "[", tostring(split(ClientIP,"]:")[1]), 
+ClientIP 
+) 
+| project TimeGenerated, UserId, UserDomain, subDomain, Operation, ForwardedtoDomain, ClientIPAddress, Result, Port, OriginatingServer, OfficeObjectId, fwdingDestination 
+| extend timestamp = TimeGenerated, AccountCustomEntity = UserId, IPCustomEntity = ClientIPAddress, HostCustomEntity = OriginatingServer 
+ 
+MCAS Alerts 
+ 
+// Alerts reported by Microsoft Cloud App Security (MCAS) 
+SecurityAlert 
+| where ProviderName == "MCAS" 
+ 
+OneDrive – Executable Files 
+ 
+let starttime = 3d; 
+let endtime = 3d; 
+let historicalActivity= 
+OfficeActivity 
+| where OfficeWorkload == "OneDrive" 
+| where SourceFileExtension == "exe"  
+| where TimeGenerated between(ago(starttime)..ago(endtime)) 
+//| summarize historicalCount=count() by ClientIP; 
+| summarize historicalCount=count() by UserId; 
+let recentActivity = OfficeActivity 
+| where OfficeWorkload == "OneDrive" 
+| where Operation in ("FileDownloaded", "FileUploaded") 
+| where SourceFileExtension == "exe" 
+| where TimeGenerated > ago(endtime)  
+| summarize StartTimeUtc = min(TimeGenerated), EndTimeUtc = max(TimeGenerated), recentCount=count() by UserId, ClientIP, OfficeWorkload, Operation, ItemType, SourceFileName, SourceFileExtension, LogonUserSid; 
+recentActivity | join kind= leftanti ( 
+historicalActivity  
+) on UserId  
+| extend timestamp = StartTimeUtc, IPCustomEntity = ClientIP 
+ 
+OneDrive and SharePoint Activity Over 2 Week Period 
+ 
+OfficeActivity 
+| where TimeGenerated > ago(14d) 
+// Device - OneDrive and SharePoint 
+| where OfficeWorkload in ("OneDrive", "SharePoint") 
+| summarize Count=count() by bin(TimeGenerated, 1d) 
+| render timechart 
+ 
+Privileged Identity Management Requests 
+ 
+// PIM requests 
+AuditLogs 
+| where OperationName == "Add member to role requested (PIM activation)" or OperationName == "Remove member from role completed (PIM deactivate)" 
+| extend Account = tostring(InitiatedBy.["user"].["userPrincipalName"]) 
+| extend Role = tostring(TargetResources.[0].["displayName"]) 
+| distinct TimeGenerated, Account, ResultDescription, Role 
+ 
+SSC Admin Account Activity 
+ 
+AuditLogs 
+| where TimeGenerated > ago(30d) 
+| extend Time=TimeGenerated  
+// Check for most active SSC Admin users 
+| summarize by tostring(InitiatedBy.user), Time, OperationName 
+| extend userPrincipalName = tostring(parse_json(InitiatedBy_user).userPrincipalName) 
+// SSC account 
+| where userPrincipalName in ("SSC-CBS-Reporting@018gc.onmicrosoft.com", "Admin-SSC@018gc.onmicrosoft.com") 
+// Summarize SSC accounts activity by Date/Time 
+| summarize Count=count() by Time, SysAdmin=userPrincipalName 
+| sort by Count desc  
+| render columnchart 
+ 
+User Sign-in Outside Canada 
+ 
+SigninLogs  
+// Make sure there is a description 
+| where OperationName == "Sign-in activity" 
+| where Location != "CA" 
+| where Location <>"" 
+| where Identity <>"" 
+// Domain Defence O365 
+| where UserDisplayName matches regex "@.*@Defence O365" 
+// Break down all the O365 by group 
+| extend get_Group=extract("(@.*@Defence O365)", 1, UserDisplayName) 
+//Get only the Group 
+| extend Group=extract("@(.*)@Defence O365", 1,get_Group) 
+| where isnotempty(Group) 
+| project Group, Location, Identity  
+| summarize Count=count() by Identity, Group, Location 
+| order by Count desc 
+| render columnchart 
+ 
+User Sign-in with IP Address Timeline 
+ 
+SigninLogs 
+| where TimeGenerated > ago(2d)  
+| where UserPrincipalName == "kirk.lillington@jdcp.forces.gc.ca"  
+//| where IPAddress in ("131.137.245.208", "131.137.245.209", "131.137.245.206", "131.137.245.207") 
+| summarize Count=count () by IPAddress, UserPrincipalName, bin(TimeGenerated, 1h)  
+| sort by Count desc 
+ 
+User Activity from DWAN Proxy 
+ 
+SigninLogs 
+| where UserPrincipalName == "kirk.lillington@jdcp.forces.gc.ca"  
+| where IPAddress in ("131.137.245.208", "131.137.245.209", "131.137.245.207", "131.137.245.206") 
+| extend Time=TimeGenerated  
+| extend Access = tostring(ConditionalAccessPolicies[5].displayName)  
+| extend Access_Type = tostring(ConditionalAccessPolicies[6].displayName)  
+| extend Control = tostring(parse_json(tostring(ConditionalAccessPolicies[10].enforcedGrantControls))[0])  
+| extend Activity = tostring(ConditionalAccessPolicies[11].displayName)  
+| extend Action = tostring(ConditionalAccessPolicies[12].displayName)  
+| project Time, IPAddress, UserDisplayName, Access, Access_Type, Control, Activity, Action 
+ 
+Looking after failed authentication attempts to Azure portal 
+  
+SigninLogs 
+| extend OS = DeviceDetail.operatingSystem, Browser = DeviceDetail.browser 
+| extend StatusCode = tostring(Status.errorCode), StatusDetails = tostring(Status.additionalDetails) 
+| extend State = tostring(LocationDetails.state), City = tostring(LocationDetails.city) 
+| where AppDisplayName contains "Azure Portal" 
+| where ResultType !in ("0", "50125", "50140") 
+ 
+ 
+// This loops through the list of users on Teams Callers 
+  
+TeamCallRecord_CL 
+| extend CallStartDate = format_datetime(startDateTime_t,'dd-MM-yyyy') 
+| extend CallStartTime = format_datetime(startDateTime_t, 'HH:mm:ss') 
+| extend CallEndDate = format_datetime(endDateTime_t,'dd-MM-yyyy') 
+| extend CallEndTime = format_datetime(endDateTime_t, 'HH:mm:ss') 
+| project participants_s, modalities_s, CallStartDate, CallStartTime, CallEndDate, CallEndTime, endDateTime_t, type_s, organizer_user_displayName_s 
+| mv-expand todynamic(participants_s) 
+| extend Phone = tostring(parse_json(tostring(participants_s.phone)).id) 
+| project Phone, participants_s.user.displayName, modalities_s,CallStartDate, CallStartTime, CallEndDate, CallEndTime, endDateTime_t, type_s, organizer_user_displayName_s 
+| where isnotempty(participants_s_user_displayName) or isnotempty(Phone) 
+| summarize by CallStartDate, CallStartTime, CallEndDate, CallEndTime, Participang=tostring(participants_s_user_displayName), Phone, modalities_s, endDateTime_t, Organizer=organizer_user_displayName_s 
+// If you need to list Participant by organizer add this 
+//| where Organizer contains "Bruneau" 
+| sort by CallStartTime, Organizer asc 
+
+Summarize Email Threats  
+ 
+O365API_CL 
+// Summarize email threats 
+| where TimeGenerated > ago(1d) 
+| where Category == "ThreatManagement" 
+| where Source_s == "Office 365 Security & Compliance"  
+| where EntityType_s == "MalwareFamily"  
+| extend Sender = tostring(parse_json(Data_s).tsd)  
+| extend Recipient = tostring(parse_json(Data_s).trc)  
+| extend Type = tostring(parse_json(Data_s).thn) 
+| extend Subject = tostring(parse_json(Data_s).ms)   
+| summarize Count=count() by Result=Name_s, Sender, Recipient, Subject, Type 
+ 
+DND - Email-Redirect Detection 
+  
+let timeframe = 2d; 
+OfficeActivity 
+| where TimeGenerated >= ago(timeframe) 
+| where Parameters contains 'redirect' 
+| extend Name = tostring(parse_json(Parameters)[2].Name)  
+| where Name == "RedirectTo" 
+| extend RedirectTo = tostring(parse_json(Parameters)[2].Value) 
+// Attemp to redirect email successful 
+| where ExternalAccess != "False"  
+| where RedirectTo !endswith "@forces.gc.ca" and RedirectTo !endswith @drdc-rddc.gc.ca 
+ 
+ 
+Alert if More than 60+ Files Access with 10 Minutes Period  
+OfficeActivity  
+| where OfficeWorkload in ("OneDrive", "SharePoint") 
+| where UserKey == "i:0h.f|membership|10032000aba8e405@live.com"  
+| where (OfficeObjectId matches regex "https://018gc.*sharepoint.com/.*") 
+// Look for anything SharePoint and ignore Document & Personal to get the UserId 
+| extend get_Object=extract("(https://018gc.*sharepoint.com/personal/.*/.*?(Documents|Personal)/.*$)", 1, OfficeObjectId) 
+| extend User=extract("https://018gc.*sharepoint.com/personal/(.*)/.*?(Documents|Personal)/.*$", 1,get_Object) 
+// Look for anything SharePoint and select filename 
+| extend get_Object1=extract("(https://018gc.sharepoint.com/sites/.*/.*$)", 1, OfficeObjectId) 
+| extend Filename=extract("https://018gc.sharepoint.com/sites/.*/(.*)$", 1,get_Object1) 
+//| where Operation == "FileDownloaded"  
+| summarize UniqueFile=dcount(Filename) by TimeGenerated, User, UserKey, Operation 
+| sort by TimeGenerated desc // Sort by time to see activity on the files, if any, by users  
+
+Actions by SysAdmin 
+ 
+AzureActivity 
+// SysAdmin Azure Activity 
+| where (Caller contains "@018gc.onmicrosoft.com") 
+| project Time=TimeGenerated, SysAdmin=Caller, IPAddress=CallerIpAddress, Activity=OperationName, Level , Category, ActivityStatus, Resource  
+ 
+Actions by JDCP Power User 
+ 
+AzureActivity 
+// SysAdmin Azure Activity 
+| where (Caller endswith ".forces.gc.ca") 
+| project Time=TimeGenerated, SysAdmin=Caller, IPAddress=CallerIpAddress, Activity=OperationName, Status=ActivityStatus, Level , Category, Resource  
+ 
+Azure Policy Traffic Activity by Ports 
+AzureActivity 
+| extend Access = tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(Properties).responseBody)).properties)).securityRules))[1].properties)).access)  
+| extend DstAddress = tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(Properties).responseBody)).properties)).securityRules))[1].properties)).destinationAddressPrefix)  
+| extend DstPort = tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(Properties).responseBody)).properties)).securityRules))[1].properties)).destinationPortRange)  
+| extend Direction = tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(Properties).responseBody)).properties)).securityRules))[1].properties)).direction)  
+| extend State = tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(Properties).responseBody)).properties)).securityRules))[1].properties)).provisioningState)  
+| extend Contact_Email = tostring(parse_json(tostring(parse_json(tostring(parse_json(Properties).responseBody)).tags)).["Primary Contact Email"])  
+| extend Project = tostring(parse_json(tostring(parse_json(tostring(parse_json(Properties).responseBody)).tags)).["Project Name"])  
+| summarize by Access, DstAddress, DstPort, Direction, State, Contact_Email, Project 
+ 
+ 
+Group Security Alerts by Users & Locations Unfamiliar sign-in properties 
+SecurityAlert 
+| where AlertName == "Unfamiliar sign-in properties"  
+| extend User = tostring(parse_json(ExtendedProperties).["User Account"])  
+| extend Address = tostring(parse_json(Entities)[1].Address)  
+| extend Location = tostring(parse_json(ExtendedProperties).["Client Location"])  
+| extend User_Name = tostring(parse_json(ExtendedProperties).["User Name"])  
+// Domain Defence O365 
+| where User_Name matches regex "@.*@Defence O365" 
+// Break down all the O365 by group 
+| extend get_Group=extract("(@.*@Defence O365)", 1, User_Name) 
+//Get only the Group 
+| extend Group=extract("@(.*)@Defence O365", 1,get_Group) 
+| where isnotempty(Group) 
+//| project AlertName, User, Group, Address, Location 
+| summarize Count=count()  by AlertName, User, Group, Address, Location 
+| sort by User, Location 
+ 
+Lists Anonymous IP Address by Users 
+SecurityAlert 
+| where AlertName == "Anonymous IP address"  
+| extend User = tostring(parse_json(ExtendedProperties).["User Account"])  
+| extend Address = tostring(parse_json(Entities)[1].Address)  
+| extend Location = tostring(parse_json(ExtendedProperties).["Client Location"])  
+| project AlertName, User, Address, Location 
+ 
+ 
+List User that Triggered Code injection discovered 
+SecurityAlert 
+| where DisplayName == "Code injection discovered"  
+| extend Process = tostring(parse_json(ExtendedProperties).ProcessPath)  
+| extend Username = tostring(parse_json(ExtendedProperties).Username)  
+| project StartTime, AlertName, AlertSeverity, Username, Process, AlertType, WorkspaceResourceGroup 
+ 
+ 
+Shows Portscan Activity by Port and IP Addresses 
+SecurityAlert 
+| where DisplayName == "Traffic detected from IP addresses recommended for blocking"  
+| extend resourceType = tostring(parse_json(ExtendedProperties).resourceType)  
+// List port targeted 
+| extend Destination_Port = tostring(parse_json(ExtendedProperties).["Destination Port"])  
+// List IP Source IP addresses 
+| extend SourceIP = tostring(parse_json(ExtendedProperties).["Source IP(s) [#attempts]"])  
+// List target device 
+| extend AzureID = tostring(parse_json(Entities)[1].AzureID)  
+| summarize by Destination_Port, SourceIP, AzureID 
+ 
+ 
+  
+Query Summarize Email with file(s) and URL 
+ 
+M365_EmailEvents_CL  
+| where TimeGenerated > ago(2d)  
+// Join all 3 email tables 
+| join (M365_EmailAttachmentInfo_CL) on NetworkMessageId_g 
+| join (M365_EmailUrlInfo_CL) on NetworkMessageId_g 
+// Convert date/time to just Date 
+| extend Date = format_datetime(TimeGenerated,'dd-MM-yyyy') 
+// Remove Forces and Microsoft as sources 
+| where SenderMailFromDomain_s !contains "forces.gc.ca" and SenderMailFromDomain_s !contains "microsoft.com" 
+// PB 
+//| where SenderFromAddress_s contains "include email here" 
+// Enter the filename to search for 
+//| where Filename_s contains "image001" 
+| summarize Filename=make_list(FileName_s), SHA256=make_list(SHA256_s), URL=make_list(Url_s) by Date, Sender=SenderFromAddress_s, Recipient=RecipientEmailAddress_s, Subject=Subject_s, Direction=EmailDirection_s, Action=DeliveryAction_s, Location=DeliveryLocation_s, Verdict=MalwareFilterVerdict_s 
+  
+  
+Query without file(s) attached 
+ 
+M365_EmailEvents_CL  
+| where TimeGenerated > ago(2d)  
+// Join all 2 email tables 
+//| join (M365_EmailAttachmentInfo_CL) on NetworkMessageId_g 
+| join (M365_EmailUrlInfo_CL) on NetworkMessageId_g 
+// Convert date/time to just Date 
+| extend Date = format_datetime(TimeGenerated,'dd-MM-yyyy') 
+// Remove Forces and Microsoft as sources 
+| where SenderMailFromDomain_s !contains "forces.gc.ca" and SenderMailFromDomain_s !contains "microsoft.com" 
+// PB 
+//| where SenderFromAddress_s contains "include email here" 
+// Enter the filename to search for 
+//| where Filename_s contains "image001" 
+| summarize URL=make_list(Url_s) by Date, Sender=SenderFromAddress_s, Recipient=RecipientEmailAddress_s, Subject=Subject_s, Direction=EmailDirection_s, Action=DeliveryAction_s, Location=DeliveryLocation_s, Verdict=MalwareFilterVerdict_s 
+ 
+// Users with multiple cities  
+// Get list of users that signed in from multiple cities for the last day.  
+SigninLogs 
+| where TimeGenerated > ago(1h) 
+| extend City = tostring(LocationDetails.city) 
+| project UserPrincipalName, City 
+| mv-expand todynamic(City) 
+// Make sure the domain is forces.gc.ca 
+| where UserPrincipalName contains "forces.gc.ca" 
+// List member and city together 
+| distinct UserPrincipalName, tostring(City) 
+// Summary of member -> city 
+| summarize make_list(City) by UserPrincipalName 
+| sort by UserPrincipalName asc 
+// List all the member login that contains more than one city 
+| where array_length(list_City) > 1 
+| order by array_length(list_City) desc 
+
+</details>
+
+<details>
+<summary>Cloud architecture questions</summary>
+<br>
+- Cloud lifecycle mgmt. 
+Compliance mgmt. 
+Data residency: Canada central and Canada east 
+PCI… 
+Governance mgmt.
+Inventory/provision/mgmt./support 
+Provision process and tool:  RightScale, devops pipeline 
+Config Mgmt tool: SCCM, add SCCM DP;  Azure DSC 
+Inventory: naming, tagging (lower case, transit, project, env, mapID..) enforced by Azure policy 
+Policy mgmt.: azure policy 
+Onboarding and offboarding process 
+Business requirement🡪 architect and engineering 🡪 onboarding to IAM, monitoring, security review 🡪 certified process (follow cloud control checklist) 
+Environment: dev, uat, prod 
+- IAM 
+Provision process: done in on-prem AD via servicenow ticket 
+Privileged IDs with write or higher permission in prod, roles must be PIMed.  
+Personal IDs: read only access to prod 
+Service Principle management: 
+RBAC roles review, must use custom RBAC roles, need to develop approval process 
+Attestation 
+Azure tenant restriction 
+Block marketplace access using Azure policies 
+Azure mgmt. portal, AAD portal access, and billing portal access 
+- Data protection 
+Data encryption in Transit: TLS 1.2 or later protocol must be enforced by network control points 
+Data encryption at rest: 
+VM disk encryption: KEK is stored in Key Vault (KV) 
+Azure SQL: TDE integrated with KV to separate data mgmt. and key mgmt. 
+Key mgmt.: key externalization requirement? Which team to manage the key lifecycle? 
+App secrets: do not store on-prem in KV; rotation? 
+All VMs domain joined.  Local admin pwd can be reset via Azure portal without knowing existing pwd, which should be restricted and audited.  
+Azure SQL: random pwd for local admin. 
+Key vault: security admin should manage or oversee the key lifecycle (creation, grant access, provision, rotate); KV instance is dedicated to a single infrastructure or project.  Monitored by log analytics; RBAC and access policies; backup and restore, replication. 
+DLP rules? 
+- Infra security 
+Service and infr Hardening guidance and implementation 
+Jump server, no direct access to VMs 
+Only approved images can be deployed 
+AV: trend Micro deep security; tripwire scan for vulnerability; SCCM  patching 
+- App security 
+SSDL, pipeline security 
+Open-source mgmt. 
+Vulnerability management and threat modeling 
+- Network security 
+Ipsec tunnel on ER b/w on-prem and Azure 
+Firewall VMSS (VM scale set) deployed in each env to restrict outbound traffic 
+SSL termination and offload 
+Env segregation: 
+Each Env has a dedicated central infra hub and shared services: tripwire distribution point (dp), sccm dp, DC, etc.. 
+Separate IP space 
+DNSSEC 
+Network control point 
+On-prem 🡪 Azure public Internet service PaaS 
+All traffic b/w on-prem and Azure public services pass through the EISP FW 
+Only approved services are open  
+Future plan: for PaaS, private link or Microsoft peering to avoid Internet exposure 
+On-prem 🡪 Azure Infrastructure Hub VNETs 
+IPSec VPN tunnels are established b/w datacenters and the shared infra hubs vnet in Canada Central/East regions  
+All network access to app hubs traverses via the hubs (not direct) 
+All VPN traffic to Azure passes through the FW, the firewalls block all traffic by default; only specifically requested/approved ports and flows are opened via FW rule requests 
+Shared Infra hub 🡪application vnets 
+Vnet peering controls the allowable flow of data b/w vnets within Azure 
+Vnet peering is not transitive unless specifically peered 
+Vnet is segregated by environment, such that dev and prod traffic use different hubs and different vpn tunnels.  They cannot talk to each other 
+Future consideration: vnet peering with gateway transit 
+Vnet inbound access 
+It is controlled by NSG rules at the subnet level 
+All inbounds are blocked with the exception of specific Azure Mgmt services such as Databricks, ASE mgmt. plane that must have access for them to function 
+Vnet outbound access 
+Controlled by NSG at the subnet level 
+NSG block all outstand internet access unless required by PaaS mgmt. planes 
+Direct outbound Internet access is not allowed.   Hubs and app vnets are peered to the outbound Internet DMZ and Internet traffic is routed via UDRs on each subnet to direct traffic 
+Outbound Internet DMZ 
+Each shared infra hub (dev, prod, uat) contains a “security vnet” with Checkpoint Firewall appliances to control Outbound Internet Access 
+Hubs and app vnets are peered to the outbound Internet DMZ and Internet traffic is routed via UDRs on each subnet to direct traffic 
+Allowable Outbound Internet access includes: 
+Approved Azure Services (Azure AD..) 
+Approved Azure instances (Azure SQL, storage, key vault…) 
+Windows update 
+- Vulnerability mgmt. 
+Host based/network IDS and IPS 
+Azure SQL/Storage/KV.. 
+- Log, monitoring and incident response 
+VM logs: MMA agents 🡪 OMS proxy 🡪 log analytics🡪 SIEM 
+Log retention requirements 🡪dedicated log analytics🡪 SIEM 
+Central event hubs for each env ( in hub vnet) 
+- Modular Tiered Multi-Cloud onboarding process 
+ 
+ 	Gating 	Implementation 	Architect 	Cross-Functional team 	Risk Assessment 	Monitoring 
+CSP onboarding like AWS, Azure, GCP 	Cloud Steering Committee 	Cloud Infrastructure Engineer/DevOps 	Cloud Architect/Security Architect 	IAM, Crypto, App Security, vulnerability mgmt, Network, compute, monitoring 	vendor risk assessment 
+ 
+Platform risk assessment 
+ 	Platform level monitoring such as IAM, policies, network, crypto.. 
+Cloud Service Onboarding 	Cloud Steering Committee 	Cloud Infrastructure Engineer/DevOps 	Cloud Architect/Security Architect 	IAM, Crypto, App Security, vulnerability mgmt, Network, compute, monitoring 	Service TRA 	Service level monitoring such as storage policies such as non-public IPs 
+Cloud Project Onboarding 	Cloud Steering Committee 	Cloud project Engineer/DevOps 	Cloud App Architect/Security Architect 	 	Project TRA 	Application-level monitoring based on app requirements such as file integrity monitoring 
+- Azure new region on boarding 
+A new region onboarded, a new log analytics workspace (primary and secondary) is required.  MMA agents and DSC config needs to point to the new workspace 
+Naming convention 
+Region specific resources:  key vault, Storage, SQL, jump hosts 
+Event hubs integration with SIEM 
+Hubs 
+Tripwire 
+SCCM DP 
+Trend office Scan DP 
+ArcSight 
+Jump servers 
+Nettools 
+Service Now 
+Hybrid worker 
+OMS gateway 
+Network security vnet 
+Egress FW 
+Ingress FW 
+Event hubs 
+Paired region 
+Application VNET onboarding 
+For each new subnet, notify SCCM, Tripwire, other agents mgmt. software 
+Peering vnet to expressroute vnet to hub vnet for shared services 
+</details>
+
+<details>
+<summary>General cloud questions</summary>
+<br>
+Define Microsoft Azure and its fundamental use.
+Answer: There are certain companies in the market that provide the Cloud Service. One of them is Microsoft. So, Microsoft Azure is a Cloud Service Provider. It is mainly used for accessing Microsoft’s Infrastructure for Cloud services.
+
+Mention the Security features of the Cloud.
+Answer: The main security features provide with Cloud are:
+Identity and Access Management: It is a framework of policies and technologies that ensures that all the employees of an organization have access to the technology. It incorporates features like AD, PIM, Conditional Access Policy, etc.
+Platform protection: It helps prevent file-based Malware attacks, detect malicious activity, and provide the investigation and remediation capabilities. It incorporates features like Azure firewall, Load balancer, DDoS protection, front door, etc.
+Security operation: It is a practice or team that is devoted to preventing, detecting, assessing, monitoring, and responding to cybersecurity threats and incidents. It incorporates features like Log analytic Workspace, Azure sentinel.
+Secure Data and Application: It is a process of protecting data from unauthorized access and data corruption throughout its lifecycle. It incorporates features like Azure key vault, Encryption, SAS, Service Identity etc.
+Define the implemented Security Laws to secure data in a Cloud.
+Answer: The implemented Security Laws to secure the data in a Cloud are:
+Processing: It mainly controls the data that is being processed accurately and thoroughly in any application.
+File: It maintains and regulates the data that is being manipulated in any of the files.
+Output reconciliation: It manages the data that has to be reconciled from input to output.
+Input Validation: It controls the input data.
+Security and Backup: It delivers security and backup along with controlling the security breach logs.
+What are the services provided by Windows Azure Operating System?
+Answer: There are three core services provided by Windows Azure Operating System given as:
+Compute
+Storage
+Management
+Mention the essential things to be taken into account by the users before moving to a Cloud Computing Platform.
+Answer: The essential things to be taken into account are:
+Compliance
+Loss of data
+Data storage
+Business continuity
+Uptime
+Data integrity in cloud computing
+What are the different layers defining the Cloud architecture?
+Answer: The different layers that define the Cloud architecture are:
+CLC or Cloud Controller
+Walrus
+Cluster Controller
+SC or Storage Controller
+NC or Node Controller
+How can you secure your data for transport in the cloud?
+Answer: In order to secure your data during transportation from one place to another, ensure there is no leakage with the encryption key applied to the data that you are sending.
+Define a Storage Key.
+Answer: The ‘Storage Account Keys’ are like root passwords for your storage accounts. You must be careful to defend your access keys. You can use Azure Key Vault to manage and rotate your keys securely. Azure Portal, Powershell, and Azure CLI can help you in viewing and copying your account access keys.
+Define Network Security Groups.
+Answer: Network Security Groups are abbreviated as NSGs, incorporate a list of rules of Access Control List (ACL) that either allow or deny network traffic to subnets, NICs, or both. NSGs are often correlated with subnets or single NICs connected to a subnet. The ACL rules will apply to all the VMs in the subnet that is associated with an NSG. Also, the traffic to an individual NIC can be restrained when an NSG is directly associated with a NIC.
+Define Azure Security Center.
+Answer: Azure Security Center is a consolidated infrastructure security management framework that reinforces the security posture of your data centers, and offers advanced threat protection across your hybrid tasks in the cloud – if they’re in Azure or not – just as on-premises. Azure Security Center equips you with the proper tools expected to solidify your network, secure your services and ensure that you’re on top of your security position.
+How does Azure Security Center help in improving the security infrastructure?
+Answer: Azure Security Center strengthens the security posture by helping you identify and perform the solidifying tasks recommended as security best practices and execute them across your machines, data services, and apps. This incorporates managing and enforcing your security approaches, and ensuring your Azure virtual machines, non-Azure servers, and Azure PaaS services are compliant. It also offers the tools you need to have for an aerial perspective on your workloads, along with focused visibility on your network security estate.
+
+What will happen if you exhaust the maximum failed attempts for authenticating yourself via Azure AD?
+Answer: We use a complex technique to secure accounts. This entirely depends on the IP address of the application and the passwords mentioned. The duration of the lockout likewise increases based on the probability that it is an attack. We can also enforce Password Change and MFA as per the policy.
+Define the Azure Security Policies.
+Answer: A security policy specifies the aspired arrangement of your workloads and supports in making sure that you’re complying with the security obligations of your corporation or regulators.
+Azure Security Center proffers its security suggestions based on your preferred policies. Security Center policies are dependent on policy initiatives designed in Azure Policy. You can use it to maintain your policies and to set policies across Management groups and across multiple subscriptions. There are options offered by Security Center to work with Security Policies:
+View and edit the built-in default policy
+Add your own custom policies
+Add regulatory compliance policies
+What is Network Access Control?
+Answer: Network Access Control also referred to as NAC, is the act of controlling connectivity to and from specific devices or subnets within a virtual network. Its purpose is to allow access to your virtual machines and services, only to the approved users and devices. Access controls are dependent on choices to allow or deny connections to and from your virtual machine or service.
+Azure supports various sorts of network access control, like:
+Network layer control
+Route control and forced tunneling
+Virtual network security appliances
+How will you define Azure Network Security?
+Answer: Network security could be characterized as the way of protecting resources from unapproved access or assault by applying controls to network traffic. Its main intention is to make sure that only legitimate traffic is permitted. Azure incorporates a vigorous networking infrastructure to help your application and service connectivity necessities. Network connectivity is conceivable between resources situated in Azure, between on-premises and Azure-hosted resources, and to and from the web and Azure.
+Mention the challenges addressed by Azure Security Center.
+Answer: Azure Security Center mostly addresses these three urgent security challenges:
+Rapidly changing workloads: This is a strength of the cloud as well as a challenge.
+Increasingly sophisticated attacks: Wherever you execute your workloads, the attacks keep getting more sophisticated. You need to secure your public cloud workloads, which are an Internet-facing workload, that can leave you more exposed if you don’t follow security best practices.
+Security skills are in short supply: The quantity of security alerts and alerting systems far dwarfs the number of administrators with the fundamental foundation and experience to ensure your surroundings are secured. Staying up-to-date with the recent assaults is a constant challenge, making it difficult to stay in place while the world of security is steadily evolving.
+How can Azure Security Center help you in protecting against security challenges?
+Answer: Azure Security Center offers you the tools to help you protect against the security challenges:
+Strengthen security posture: Security Center evaluates your surroundings and equips you to know the status of your resources, and if they are secure.
+Protect against threats: Security Center evaluates your workloads and raises threat prevention support and security alerts.
+Get secure faster: In the Security Center, everything is done at cloud speed. Since it is natively incorporated, deployment of Security Center is simple, giving you auto-provisioning and protection with Azure services.
+Define encryption of Data at rest.
+Answer: Data at rest incorporates information that resides in resolute storage on physical media, in any digital format. The media can accommodate files on magnetic or optical media, archived data, and data backups. So, Data Encryption at rest is designed to prevent the attacker from accessing the unencrypted data by making sure the data is encrypted when on disk. Data encryption at rest is accessible for services across the cloud models like Software as a Service (SaaS), Platform as a Service (PaaS), and Infrastructure as a Service (IaaS).
+
+Mention the Azure Encryption models.
+Answer: There are many Azure Encryption models:
+Client-side encryption
+Server-side encryption
+Azure disk encryption
+Azure Storage Service Encryption
+Client-side encryption of Azure blobs
+Data at rest encryption with Azure SQL Database
+Cosmos DB database encryption
+At-rest encryption in Data Lake
+Define Advanced Threat Protection.
+Answer: Advanced Threat Protection is examining your logs to identify anomalous performance and potentially malicious efforts to access or exploit databases. Alerts are generated for suspicious activities such as SQL injection, potential data infiltration, and brute force attacks or for anomalies in access patterns to catch privilege escalations and breached credentials use. Alerts are viewed from the Azure Security Center, where the specifics of the suspicious activities are implemented and recommendations for further investigation provided along with actions to mitigate the threat.
+
+Tell Me About a Problem You Solved at Your Prior Job regarding Azure.
+What is the difference between SaaS, PaaS, and IaaS?
+SaaS: Office365, PaaS: Azure SQL, IaaS: Azure VM
+
+What are the instance types offered by Azure?
+Azure offers a number of different instance types based on what needs they fulfill. 
+General Purpose - CPU to memory ratio is balanced. Provides low to medium traffic web servers, small to medium databases and is ideal for testing and development
+Largest instance size: Standard_D64_v3
+256 GB Memory and 1600 GB SSD Temp Storage
+Compute Optimized - High CPU to memory ratio. Best suited for medium traffic web servers, application servers, batch processes, and network appliances
+Largest instance size: Standard_F72s_V2
+144 GB Memory and 576 GB SSD Temp Storage
+Memory-Optimized - High memory to CPU ratio. Best suited for relational database servers, in-memory analytics, and medium to large caches
+Largest instance size: Standard_M128m
+3892 GB Memory and 14,336 GB SSD Temp Storage
+What are the deployment environments offered by Azure?
+This is one of the most frequently asked Azure interview questions, and you must know the answer. Azure offers two deployment environments:
+Staging Environment:
+It provides a platform to validate changes to your application before it can be made live in the production environment
+In this stage, the app can be identified using the Azure’s Globally Unique Identifier (GUID) in URL form (GUID.cloudapp.net) 
+Production Environment:
+This environment is used to store the live application
+It can be differentiated from the staging environment with an URL that’s more DNS friendly (servicename.cloudapp.net)
+How is Windows Active Directory and Azure Active Directory different?
+This one’s another regular question from the list of Azure interview questions.
+Windows Active Directory	Azure Active Directory
+It is a directory service that facilitates working with interconnected, complex and different network resources in a unified manner	Azure Active Directory (Azure AD) is Microsoft’s multi-tenant, cloud-based directory and identity management service
+Uses 5 layers to store data, store user details, issue and manage certifications, etc.	Uses 5 layers to store data, store user details, issue and manage certifications, etc.
+Works with an emphasis on on-premises units like applications, file services, printers, etc. 	Emphasizes on web-based services that use RESTful interfaces
+
+What are the types of Queues offered by Azure?
+Azure offers two types of queues:
+Storage Queues:
+It is a part of Azure’s Storage infrastructure
+It provides messaging within and between services
+It is best suited when users need to store more than 80 GB of messages in queues 
+It can provide side logs of all transactions executed against the user’s queues
+Service Bus Queues:
+It is a part of Azure’s messaging infrastructure
+It integrates application or application components that span multiple communication protocols, network environments, etc.
+It provides a FIFO style of delivery
+The user’s queue size has to remain under 80 GB
+What are the advantages of the Azure Resource Manager?
+Azure Resource Manager enables users to manage their usage of application resources. Few of the advantages of Azure Resource Manager are:
+ARM helps deploy, manage and monitor all the resources for an application, a solution or a group
+Users can be granted access to resources they require
+It obtains comprehensive billing information for all the resources in the group
+Provisioning resources is made much easier with the help of templates
+How has integrating hybrid cloud been useful for Azure?
+The Hybrid Cloud boosts productivity by using Azure and the Azure stack for building and deploying applications for the cloud and on-premises applications. Integrating hybrid cloud been useful for Azure in the following ways:
+It obtains greater efficiency with a combination of Azure services and DevOps processes and tools
+Users can take advantage of constantly updated Azure services and other Azure Marketplace applications
+It enables it to be deployed regardless of its location, the cloud, or on-premises. 
+This enables applications to be created at a higher speed
+What is the Federation in Azure SQL?
+SQL Azure Federation provides tools that can enable developers to access or share databases among themselves in SQL Azure.
+It enables users to take advantage of resources within the cloud
+It allows users to have their own database or share databases amongst each other
+It reduces the possibility of a single point of failure
+It provides cost-effectiveness, by using cloud resources only when needed
+What are the different types of storage offered by Azure?
+Storage questions are very commonly asked during an Azure Interview. Azure has four different types of storage. They are:
+Azure Blob Storage 
+Blob Storage enables users to store unstructured data that can include pictures, music, video files, etc. along with their metadata. 
+When an object is changed, it is verified to ensure it is of the latest version. 
+It provides maximum flexibility to optimize the user’s storage needs. 
+Unstructured data is available to customers through REST-based object storage
+Azure Table Storage
+Table Storage enables users to perform deployment with semi-structured datasets and a NoSQL key-value store. 
+It is used to create applications requiring flexible data schema
+It follows a strong consistency model, focusing on enterprises 
+Azure File Storage
+File Storage provides file-sharing capabilities accessible by the SMB (Server Message Block) protocol
+The data is protected by SMB 3.0 and HTTPS
+Azure takes care of managing hardware and operating system deployments
+It improves on-premises performance and capabilities
+Azure Queue Storage
+Queue Storage provides message queueing for large workloads
+It enables users to build flexible applications and separate functions
+It ensures the application is scalable and less prone to individual components failing
+It enables queue monitoring which helps ensure customer demands are met
+</details>
