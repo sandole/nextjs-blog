@@ -858,26 +858,6 @@ AuditLogs 
 | sort by Count desc  
 | render columnchart 
  
-User Sign-in Outside Canada 
- 
-SigninLogs  
-// Make sure there is a description 
-| where OperationName == "Sign-in activity" 
-| where Location != "CA" 
-| where Location <>"" 
-| where Identity <>"" 
-// Domain Defence O365 
-| where UserDisplayName matches regex "@.*@Defence O365" 
-// Break down all the O365 by group 
-| extend get_Group=extract("(@.*@Defence O365)", 1, UserDisplayName) 
-//Get only the Group 
-| extend Group=extract("@(.*)@Defence O365", 1,get_Group) 
-| where isnotempty(Group) 
-| project Group, Location, Identity  
-| summarize Count=count() by Identity, Group, Location 
-| order by Count desc 
-| render columnchart 
- 
 User Sign-in with IP Address Timeline 
  
 SigninLogs 
