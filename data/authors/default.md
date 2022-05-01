@@ -30,4 +30,4 @@ This blog demonstrates many employable skills that I have:
   
 2. Web Development: As the title suggests, I have implemented a personal blog using NextJS, React and TailwindCSS. I chose NextJS for the fastest server side rendering and easy template accesses and TailwindCSS for beautiful pre-made components that I felt was easy to imbed into this blog. The source code for this blog is available in my github where interested people can visit and view my coding writing practices.  
   
-3. Other contents: The contents of this blog contains information about how I develop myself throughout my career. I have documented information about full-stack web development, implementing cloud solutions, containerization and DevSecOps topics. Continue reading this blog to hopefully some useful information for yourself!  
+3. Other contents: The contents of this blog contains information about how I develop myself throughout my career. I have documented information about full-stack web development, implementing cloud solutions and DevSecOps topics. Continue reading this blog to hopefully some useful information for yourself!  
