@@ -9,7 +9,7 @@ const projectsData = [
     title: 'The Odin Project',
     description: `Open source online curriculum for learning full stack development: from basic HTML to MERN stack`,
     imgSrc: '/static/images/TOP.png',
-    href: 'https://www.theodinproject.com/',
+    href: 'https://github.com/sandole/the-odin-project',
   },
   {
     title: 'Minecraft Server using Azure',
