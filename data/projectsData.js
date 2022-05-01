@@ -13,7 +13,7 @@ const projectsData = [
   },
   {
     title: 'Minecraft Server using Azure',
-    description: `Minecraft server fully hosted on Azure, from building vm image to pipelining and deploying: join swbzminecraftserver.westus3.cloudapp.azure.com`,
+    description: `Minecraft server fully hosted on Azure, from building VM image to pipelining and deploying: join swbzminecraftserver.westus3.cloudapp.azure.com`,
     imgSrc: '/static/images/minecraft.png',
     href: 'https://johnseong.vercel.app/blog/AzureVMApplication',
   },
