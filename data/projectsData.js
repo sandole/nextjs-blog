@@ -29,7 +29,7 @@ const projectsData = [
       'PSA - Edmonton',
     description: `Website development for a local Filipino basketball organization using Reach and Redis stack; joint project with a friend`,
     imgSrc: '/static/images/psa-logo.png',
-    href: '',
+    href: 'https://psaedm.com/',
   },
 ]
 
