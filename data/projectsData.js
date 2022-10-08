@@ -24,6 +24,13 @@ const projectsData = [
     imgSrc: '/static/images/MATLAB-logo.png',
     href: '',
   },
+  {
+    title:
+      'PSA - Edmonton',
+    description: `Website development for a local Filipino basketball organization using Reach and Redis stack; joint project with a friend`,
+    imgSrc: '/static/images/psa-logo.png',
+    href: '',
+  },
 ]
 
 export default projectsData
