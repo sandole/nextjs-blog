@@ -11,11 +11,13 @@ Hi, welcome to my blog!
 
 **Who Am I?**  
   
-~~My name is Minjun (John) Seong and I am currently residing in Edmonton, Alberta. Due to the nature of my current job, where I am living in or what I do can change quite frequently. I am currently a full-time Communications and Electronics Engineering (CELE) Officer in the Canadian Armed Forces serving with 3 CDSB Signals Squadron. Think of it like an information technology (IT) support for the military - serving over 10,000 personnel - and across multiple elements like Royal Canadian Air Force and Canadian Army.  ~~
+My name is John Seong and I am currently in Edmonton, Alberta, Canada. I am a cloud engineering consultant with Avanade and I am staffed to work on ESDC account for benefit delivery modernization. 
 
-~~Despite my experience in aviation, I have realized that IT is truly where my passion is at. I have a bachelor's degree in Computer Engineering from Royal Military College and I spend a lot of my free time exploring the web and learning a ton. I am looking to learn about a lot of new technologies and interesting things I can do online. I am also a person who likes to give myself constant challenges, stay competitive and learn new things on a regular basis. I am currently focusing on DevSecOps, cloud computing technologies and web development.  ~~
-  
-~~I care about contributing to my community. That is why I decided to start my career off by repaying my debts to this country. I did this by becoming a military officer and supporting many military operations and exercises. After 7 years of serving in the Canadian military, I am looking forward to starting a career in the software engineering industry. Thanks to Avanade, I was able to successfully transition into a cloud engineer role for cool (and paid) experiences. I am really excited about this career that I feel is better suited and compensated for me. On top of that, I feel that software engineering jobs will allow me to contribute to the world more positively and effectively.~~
+I started my career in 2015 where I enroled into a subsized education program by the military where the academic year would be spent studying computer engineering academia and summers were spent supporting military IT and learning a ton of stuff about tech. Feel free to reach out to me for more details about my experience or my resume.
+ 
+I care about contributing to my community. That is why I decided to start my career off by serving the country. I did this by becoming a military officer and supporting many military operations and exercises. After 7 interesting years of serving in the Canadian military, I have succesfully transitioned into a private sector tech career, thanks to Avanade.
+
+In my free time, I play in two different competitive basketball teams, contribute to Green Software Foundation with optimized infrastructure provisioning, attend local Christian services and study endlessly about the cloud.
 
 **My Story**  
   
