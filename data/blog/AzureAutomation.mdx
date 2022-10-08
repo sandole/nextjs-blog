@@ -1,0 +1,21 @@
+---
+title: 'Azure Automation'
+date: '2022-10-07'
+tags: ['Azure','cloud','development']
+summary: Azure provides many solution to automation problems
+---
+
+Azure provides many different automation tools for three largely grouped purposes: 
+deployment of resources, responding to external events, complex orchestration, and integration. 
+In this blog, I will explore the tools for responding to external events, complex orchestration and integration 
+automation methods as described on official Microsoft documentation. 
+Namely, these services are called Azure Functions, Azure Automation, and Azure Logic Apps.
+
+Azure Logic Apps gives developers two options: a graphics-friendly interface and JSON-based coding option.
+Most developers will have to resort to jumping between the two of these options as they will provide different benefits.
+As an example of an business use for implementing Azure Logic Apps, any Azure-native notification can be used for change in resource deployment.
+Let's say the stakeholders in a project need to be notified whenever the IP address allocation for deployed virtual network changes.
+By change, it could mean this virtual network was moved to a different resource group or subscription, maybe it means the CIDR range changed, maybe it means a new subnet was added or the virtual network was taken out completely.
+In any of these cases, there are tons of automation that can be implemented in Azure using Logic Apps, Functions and other Automation tools like Runbooks.
+
+For more information on Azure Automation, check out https://learn.microsoft.com/en-us/azure/automation/automation-services.
