@@ -9,7 +9,7 @@ import siteMetadata from '@/data/siteMetadata'
 const postDateTemplate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
 
 export default function PostLayout({ frontMatter, authorDetails, next, prev, children }) {
-  const { slug, fileName, date, title, images, tags } = frontMatter
+  const { slug, date, title, tags } = frontMatter
 
   return (
     <SectionContainer>
