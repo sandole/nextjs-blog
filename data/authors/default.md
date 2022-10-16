@@ -1,7 +1,7 @@
 ---
 name: John Seong
 avatar: /static/images/hello.png
-company: Canadian Armed Forces
+company: Avanade
 email: sandole97@gmail.com
 github: https://github.com/sandole
 slogan: Thinker's tinkers
