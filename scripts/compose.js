@@ -36,9 +36,11 @@ const genFrontMatter = (answers) => {
   title: ${answers.title ? answers.title : 'Untitled'}
   date: '${date}'
   tags: [${answers.tags ? tags : ''}]
+  draft: ${answers.draft === 'yes' ? true : false}
   summary: ${answers.summary ? answers.summary : ' '}
   images: []
   layout: ${answers.layout}
+  canonicalUrl: ${answers.canonicalUrl}
   `
 
   if (answers.authors.length > 0) {
@@ -75,6 +77,12 @@ inquirer
       type: 'input',
     },
     {
+      name: 'draft',
+      message: 'Set post as draft?',
+      type: 'list',
+      choices: ['yes', 'no'],
+    },
+    {
       name: 'tags',
       message: 'Any Tags? Separate them with , or leave empty if no tags.',
       type: 'input',
@@ -85,6 +93,11 @@ inquirer
       type: 'list',
       choices: getLayouts,
     },
+    {
+      name: 'canonicalUrl',
+      message: 'Enter canonical url:',
+      type: 'input',
+    },
   ])
   .then((answers) => {
     // Remove special characters and replace space with -
@@ -94,6 +107,7 @@ inquirer
       .replace(/ /g, '-')
       .replace(/-+/g, '-')
     const frontMatter = genFrontMatter(answers)
+    if (!fs.existsSync('data/blog')) fs.mkdirSync('data/blog', { recursive: true })
     const filePath = `data/blog/${fileName ? fileName : 'untitled'}.${
       answers.extension ? answers.extension : 'md'
     }`
