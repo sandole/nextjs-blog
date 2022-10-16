@@ -1,0 +1,36 @@
+---
+title: 'Dependency in web development'
+date: '2022-10-15'
+tags: ['development']
+summary: Azure provides many solution to automation problems
+---
+
+When maintaining a website deployment for a long duration, something that engineers often undermine is the power of dependency. Today, I fell into that trap.
+The deployment of this blog has stopped for a long time due to mdx-bundler and esbuild having circular dependency issues. Here is what that looked like:
+```
+npm ERR! code ERESOLVE
+npm ERR! ERESOLVE could not resolve
+npm ERR! 
+npm ERR! While resolving: mdx-bundler@9.0.1
+npm ERR! Found: esbuild@0.15.10
+npm ERR! node_modules/esbuild
+npm ERR!   esbuild@"^0.15.10" from the root project
+npm ERR!   peer esbuild@"*" from @esbuild-plugins/node-resolve@0.1.4
+npm ERR!   node_modules/@esbuild-plugins/node-resolve
+npm ERR!     @esbuild-plugins/node-resolve@"^0.1.4" from mdx-bundler@9.0.1
+npm ERR!     node_modules/mdx-bundler
+npm ERR!       mdx-bundler@"^9.0.1" from the root project
+npm ERR!   1 more (@mdx-js/esbuild)
+npm ERR! 
+npm ERR! Could not resolve dependency:
+npm ERR! peer esbuild@"0.11.x || 0.12.x || 0.13.x || 0.14.x" from mdx-bundler@9.0.1
+npm ERR! node_modules/mdx-bundler
+npm ERR!   mdx-bundler@"^9.0.1" from the root project
+```
+I came to resolve this issue by using yarn which acted as a wrapper to npm. First start by deleting package-lock.json and node_modules directory. Then install yarn using npm and install all node modules using yarn. 
+Yarn as a package manager automatically fixes all dependencies as you run build commands.  
+
+Another issue I came across was a module named globby with no longer support for require in Javascript. For this issue, I just had to downgrade the version of globby to 11.0.4 from 12.0.2. 
+A recommendation for preventing issues like this is keeping a .nvm folder to maintain fixed versions of packages and dependencies.
+
+P.S. reminder to disable any linting rules in .eslintrc.js and test the build locally for faster deployments!
