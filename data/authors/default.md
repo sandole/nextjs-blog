@@ -11,7 +11,7 @@ Hi, welcome to my blog!
 
 **Who Am I?**
 
-My name is John Seong and I am currently in Edmonton, Alberta, Canada. I am a cloud engineering consultant with Avanade and I am staffed to work on public sector accounts and projects.
+My name is John Seong. I am a cloud engineering consultant with Avanade and I am staffed to work on public sector accounts and projects.
 
 I started my career in 2015 where I enroled into a subsized education program by the military where the academic year would be spent studying computer engineering academia and summers were spent supporting military IT and learning a ton of stuff about tech. Feel free to reach out to me for more details about my experience or my resume.
 
