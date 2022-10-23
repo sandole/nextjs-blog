@@ -1,0 +1,22 @@
+---
+title: 'Working in Terraform'
+date: '2022-10-22'
+tags: ['development']
+summary: I have had a good experience developing in Terraform
+---
+
+As a cloud engineer, I have had a good experience developing in Terraform for infrastructure provisioning.
+When we help our clients through their cloud adoption journey, both our team and our client learned a lot on the way.
+
+Here are a set of standard practice we have established that we learned through experience:
+- Creating a landing zone can be done using three official sources: internal landing zone models, Microsoft landing zone model (https://github.com/Azure/caf-terraform-landingzones) and HashiCorp landing zone registry (https://registry.terraform.io/).
+- Pipelining CI/CD in Terraform should at the minimum consist of tflint, tfsec, OPA (unit testing in Terraform), steampipe (framework compliance like CIS), checkov (Policy-as-code similar to TFE Sentinel), and Terratest for any other testing requirements.
+- Follow good engineering principles like SOLID or DRY. Other software engineering principles shall be respected even when developing in a declarative language like Terraform or HCL. 
+
+I have also strived towards gaining a couple of certifications in Terraform. The two that I have achieved and are considered the de facto standard in this industry are: HashiCorp Infrastructure Automation Certification and CHIP.
+Doing the labs on the HashiCorp partner portal for a Terraform Enterprise Implementation Foundation certificate, 
+obtaining HashiCorp Infrastructure Automation Certification and attending a 1-day workshop with HashiCorp Solutions Engineer will grant a Certified HashiCorp Implementation Partner certification - a.k.a CHIP.
+
+For more information on cloud adoption journey or a recorded video of the workshop on Youtube, check out the links below:  
+https://blog.gruntwork.io/cloud-adoption-fails-65295aff30cc  
+https://www.youtube.com/watch?v=Z139TqRang8&feature=youtu.be&ab_channel=JohnBoero
