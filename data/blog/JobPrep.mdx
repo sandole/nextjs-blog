@@ -11,6 +11,7 @@ Below summarizes an exhaustive list of preparation I did for technical interview
 
 <details>
 <summary> Security questions </summary>
+
 Encryption and Authentication
 
 What is a three-way handshake?
@@ -380,10 +381,6 @@ How would you conduct a security code review?
 manual and/or automated review of an application's source code in an attempt to identify security-related weaknesses (flaws) in the code.
 Use online tools (ex. CVE tester)
 
-How can Github webhooks be used in a malicious way?
-
-Change repositories.
-
 Can I write a tool that would search our Github repos for secrets, keys, etc.?
 
 git-secrets scans commits, commit messages, and --no-ff merges to prevent adding secrets into your git repositories
@@ -430,6 +427,7 @@ The NIST framework is based on the existing standards, guidelines, and best prac
 
 <details>
 <summary> More security questions </summary>
+
 Which architecture is more secure? 2 tier or 3 tier
 
 3 tier
@@ -675,24 +673,23 @@ Certificate Transparency logs are "append-only" and publicly-auditable ledgers o
 
 <details>
 <summary> Common KQL queries </summary>
+
 All Security Alerts to Sentinel by Product 
- 
+  
 // Alerts reported by all log feeds to Sentinel 
 SecurityAlert 
 | summarize count() by ProviderName, ProductName 
- 
- 
+   
 Azure Portal Logins 
- 
 // show all successful logins in the Azure portal divided by 30 minute intervals 
 SigninLogs 
 | where AppDisplayName == "Azure Portal" 
 and ResultType == 0 
 | summarize count() by Identity, bin(TimeGenerated, 30m) 
 | render columnchart kind=unstacked  
- 
+
 Conditional Access Policies in-use 
- 
+   
 SigninLogs 
 | where tostring(ConditionalAccessPolicies.[0].displayName) !="" 
 | where ConditionalAccessStatus == "success" 
@@ -700,7 +697,7 @@ SigninLogs 
 CAPolicyName = tostring(ConditionalAccessPolicies.[0].displayName), ConditionalAccessStatus 
  
 Exchange Activity Over 2 Week Period 
- 
+  
 OfficeActivity 
 | where TimeGenerated > ago(14d) 
 // Device - Exchange 
@@ -709,7 +706,7 @@ OfficeActivity 
 | render timechart 
  
 File Activity For OneDrive and SharePoint For All forces.gc.ca 
- 
+  
 OfficeActivity 
 | where TimeGenerated > ago(1h) 
 // Any Forces accounts 
@@ -719,18 +716,18 @@ OfficeActivity 
 // Sort by activity 
 | summarize Count=count () by UserId, Activity=Operation, Device=OfficeWorkload, Filename=SourceFileName 
 | sort by Count desc 
- 
-File Uplodaed Activity Over 2 Week Period 
- 
+  
+File Uploded Activity Over 2 Week Period 
+  
 OfficeActivity 
 | where TimeGenerated > ago(14d) 
 | where Operation contains "FileUploaded" 
 // | summarize FileUploaded = count() by UserId 
 | summarize FileUploaded =count() by bin(TimeGenerated, 1d) 
 | render timechart 
- 
-FileUploaded by users Greater than 100 Over 2 Week Period  
- 
+  
+File Uploaded by users Greater than 100 Over 2 Week Period  
+  
 OfficeActivity 
 | where TimeGenerated > ago(14d) 
 | extend day = UserId(TimeGenerated % 1d , 1d) 
@@ -739,17 +736,17 @@ OfficeActivity 
 | where Count > 100 
 | sort by Count desc 
 | render columnchart 
- 
-Find File Details 
- 
+  
+Find File Details  
+  
 OfficeActivity 
 | where SourceFileName contains "DAG - OP LASER - OP LENTUS" 
 | project TimeGenerated, UserId , Operation , SourceRelativeUrl , Site_Url  
 | summarize UniqueNumber = count() by Operation  
 | sort by UniqueNumber asc  
- 
+  
 List Exchange Activity for all forces.gc.ca 
- 
+  
 OfficeActivity 
 | where TimeGenerated > ago(1h) 
 // Any Forces accounts 
@@ -761,9 +758,9 @@ OfficeActivity 
 // Sort by activity 
 | summarize Count=count () by Subject, Mailbox=UserId, Activity=Operation, Device=OfficeWorkload, Result=ResultStatus 
 | sort by Count desc  
- 
+  
 List of Unusual File Extensions Over 24 Hours 
- 
+  
 OfficeActivity 
 | where TimeGenerated > ago(1d) 
 | where ItemType == "File" 
@@ -772,9 +769,9 @@ OfficeActivity 
 | sort by TimeGenerated, SourceFileExtension 
 | summarize Count=count() by Operation, Device=OfficeWorkload, Source=EventSource, Filename=SourceFileName 
 | render columnchart 
- 
+  
 Mailbox Rule Created to Forward to an External Domain 
- 
+  
 // let timeframe = 2d; 
 OfficeActivity 
 | where (Operation =~ "Set-Mailbox" and Parameters contains 'ForwardingSmtpAddress')  
@@ -796,15 +793,15 @@ ClientIP 
 ) 
 | project TimeGenerated, UserId, UserDomain, subDomain, Operation, ForwardedtoDomain, ClientIPAddress, Result, Port, OriginatingServer, OfficeObjectId, fwdingDestination 
 | extend timestamp = TimeGenerated, AccountCustomEntity = UserId, IPCustomEntity = ClientIPAddress, HostCustomEntity = OriginatingServer 
- 
+  
 MCAS Alerts 
- 
+  
 // Alerts reported by Microsoft Cloud App Security (MCAS) 
 SecurityAlert 
 | where ProviderName == "MCAS" 
- 
+  
 OneDrive – Executable Files 
- 
+  
 let starttime = 3d; 
 let endtime = 3d; 
 let historicalActivity= 
@@ -824,27 +821,27 @@ recentActivity | join kind= leftanti ( 
 historicalActivity  
 ) on UserId  
 | extend timestamp = StartTimeUtc, IPCustomEntity = ClientIP 
- 
+  
 OneDrive and SharePoint Activity Over 2 Week Period 
- 
+  
 OfficeActivity 
 | where TimeGenerated > ago(14d) 
 // Device - OneDrive and SharePoint 
 | where OfficeWorkload in ("OneDrive", "SharePoint") 
 | summarize Count=count() by bin(TimeGenerated, 1d) 
 | render timechart 
- 
+  
 Privileged Identity Management Requests 
- 
+  
 // PIM requests 
 AuditLogs 
 | where OperationName == "Add member to role requested (PIM activation)" or OperationName == "Remove member from role completed (PIM deactivate)" 
 | extend Account = tostring(InitiatedBy.["user"].["userPrincipalName"]) 
 | extend Role = tostring(TargetResources.[0].["displayName"]) 
 | distinct TimeGenerated, Account, ResultDescription, Role 
- 
+  
 SSC Admin Account Activity 
- 
+  
 AuditLogs 
 | where TimeGenerated > ago(30d) 
 | extend Time=TimeGenerated  
@@ -857,18 +854,18 @@ AuditLogs 
 | summarize Count=count() by Time, SysAdmin=userPrincipalName 
 | sort by Count desc  
 | render columnchart 
- 
+  
 User Sign-in with IP Address Timeline 
- 
+  
 SigninLogs 
 | where TimeGenerated > ago(2d)  
 | where UserPrincipalName == "kirk.lillington@jdcp.forces.gc.ca"  
 //| where IPAddress in ("131.137.245.208", "131.137.245.209", "131.137.245.206", "131.137.245.207") 
 | summarize Count=count () by IPAddress, UserPrincipalName, bin(TimeGenerated, 1h)  
 | sort by Count desc 
- 
+  
 User Activity from DWAN Proxy 
- 
+  
 SigninLogs 
 | where UserPrincipalName == "kirk.lillington@jdcp.forces.gc.ca"  
 | where IPAddress in ("131.137.245.208", "131.137.245.209", "131.137.245.207", "131.137.245.206") 
@@ -879,7 +876,7 @@ SigninLogs 
 | extend Activity = tostring(ConditionalAccessPolicies[11].displayName)  
 | extend Action = tostring(ConditionalAccessPolicies[12].displayName)  
 | project Time, IPAddress, UserDisplayName, Access, Access_Type, Control, Activity, Action 
- 
+  
 Looking after failed authentication attempts to Azure portal 
   
 SigninLogs 
@@ -889,9 +886,9 @@ SigninLogs 
 | where AppDisplayName contains "Azure Portal" 
 | where ResultType !in ("0", "50125", "50140") 
  
- 
+  
 // This loops through the list of users on Teams Callers 
-  
+  
 TeamCallRecord_CL 
 | extend CallStartDate = format_datetime(startDateTime_t,'dd-MM-yyyy') 
 | extend CallStartTime = format_datetime(startDateTime_t, 'HH:mm:ss') 
@@ -906,9 +903,9 @@ TeamCallRecord_CL 
 // If you need to list Participant by organizer add this 
 //| where Organizer contains "Bruneau" 
 | sort by CallStartTime, Organizer asc 
-
+  
 Summarize Email Threats  
- 
+  
 O365API_CL 
 // Summarize email threats 
 | where TimeGenerated > ago(1d) 
@@ -920,9 +917,9 @@ O365API_CL 
 | extend Type = tostring(parse_json(Data_s).thn) 
 | extend Subject = tostring(parse_json(Data_s).ms)   
 | summarize Count=count() by Result=Name_s, Sender, Recipient, Subject, Type 
- 
+  
 DND - Email-Redirect Detection 
-  
+  
 let timeframe = 2d; 
 OfficeActivity 
 | where TimeGenerated >= ago(timeframe) 
@@ -933,9 +930,9 @@ OfficeActivity 
 // Attemp to redirect email successful 
 | where ExternalAccess != "False"  
 | where RedirectTo !endswith "@forces.gc.ca" and RedirectTo !endswith @drdc-rddc.gc.ca 
- 
- 
-Alert if More than 60+ Files Access with 10 Minutes Period  
+  
+Alert if More than 60+ Files Access with 10 Minutes Period
+  
 OfficeActivity  
 | where OfficeWorkload in ("OneDrive", "SharePoint") 
 | where UserKey == "i:0h.f|membership|10032000aba8e405@live.com"  
@@ -949,22 +946,23 @@ OfficeActivity  
 //| where Operation == "FileDownloaded"  
 | summarize UniqueFile=dcount(Filename) by TimeGenerated, User, UserKey, Operation 
 | sort by TimeGenerated desc // Sort by time to see activity on the files, if any, by users  
-
+  
 Actions by SysAdmin 
- 
+  
 AzureActivity 
 // SysAdmin Azure Activity 
 | where (Caller contains "@018gc.onmicrosoft.com") 
 | project Time=TimeGenerated, SysAdmin=Caller, IPAddress=CallerIpAddress, Activity=OperationName, Level , Category, ActivityStatus, Resource  
- 
+  
 Actions by JDCP Power User 
- 
+  
 AzureActivity 
 // SysAdmin Azure Activity 
 | where (Caller endswith ".forces.gc.ca") 
 | project Time=TimeGenerated, SysAdmin=Caller, IPAddress=CallerIpAddress, Activity=OperationName, Status=ActivityStatus, Level , Category, Resource  
- 
-Azure Policy Traffic Activity by Ports 
+  
+Azure Policy Traffic Activity by Ports
+  
 AzureActivity 
 | extend Access = tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(Properties).responseBody)).properties)).securityRules))[1].properties)).access)  
 | extend DstAddress = tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(tostring(parse_json(Properties).responseBody)).properties)).securityRules))[1].properties)).destinationAddressPrefix)  
@@ -974,9 +972,9 @@ AzureActivity 
 | extend Contact_Email = tostring(parse_json(tostring(parse_json(tostring(parse_json(Properties).responseBody)).tags)).["Primary Contact Email"])  
 | extend Project = tostring(parse_json(tostring(parse_json(tostring(parse_json(Properties).responseBody)).tags)).["Project Name"])  
 | summarize by Access, DstAddress, DstPort, Direction, State, Contact_Email, Project 
- 
- 
+  
 Group Security Alerts by Users & Locations Unfamiliar sign-in properties 
+  
 SecurityAlert 
 | where AlertName == "Unfamiliar sign-in properties"  
 | extend User = tostring(parse_json(ExtendedProperties).["User Account"])  
@@ -993,25 +991,26 @@ SecurityAlert 
 //| project AlertName, User, Group, Address, Location 
 | summarize Count=count()  by AlertName, User, Group, Address, Location 
 | sort by User, Location 
- 
+  
 Lists Anonymous IP Address by Users 
+  
 SecurityAlert 
 | where AlertName == "Anonymous IP address"  
 | extend User = tostring(parse_json(ExtendedProperties).["User Account"])  
 | extend Address = tostring(parse_json(Entities)[1].Address)  
 | extend Location = tostring(parse_json(ExtendedProperties).["Client Location"])  
 | project AlertName, User, Address, Location 
- 
- 
+  
 List User that Triggered Code injection discovered 
+  
 SecurityAlert 
 | where DisplayName == "Code injection discovered"  
 | extend Process = tostring(parse_json(ExtendedProperties).ProcessPath)  
 | extend Username = tostring(parse_json(ExtendedProperties).Username)  
 | project StartTime, AlertName, AlertSeverity, Username, Process, AlertType, WorkspaceResourceGroup 
- 
- 
+  
 Shows Portscan Activity by Port and IP Addresses 
+  
 SecurityAlert 
 | where DisplayName == "Traffic detected from IP addresses recommended for blocking"  
 | extend resourceType = tostring(parse_json(ExtendedProperties).resourceType)  
@@ -1022,11 +1021,9 @@ SecurityAlert 
 // List target device 
 | extend AzureID = tostring(parse_json(Entities)[1].AzureID)  
 | summarize by Destination_Port, SourceIP, AzureID 
- 
- 
-  
+  
 Query Summarize Email with file(s) and URL 
- 
+  
 M365_EmailEvents_CL  
 | where TimeGenerated > ago(2d)  
 // Join all 3 email tables 
@@ -1041,10 +1038,9 @@ M365_EmailEvents_CL  
 // Enter the filename to search for 
 //| where Filename_s contains "image001" 
 | summarize Filename=make_list(FileName_s), SHA256=make_list(SHA256_s), URL=make_list(Url_s) by Date, Sender=SenderFromAddress_s, Recipient=RecipientEmailAddress_s, Subject=Subject_s, Direction=EmailDirection_s, Action=DeliveryAction_s, Location=DeliveryLocation_s, Verdict=MalwareFilterVerdict_s 
-  
-  
+  
 Query without file(s) attached 
- 
+  
 M365_EmailEvents_CL  
 | where TimeGenerated > ago(2d)  
 // Join all 2 email tables 
@@ -1059,9 +1055,10 @@ M365_EmailEvents_CL  
 // Enter the filename to search for 
 //| where Filename_s contains "image001" 
 | summarize URL=make_list(Url_s) by Date, Sender=SenderFromAddress_s, Recipient=RecipientEmailAddress_s, Subject=Subject_s, Direction=EmailDirection_s, Action=DeliveryAction_s, Location=DeliveryLocation_s, Verdict=MalwareFilterVerdict_s 
- 
+  
 // Users with multiple cities  
 // Get list of users that signed in from multiple cities for the last day.  
+  
 SigninLogs 
 | where TimeGenerated > ago(1h) 
 | extend City = tostring(LocationDetails.city) 
@@ -1077,7 +1074,6 @@ SigninLogs 
 // List all the member login that contains more than one city 
 | where array_length(list_City) > 1 
 | order by array_length(list_City) desc 
-
 </details>
 
 <details>
@@ -1105,17 +1101,17 @@ Attestation 
 Azure tenant restriction 
 Block marketplace access using Azure policies 
 Azure mgmt. portal, AAD portal access, and billing portal access 
-- Data protection 
+- Data protection  
 Data encryption in Transit: TLS 1.2 or later protocol must be enforced by network control points 
 Data encryption at rest: 
 VM disk encryption: KEK is stored in Key Vault (KV) 
 Azure SQL: TDE integrated with KV to separate data mgmt. and key mgmt. 
 Key mgmt.: key externalization requirement? Which team to manage the key lifecycle? 
-App secrets: do not store on-prem in KV; rotation? 
+App secrets: do not store on-prem in KV; rotation?   
 All VMs domain joined.  Local admin pwd can be reset via Azure portal without knowing existing pwd, which should be restricted and audited.  
 Azure SQL: random pwd for local admin. 
 Key vault: security admin should manage or oversee the key lifecycle (creation, grant access, provision, rotate); KV instance is dedicated to a single infrastructure or project.  Monitored by log analytics; RBAC and access policies; backup and restore, replication. 
-DLP rules? 
+DLP rules?  
 - Infra security 
 Service and infr Hardening guidance and implementation 
 Jump server, no direct access to VMs 
@@ -1204,27 +1200,31 @@ Peering vnet to expressroute vnet to hub vnet for shared services 
 
 <details>
 <summary> General cloud questions </summary>
-Define Microsoft Azure and its fundamental use.
+
+Define Microsoft Azure and its fundamental use.  
 Answer: There are certain companies in the market that provide the Cloud Service. One of them is Microsoft. So, Microsoft Azure is a Cloud Service Provider. It is mainly used for accessing Microsoft’s Infrastructure for Cloud services.
 
-Mention the Security features of the Cloud.
+Mention the Security features of the Cloud.  
 Answer: The main security features provide with Cloud are:
 Identity and Access Management: It is a framework of policies and technologies that ensures that all the employees of an organization have access to the technology. It incorporates features like AD, PIM, Conditional Access Policy, etc.
 Platform protection: It helps prevent file-based Malware attacks, detect malicious activity, and provide the investigation and remediation capabilities. It incorporates features like Azure firewall, Load balancer, DDoS protection, front door, etc.
 Security operation: It is a practice or team that is devoted to preventing, detecting, assessing, monitoring, and responding to cybersecurity threats and incidents. It incorporates features like Log analytic Workspace, Azure sentinel.
 Secure Data and Application: It is a process of protecting data from unauthorized access and data corruption throughout its lifecycle. It incorporates features like Azure key vault, Encryption, SAS, Service Identity etc.
-Define the implemented Security Laws to secure data in a Cloud.
+  
+Define the implemented Security Laws to secure data in a Cloud.  
 Answer: The implemented Security Laws to secure the data in a Cloud are:
 Processing: It mainly controls the data that is being processed accurately and thoroughly in any application.
 File: It maintains and regulates the data that is being manipulated in any of the files.
 Output reconciliation: It manages the data that has to be reconciled from input to output.
 Input Validation: It controls the input data.
 Security and Backup: It delivers security and backup along with controlling the security breach logs.
-What are the services provided by Windows Azure Operating System?
+  
+What are the services provided by Windows Azure Operating System?  
 Answer: There are three core services provided by Windows Azure Operating System given as:
 Compute
 Storage
 Management
+  
 Mention the essential things to be taken into account by the users before moving to a Cloud Computing Platform.
 Answer: The essential things to be taken into account are:
 Compliance
@@ -1233,50 +1233,62 @@ Data storage
 Business continuity
 Uptime
 Data integrity in cloud computing
-What are the different layers defining the Cloud architecture?
+  
+What are the different layers defining the Cloud architecture?  
 Answer: The different layers that define the Cloud architecture are:
 CLC or Cloud Controller
 Walrus
 Cluster Controller
 SC or Storage Controller
 NC or Node Controller
-How can you secure your data for transport in the cloud?
+  
+How can you secure your data for transport in the cloud?  
 Answer: In order to secure your data during transportation from one place to another, ensure there is no leakage with the encryption key applied to the data that you are sending.
+  
 Define a Storage Key.
 Answer: The ‘Storage Account Keys’ are like root passwords for your storage accounts. You must be careful to defend your access keys. You can use Azure Key Vault to manage and rotate your keys securely. Azure Portal, Powershell, and Azure CLI can help you in viewing and copying your account access keys.
+  
 Define Network Security Groups.
 Answer: Network Security Groups are abbreviated as NSGs, incorporate a list of rules of Access Control List (ACL) that either allow or deny network traffic to subnets, NICs, or both. NSGs are often correlated with subnets or single NICs connected to a subnet. The ACL rules will apply to all the VMs in the subnet that is associated with an NSG. Also, the traffic to an individual NIC can be restrained when an NSG is directly associated with a NIC.
+  
 Define Azure Security Center.
 Answer: Azure Security Center is a consolidated infrastructure security management framework that reinforces the security posture of your data centers, and offers advanced threat protection across your hybrid tasks in the cloud – if they’re in Azure or not – just as on-premises. Azure Security Center equips you with the proper tools expected to solidify your network, secure your services and ensure that you’re on top of your security position.
-How does Azure Security Center help in improving the security infrastructure?
+  
+How does Azure Security Center help in improving the security infrastructure?  
 Answer: Azure Security Center strengthens the security posture by helping you identify and perform the solidifying tasks recommended as security best practices and execute them across your machines, data services, and apps. This incorporates managing and enforcing your security approaches, and ensuring your Azure virtual machines, non-Azure servers, and Azure PaaS services are compliant. It also offers the tools you need to have for an aerial perspective on your workloads, along with focused visibility on your network security estate.
 
-What will happen if you exhaust the maximum failed attempts for authenticating yourself via Azure AD?
+What will happen if you exhaust the maximum failed attempts for authenticating yourself via Azure AD?  
 Answer: We use a complex technique to secure accounts. This entirely depends on the IP address of the application and the passwords mentioned. The duration of the lockout likewise increases based on the probability that it is an attack. We can also enforce Password Change and MFA as per the policy.
+  
 Define the Azure Security Policies.
 Answer: A security policy specifies the aspired arrangement of your workloads and supports in making sure that you’re complying with the security obligations of your corporation or regulators.
 Azure Security Center proffers its security suggestions based on your preferred policies. Security Center policies are dependent on policy initiatives designed in Azure Policy. You can use it to maintain your policies and to set policies across Management groups and across multiple subscriptions. There are options offered by Security Center to work with Security Policies:
 View and edit the built-in default policy
 Add your own custom policies
 Add regulatory compliance policies
-What is Network Access Control?
+  
+What is Network Access Control?  
 Answer: Network Access Control also referred to as NAC, is the act of controlling connectivity to and from specific devices or subnets within a virtual network. Its purpose is to allow access to your virtual machines and services, only to the approved users and devices. Access controls are dependent on choices to allow or deny connections to and from your virtual machine or service.
 Azure supports various sorts of network access control, like:
 Network layer control
 Route control and forced tunneling
 Virtual network security appliances
-How will you define Azure Network Security?
+  
+How will you define Azure Network Security?  
 Answer: Network security could be characterized as the way of protecting resources from unapproved access or assault by applying controls to network traffic. Its main intention is to make sure that only legitimate traffic is permitted. Azure incorporates a vigorous networking infrastructure to help your application and service connectivity necessities. Network connectivity is conceivable between resources situated in Azure, between on-premises and Azure-hosted resources, and to and from the web and Azure.
+  
 Mention the challenges addressed by Azure Security Center.
 Answer: Azure Security Center mostly addresses these three urgent security challenges:
 Rapidly changing workloads: This is a strength of the cloud as well as a challenge.
 Increasingly sophisticated attacks: Wherever you execute your workloads, the attacks keep getting more sophisticated. You need to secure your public cloud workloads, which are an Internet-facing workload, that can leave you more exposed if you don’t follow security best practices.
 Security skills are in short supply: The quantity of security alerts and alerting systems far dwarfs the number of administrators with the fundamental foundation and experience to ensure your surroundings are secured. Staying up-to-date with the recent assaults is a constant challenge, making it difficult to stay in place while the world of security is steadily evolving.
-How can Azure Security Center help you in protecting against security challenges?
+  
+How can Azure Security Center help you in protecting against security challenges?  
 Answer: Azure Security Center offers you the tools to help you protect against the security challenges:
 Strengthen security posture: Security Center evaluates your surroundings and equips you to know the status of your resources, and if they are secure.
 Protect against threats: Security Center evaluates your workloads and raises threat prevention support and security alerts.
 Get secure faster: In the Security Center, everything is done at cloud speed. Since it is natively incorporated, deployment of Security Center is simple, giving you auto-provisioning and protection with Azure services.
+  
 Define encryption of Data at rest.
 Answer: Data at rest incorporates information that resides in resolute storage on physical media, in any digital format. The media can accommodate files on magnetic or optical media, archived data, and data backups. So, Data Encryption at rest is designed to prevent the attacker from accessing the unencrypted data by making sure the data is encrypted when on disk. Data encryption at rest is accessible for services across the cloud models like Software as a Service (SaaS), Platform as a Service (PaaS), and Infrastructure as a Service (IaaS).
 
@@ -1290,14 +1302,16 @@ Client-side encryption of Azure blobs
 Data at rest encryption with Azure SQL Database
 Cosmos DB database encryption
 At-rest encryption in Data Lake
+  
 Define Advanced Threat Protection.
 Answer: Advanced Threat Protection is examining your logs to identify anomalous performance and potentially malicious efforts to access or exploit databases. Alerts are generated for suspicious activities such as SQL injection, potential data infiltration, and brute force attacks or for anomalies in access patterns to catch privilege escalations and breached credentials use. Alerts are viewed from the Azure Security Center, where the specifics of the suspicious activities are implemented and recommendations for further investigation provided along with actions to mitigate the threat.
 
 Tell Me About a Problem You Solved at Your Prior Job regarding Azure.
-What is the difference between SaaS, PaaS, and IaaS?
+  
+What is the difference between SaaS, PaaS, and IaaS?  
 SaaS: Office365, PaaS: Azure SQL, IaaS: Azure VM
-
-What are the instance types offered by Azure?
+  
+What are the instance types offered by Azure?  
 Azure offers a number of different instance types based on what needs they fulfill. 
 General Purpose - CPU to memory ratio is balanced. Provides low to medium traffic web servers, small to medium databases and is ideal for testing and development
 Largest instance size: Standard_D64_v3
@@ -1308,7 +1322,8 @@ Largest instance size: Standard_F72s_V2
 Memory-Optimized - High memory to CPU ratio. Best suited for relational database servers, in-memory analytics, and medium to large caches
 Largest instance size: Standard_M128m
 3892 GB Memory and 14,336 GB SSD Temp Storage
-What are the deployment environments offered by Azure?
+  
+What are the deployment environments offered by Azure?  
 This is one of the most frequently asked Azure interview questions, and you must know the answer. Azure offers two deployment environments:
 Staging Environment:
 It provides a platform to validate changes to your application before it can be made live in the production environment
@@ -1316,14 +1331,15 @@ In this stage, the app can be identified using the Azure’s Globally Unique Ide
 Production Environment:
 This environment is used to store the live application
 It can be differentiated from the staging environment with an URL that’s more DNS friendly (servicename.cloudapp.net)
-How is Windows Active Directory and Azure Active Directory different?
+  
+How is Windows Active Directory and Azure Active Directory different?  
 This one’s another regular question from the list of Azure interview questions.
 Windows Active Directory	Azure Active Directory
 It is a directory service that facilitates working with interconnected, complex and different network resources in a unified manner	Azure Active Directory (Azure AD) is Microsoft’s multi-tenant, cloud-based directory and identity management service
 Uses 5 layers to store data, store user details, issue and manage certifications, etc.	Uses 5 layers to store data, store user details, issue and manage certifications, etc.
 Works with an emphasis on on-premises units like applications, file services, printers, etc. 	Emphasizes on web-based services that use RESTful interfaces
-
-What are the types of Queues offered by Azure?
+  
+What are the types of Queues offered by Azure?  
 Azure offers two types of queues:
 Storage Queues:
 It is a part of Azure’s Storage infrastructure
@@ -1335,41 +1351,45 @@ It is a part of Azure’s messaging infrastructure
 It integrates application or application components that span multiple communication protocols, network environments, etc.
 It provides a FIFO style of delivery
 The user’s queue size has to remain under 80 GB
-What are the advantages of the Azure Resource Manager?
+  
+What are the advantages of the Azure Resource Manager?  
 Azure Resource Manager enables users to manage their usage of application resources. Few of the advantages of Azure Resource Manager are:
 ARM helps deploy, manage and monitor all the resources for an application, a solution or a group
 Users can be granted access to resources they require
 It obtains comprehensive billing information for all the resources in the group
 Provisioning resources is made much easier with the help of templates
-How has integrating hybrid cloud been useful for Azure?
+  
+How has integrating hybrid cloud been useful for Azure?  
 The Hybrid Cloud boosts productivity by using Azure and the Azure stack for building and deploying applications for the cloud and on-premises applications. Integrating hybrid cloud been useful for Azure in the following ways:
 It obtains greater efficiency with a combination of Azure services and DevOps processes and tools
 Users can take advantage of constantly updated Azure services and other Azure Marketplace applications
 It enables it to be deployed regardless of its location, the cloud, or on-premises. 
 This enables applications to be created at a higher speed
-What is the Federation in Azure SQL?
+  
+What is the Federation in Azure SQL?  
 SQL Azure Federation provides tools that can enable developers to access or share databases among themselves in SQL Azure.
 It enables users to take advantage of resources within the cloud
 It allows users to have their own database or share databases amongst each other
 It reduces the possibility of a single point of failure
 It provides cost-effectiveness, by using cloud resources only when needed
-What are the different types of storage offered by Azure?
+  
+What are the different types of storage offered by Azure?  
 Storage questions are very commonly asked during an Azure Interview. Azure has four different types of storage. They are:
-Azure Blob Storage 
+- Azure Blob Storage 
 Blob Storage enables users to store unstructured data that can include pictures, music, video files, etc. along with their metadata. 
 When an object is changed, it is verified to ensure it is of the latest version. 
 It provides maximum flexibility to optimize the user’s storage needs. 
 Unstructured data is available to customers through REST-based object storage
-Azure Table Storage
+- Azure Table Storage
 Table Storage enables users to perform deployment with semi-structured datasets and a NoSQL key-value store. 
 It is used to create applications requiring flexible data schema
 It follows a strong consistency model, focusing on enterprises 
-Azure File Storage
+- Azure File Storage
 File Storage provides file-sharing capabilities accessible by the SMB (Server Message Block) protocol
 The data is protected by SMB 3.0 and HTTPS
 Azure takes care of managing hardware and operating system deployments
 It improves on-premises performance and capabilities
-Azure Queue Storage
+- Azure Queue Storage
 Queue Storage provides message queueing for large workloads
 It enables users to build flexible applications and separate functions
 It ensures the application is scalable and less prone to individual components failing
