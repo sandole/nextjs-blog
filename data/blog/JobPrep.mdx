@@ -673,29 +673,30 @@ Certificate Transparency logs are "append-only" and publicly-auditable ledgers o
 
 <details>
 <summary> Common KQL queries </summary>
-
+  
 All Security Alerts to Sentinel by Product 
   
 // Alerts reported by all log feeds to Sentinel 
 SecurityAlert 
 | summarize count() by ProviderName, ProductName 
-   
+     
 Azure Portal Logins 
+  
 // show all successful logins in the Azure portal divided by 30 minute intervals 
 SigninLogs 
 | where AppDisplayName == "Azure Portal" 
 and ResultType == 0 
 | summarize count() by Identity, bin(TimeGenerated, 30m) 
 | render columnchart kind=unstacked  
-
+  
 Conditional Access Policies in-use 
-   
+  
 SigninLogs 
 | where tostring(ConditionalAccessPolicies.[0].displayName) !="" 
 | where ConditionalAccessStatus == "success" 
 | summarize count() by //TimeGenerated, 
 CAPolicyName = tostring(ConditionalAccessPolicies.[0].displayName), ConditionalAccessStatus 
- 
+  
 Exchange Activity Over 2 Week Period 
   
 OfficeActivity 
@@ -704,7 +705,7 @@ OfficeActivity 
 | where OfficeWorkload == "Exchange" 
 | summarize Count=count() by bin(TimeGenerated, 1d) 
 | render timechart 
- 
+  
 File Activity For OneDrive and SharePoint For All forces.gc.ca 
   
 OfficeActivity 
@@ -726,6 +727,7 @@ OfficeActivity 
 | summarize FileUploaded =count() by bin(TimeGenerated, 1d) 
 | render timechart 
   
+  
 File Uploaded by users Greater than 100 Over 2 Week Period  
   
 OfficeActivity 
