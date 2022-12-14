@@ -1,0 +1,24 @@
+---
+title: 'ArgoCD'
+date: '2022-12-14'
+tags: ['cloud','development','kubernetes']
+summary:  
+---
+
+Argo CD is a declarative, GitOps-based continuous delivery tool for Kubernetes. 
+It allows developers to define their application's desired state in source and version control and then uses that information to automatically deploy and manage applications on OpenShift.
+One of the key benefits of using Argo CD on OpenShift is that it enables developers to automate the deployment of their applications, ensuring that they are always running in the desired state. 
+This is key: desired state. In the infrastructure world, it is critical that we maintain a certain desired state and this is often done by writing declarative code.
+In the case for Argo CD, it ensures that developers are not constantly modifying manifest files on clsuters and we keep a single source of truth in a GitOps way.
+
+Another advantage of using Argo CD on OpenShift is that it allows for easy collaboration between teams. 
+Developers can work on different parts of an application in parallel, using git branches and pull requests to manage and track changes. 
+When changes are ready to be deployed, Argo CD automatically detects them and updates the application in a controlled and consistent manner.
+Additionally, Argo CD offers powerful features for managing and monitoring applications. 
+It provides a user-friendly dashboard that allows users to view the current state of their applications, as well as see which versions are deployed to different environments. This makes it easy to track the progress of deployments and troubleshoot any issues that may arise.
+
+Overall, Argo CD is a valuable tool for anyone working with OpenShift and looking to automate the deployment and management of their applications. 
+It offers a simple, GitOps-based approach that makes it easy to collaborate with other team members and ensure that applications are running in the desired state at all times.
+
+For more information, visit https://argoproj.github.io/cd/.
+Congratulations on their recent graduation from CNCF!
