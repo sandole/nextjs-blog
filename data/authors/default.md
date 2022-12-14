@@ -15,13 +15,14 @@ My name is John Seong. I am a cloud engineering consultant with Avanade and I am
 
 I started my career in 2015 where I enroled into a subsized education program by the military where the academic year would be spent studying computer engineering academia and summers were spent supporting military IT and learning a ton of stuff about tech. Feel free to reach out to me for more details about my experience or my resume.
 
-I care about contributing to my community. That is why I decided to start my career off by serving the country. I did this by becoming a military officer and supporting many military operations and exercises. After 7 interesting years of serving in the Canadian military, I have succesfully transitioned into a private sector tech career, thanks to Avanade.
+I care about contributing to my community. That is why I decided to start my career off by serving my country. I did this by becoming a military officer and supporting many military operations and exercises. After 7 interesting years of serving in the Canadian military, I have succesfully transitioned into a tech career in the private sector, thanks to Avanade.
 
 In my free time, I play in two different competitive basketball teams, contribute to Green Software Foundation with optimized infrastructure provisioning, attend local Christian services and study endlessly about the cloud.
 
 **My Story**
 
-My first encounter with the web began when I was in elementary school. It was around year 2003 and my school had just introduced its website. In this website, students of each class were able to post contents in their own classroom splash pages. I remember when I discovered how to do this, I proceeded to surf the web for the next 5 hours scavenging funny photos and stories just to repost them for other people's entertainments. I believe the internet connects people.
+My first encounter with the web began when I was in elementary school. It was around year 2003 and my school had just introduced its website. In this website, students of each class were able to post contents in their own classroom splash pages. I remember when I discovered how to do this, I proceeded to surf the web for the next 5 hours scavenging funny photos and stories just to repost them for other people's entertainments. From this point on, I believed that the internet connects people.  
+
 I went to a fully subsidized college called Royal Military College of Canada in Kingston, Ontario (Canada) mostly because I was too afraid to take on financial debt. I came from an immigrant family so the idea of student debt or huge university loans did not seem like something I could handle. I have served many years for this country for many years now (almost 7!) and I am looking to switch my career onto a path that I feel more passionate about. I believe my background in aviation, technology and leadership will help me become an excellent software engineer!
 
 **What is here?**
@@ -32,4 +33,4 @@ This blog demonstrates many employable skills that I have:
 
 2. Web Development: As the title suggests, I have implemented a personal blog using NextJS, React and TailwindCSS. I chose NextJS for the fastest server side rendering and easy template accesses and TailwindCSS for beautiful pre-made components that I felt was easy to imbed into this blog. The source code for this blog is available in my github where interested people can visit and view my coding writing practices.
 
-3. Other contents: The contents of this blog contains information about how I develop myself throughout my career. I have documented information about full-stack web development, implementing cloud solutions and DevSecOps topics. Continue reading this blog to hopefully some useful information for yourself!
+3. Other contents: The contents of this blog contains information about how I develop myself throughout my career. I have documented information about full-stack web development, implementing cloud solutions and various DevSecOps topics. Continue reading this blog to hopefully some useful information!
