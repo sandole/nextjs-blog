@@ -1,0 +1,21 @@
+---
+title: 'Azure key Vault'
+date: '2022-12-18'
+tags: ['cloud','development','Azure']
+summary:  
+---
+Azure Key Vault is a Microsoft services that provides secure storage for sensitive data: keys, secrets, and certificates. 
+It helps organizations to safeguard these critical assets and manage them in a centralized and secure manner while hosting them in the cloud.
+One of the key features of Azure Key Vault is the ability to define access policies that control who can access the keys, secrets, and certificates stored in the vault. 
+These policies can be defined at the individual key or secret level, or at the vault level.
+To configure access policies in Azure Key Vault, you need to first create a new access policy or edit an existing one. 
+To do this, you can use the Azure portal, Azure CLI or AzAPI via Terraform.
+Once you have created the access policy, you can define the permissions that you want to grant to the users or applications that will be accessing the keys and secrets in the vault. 
+There are several types of permissions that you can set, including the ability to read, list, and delete keys and secrets, as well as the ability to create, update, and import keys and secrets.
+You can also specify the type of access that you want to grant. 
+For example, you can allow users to access the keys and secrets in the vault only through the Azure portal, or you can allow them to access the keys and secrets programmatically using the Azure Key Vault API.
+It's important to note that access policies in Azure Key Vault are additive, meaning that each policy that you assign to a user or application will be added to the existing set of permissions that they have. 
+As a result, it's important to carefully manage and review the access policies that you have defined in your Azure Key Vault to ensure that they are appropriate and secure.
+You may even need to ensure that the security configurations are compliant to the set of standards that your organization must meet.
+In summary, Azure Key Vault's access policy configuration allows you to securely manage and control access to the keys, secrets, and certificates stored in the vault. 
+By defining the appropriate access policies and permissions, you can ensure that only authorized users and applications can access the sensitive data in your Azure Key Vault.
