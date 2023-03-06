@@ -1,0 +1,157 @@
+---
+title: 'Windows configuration'
+date: '2022-12-30'
+tags: ['cloud','development','azure']
+summary: full VM infrastructure using Terraform, Ansible and Puppet
+---
+
+Setting up a Windows virtual machine (VM) infrastructure in the cloud is used for many purposes. 
+Some use this group of Windows VM for running self hosted applications like self-hosted integration runtime or maybe the developers require the robustness of a full IaaS capabilities instead of using PaaS like Azure App Services.
+This blog will demonstrate how to deploy a full Windows VM infrastructure using Terraform, Ansible and Puppet.
+
+My approach to setting up this infrastructure begins with Terraform. 
+Terraform is great for creating that base layer of infrastructure like all the networking required and resource deployment on the cloud of your choice.
+For this blog, this infrastructure will be deployed on Azure.
+The code below is a very simple example for deploying a 3 VM infrastructure.
+You may modularize this for better DRY principles or use wrappers like Terragrunt to remove redundancy and improve scalability.
+
+```
+provider "azurerm" {
+  version = "~> 2.38.0"
+}
+
+resource "azurerm_resource_group" "example" {
+  name     = "example-resource-group"
+  location = "West US"
+}
+
+resource "azurerm_virtual_network" "example" {
+  name                = "example-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+}
+
+resource "azurerm_subnet" "example" {
+  name                 = "example-subnet"
+  resource_group_name  = azurerm_resource_group.example.name
+  virtual_network_name = azurerm_virtual_network.example.name
+  address_prefix       = "10.0.1.0/24"
+}
+
+resource "azurerm_windows_virtual_machine" "example" {
+  count                = 3
+  name                 = "example-vm-${count.index+1}"
+  location             = azurerm_resource_group.example.location
+  resource_group_name  = azurerm_resource_group.example.name
+  network_interface_ids = [azurerm_network_interface.example[count.index].id]
+  vm_size              = "Standard_D2_v2"
+
+  storage_os_disk {
+    name              = "example-os-disk-${count.index+1}"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+
+  storage_image_reference {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2019-Datacenter"
+    version   = "latest"
+  }
+
+  os_profile {
+    computer_name  = "example-vm-${count.index+1}"
+    admin_username = "adminuser"
+    admin_password = "P@ssw0rd!"
+  }
+
+  os_profile_windows_config {
+    provision_vm_agent = true
+    enable_automatic_updates = true
+  }
+}
+```
+  
+The code above will deploy the base infrastructure for a 3 VM environment.
+The industry best practices criticizes the use of count in Terraform in a dynamic environment.
+Instead, use for_each. For more information on why: https://www.danzabinski.com/posts/tf-comparing-count-and-for_each/
+  
+Next, Puppet is used for the basic configuration management.
+Things like software installs, changing OS-level configuration values and firewall rules can be set via Puppet.
+Note that although Chocolatey is an excellent package management tool for Windows, some of the packages are outdated and should be tested and checked to see the installation was successful.
+
+```
+# Install the chocolatey package manager
+package { 'chocolatey':
+  ensure   => present,
+  provider => 'chocolatey',
+}
+
+# Install 7zip and Notepad++ using chocolatey
+package { ['7zip', 'notepadplusplus']:
+  ensure   => present,
+  provider => 'chocolatey',
+}
+
+# Set the hostname to "windows-vm"
+host { 'windows-vm':
+  ensure => present,
+}
+
+# Enable Remote Desktop
+registry_key { 'HKLM\System\CurrentControlSet\Control\Terminal Server':
+  ensure  => present,
+  values  => { 'fDenyTSConnections' => {
+                'type'  => 'dword',
+                'data'  => 0,
+              }
+            },
+  require => Package['chocolatey'],
+}
+
+# Configure the firewall to allow incoming RDP connections
+firewall { 'allow RDP':
+  dport   => 3389,
+  proto   => tcp,
+  action  => accept,
+  require => Package['chocolatey'],
+}
+
+```
+  
+Finally, we use Ansible to continue our day two management of this infrastructure.
+Ansible requires Python to be installed on managed hosts.
+SSH connection from the Ansible server also needs to be allowed.
+As an example of continuous configuration management, I added more softwares to install and IP allocation within the private subnet.
+
+```
+---
+- hosts: windows
+  vars:
+    ip_address: 192.168.1.100
+    subnet_mask: 255.255.255.0
+    default_gateway: 192.168.1.1
+    dns_servers:
+      - 192.168.1.1
+      - 192.168.1.2
+    software:
+      - vlc
+  tasks:
+    - name: Configure IP address
+      win_ip_config:
+        ip_address: "{{ ip_address }}"
+        subnet_mask: "{{ subnet_mask }}"
+        default_gateway: "{{ default_gateway }}"
+        dns_servers: "{{ dns_servers }}"
+
+    - name: Install software
+      win_chocolatey:
+        name: "{{ item }}"
+      with_items: "{{ software }}"
+
+```
+
+
+Stay tuned for accelerator blogs on configuration for Linux VMs, Azure Kubernetes Service and OpenShift infrastructure.
