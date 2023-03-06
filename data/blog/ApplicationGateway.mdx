@@ -1,0 +1,27 @@
+---
+title: 'Azure Application Gateway'
+date: '2023-03-05'
+tags: ['cloud','development','Azure']
+summary: Azure Application Gateway provides advanced load balancing capabilities
+---
+
+Azure Application Gateway is a managed service provided on Azure that provides advanced load balancing capabilities.
+These capabilities include distributing traffic to multiple servers in a backend pool, SSL termination, URL-based routing, session affinity, and more.
+When it comes to API management (APIM), App Gateway is an essential component in providing secure and reliable access to APIs. 
+By integrating Application Gateway with Azure API Management, engineers can leverage its advanced features to deliver scalable and secure APIs to their users.
+In this blog, we will take a closer look at App Gateway and explore how it integrates with other Azure services to provide an end-to-end API management solution.
+App Gateway is a layer-7 load balancer that provides advanced traffic management capabilities for web applications. 
+It supports multiple protocols such as HTTP, HTTPS, and WebSocket, and can be used to manage traffic to multiple backend servers.
+Some of the key features of App Gateway include:
+- SSL termination: App Gateway can terminate SSL/TLS traffic on behalf of backend servers, reducing their workload and improving their performance.
+- URL-based routing: Routing rules can be defined based on the URL of incoming requests to direct traffic to specific backend servers.
+- Session affinity: App Gateway supports session persistence, which ensures that subsequent requests from the same user are sent to the same backend server.
+- Web application firewall (WAF): App Gateway includes a WAF that provides protection against common web vulnerabilities such as SQL injection and cross-site scripting (XSS) attacks.
+App Gateway typically is placed behind an API Gateway - a core part of APIM - that bridges frontend services to backend services.
+APIM is a fully managed service that allows engineers to create, publish, and manage APIs. 
+It provides a range of features such as authentication, caching, rate limiting, and more, and can be used to deliver APIs to internal and external users.
+By integrating App Gateway with other APIM services, engineers can create a scalable and secure API management solution that provides reliable access to APIs for internal and external users. 
+The combination of App Gateway's advanced traffic management capabilities and API Management's powerful API management features makes it an ideal solution for robust software architecures.
+
+If you want to see industry leading examples of how to deploy App Gateway via Terraform, check out this link: https://github.com/aztfmod/terraform-azurerm-caf/tree/main/examples/app_gateway.
+Azure CAF landing zone guides users to many different scenarios on how the infrastructure - including Azure App Gateway - can be deployed simply via code.
