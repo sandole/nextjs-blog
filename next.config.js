@@ -54,8 +54,10 @@ const securityHeaders = [
 
 module.exports = withBundleAnalyzer({
   images: {
-    domains: ['img.buymeacoffee.com'],
-    disableStaticImages: true,
+    output: "export",
+    images: {
+      unoptimized: true,
+    },
   },
   pageExtensions: ['js', 'jsx', 'md', 'mdx'],
   eslint: {
