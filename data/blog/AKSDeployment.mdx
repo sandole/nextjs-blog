@@ -111,7 +111,7 @@ spec:
     app: airline-app
 ```
 
-## ConfigMap (configmap.yaml)
+### ConfigMap (configmap.yaml)
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -124,7 +124,7 @@ data:
     management.endpoints.web.exposure.include=health,metrics
 ```
 
-## ArgoCD Application Configuration (airline-app.yaml):
+### ArgoCD Application Configuration (airline-app.yaml):
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -148,7 +148,7 @@ spec:
     - CreateNamespace=true
 ```
 
-## Container Image Build Pipeline (azure-pipelines.yml):
+### Container Image Build Pipeline (azure-pipelines.yml):
 ```
 trigger:
   - main
@@ -177,7 +177,7 @@ stages:
           latest
 ```
 
-## Pod Disruption Budget
+### Pod Disruption Budget
 ```yaml
 apiVersion: policy/v1
 kind: PodDisruptionBudget
@@ -190,7 +190,7 @@ spec:
       app: airline-app
 ```
 
-## Horizontal Pod Autoscaler
+### Horizontal Pod Autoscaler
 ```yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
