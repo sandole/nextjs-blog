@@ -1,0 +1,141 @@
+---
+title: 'Azure Kubernetes Service'
+date: '2025-02-20'
+tags: ['cloud', 'kubernetes', 'Azure', 'development']
+summary: A deep dive into Azure Kubernetes Service, its components, deployment patterns, and integrated tooling
+---
+# Introduction
+
+Azure Kubernetes Service (AKS) is Microsoft's managed Kubernetes offering that simplifies container orchestration and cluster management. 
+In this article, I'll discuss the key components, deployment patterns, and integrated tooling that make AKS a robust platform for container workloads.
+
+## Core Components
+
+### Cluster Architecture
+AKS follows a standard Kubernetes architecture with some Azure-specific enhancements:
+- Control Plane
+  - API Server
+  - etcd
+  - Scheduler
+  - Controller Manager
+- Node Pools
+  - System node pools
+  - User node pools
+  - Support for multiple node pools with different VM sizes
+
+### Networking Options
+AKS supports several networking models:
+- Kubenet (basic)
+- Azure CNI (advanced)
+  - Standard
+  - Overlay networking
+  - Bring your own CNI
+- Network policies using Calico or Azure Network Policy
+
+## Built-in Tooling
+
+### Identity and Access Management
+- Azure Active Directory integration
+- Managed Identities
+- Role-Based Access Control (RBAC)
+- Azure Key Vault integration
+- Pod Identity
+
+### Monitoring and Diagnostics
+- Container Insights
+- Azure Monitor integration
+- Prometheus metrics collection
+- Log Analytics workspace integration
+- Live container logs
+- Node problem detector
+
+### Security Features
+- Microsoft Defender for Containers
+- Network policies
+- Pod Security Policies
+- Azure Policy integration
+- Private clusters
+- Encryption at rest
+
+### Development Tools
+- Azure CLI with AKS extensions
+- Azure DevOps integration
+- Azure Container Registry integration
+- Draft for app development
+- Bridge to Kubernetes for local development
+- Visual Studio Code integration
+
+## Deployment Patterns
+
+### Infrastructure Deployment
+Common approaches for AKS infrastructure deployment:
+- ARM templates
+- Terraform
+- Azure CLI
+- Azure Portal
+- Bicep
+
+### Application Deployment
+Standard patterns for deploying applications:
+- GitOps with Flux
+- Azure DevOps pipelines
+- GitHub Actions
+- Helm charts
+- Kustomize
+
+### Scaling Patterns
+- Horizontal Pod Autoscaling
+- Cluster Autoscaling
+- Node Pool Autoscaling
+
+## Concepts
+
+### Cluster Management
+- Node pools
+- Availability zones
+- Cluster autoscaler
+- Node image upgrades
+- Maintenance windows
+- Backup and restore
+
+### Application Management
+- Pod disruption budgets
+- Pod security contexts
+- Resource quotas
+- Limit ranges
+- Network policies
+- Storage classes
+
+### Integration Points
+- Azure Load Balancer
+- Application Gateway Ingress Controller
+- Azure Files
+- Azure Disks
+- Azure Container Registry
+- Azure Monitor
+- Azure Policy
+
+## Best Practices
+
+### Security
+- Use Azure AD integration
+- Implement network policies
+- Enable pod security policies
+- Regular cluster upgrades
+- Private API server endpoint
+- Just-in-time access
+
+### Networking
+- Plan IP addressing carefully
+- Use Azure CNI for advanced scenarios
+- Implement network policies
+- Configure proper DNS settings
+- Use internal load balancers where appropriate
+
+### Operations
+- Use multiple node pools
+- Implement proper monitoring
+- Set up proper logging
+- Configure backup and disaster recovery
+- Use pod disruption budgets
+- Implement proper resource limits

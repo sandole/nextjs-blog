@@ -1,36 +1,50 @@
 ---
 name: John Seong
 avatar: /static/images/hello.png
-company: Avanade
+company: WestJet
 email: sandole97@gmail.com
 github: https://github.com/sandole
 slogan: Thinker's tinkers
 ---
 
-Hi, welcome to my blog!
+# Hi, welcome to my blog!
 
-**Who Am I?**
+## Who Am I?
 
-My name is John Seong. I am a cloud engineering consultant with Avanade and I am staffed to work on public sector accounts and projects.
+I'm John Seong, a Senior Software Developer at WestJet where I lead the Integration and API Management team. With a background spanning cloud engineering, DevOps, and backend development, I've dedicated my career to building robust, scalable systems that make a difference.
 
-I started my career in 2015 where I enroled into a subsized education program by the military where the academic year would be spent studying computer engineering academia and summers were spent supporting military IT and learning a ton of stuff about tech. Feel free to reach out to me for more details about my experience or my resume.
+My journey began in 2015 at the Royal Military College of Canada, where I pursued computer engineering through a unique military-subsidized program. This opportunity allowed me to combine academic studies with hands-on IT support for military operations, laying a strong foundation for my technical career.
 
-I care about contributing to my community. That is why I decided to start my career off by serving my country. I did this by becoming a military officer and supporting many military operations and exercises. After 7 interesting years of serving in the Canadian military, I have succesfully transitioned into a tech career in the private sector, thanks to Avanade.
+What sets my path apart is my commitment to service. I spent seven enriching years as a military officer in the Canadian Armed Forces, supporting critical IT infrastructure and operations. This experience taught me invaluable lessons about soft skills like leadership, resilience, and the importance of being a reliable team. Thanks to Avanade, I successfully transitioned to the private sector, where I've continued to grow and innovate in cloud technology.
 
-In my free time, I play in two different competitive basketball teams, contribute to Green Software Foundation with optimized infrastructure provisioning, attend local Christian services and study endlessly about the cloud.
+As a Senior Software Developer at WestJet, I lead the Integration and API Management team, where I focus on optimizing our cloud infrastructure and API ecosystem. One of my key achievements has been implementing an API management layer that fronts our internal APIs hosted on Kubernetes. As the technical SME, I help drive architectural decisions that shape WestJet's digital transformation journey, focusing on scalable and efficient solutions that enhance our airline's operational capabilities.
 
-**My Story**
+Beyond my professional work, I'm passionate about continuous learning and community involvement. I actively contribute to the Green Software Foundation, focusing on optimized infrastructure provisioning. I maintain an active lifestyle through competitive basketball and ground myself through participation in local Christian services.
 
-My first encounter with the web began when I was in elementary school. It was around year 2003 and my school had just introduced its website. In this website, students of each class were able to post contents in their own classroom splash pages. I remember when I discovered how to do this, I proceeded to surf the web for the next 5 hours scavenging funny photos and stories just to repost them for other people's entertainments. From this point on, I believed that the internet connects people.  
+## My Story
 
-I went to a fully subsidized college called Royal Military College of Canada in Kingston, Ontario (Canada) mostly because I was too afraid to take on financial debt. I came from an immigrant family so the idea of student debt or huge university loans did not seem like something I could handle. I have served many years for this country for many years now (almost 7!) and I am looking to switch my career onto a path that I feel more passionate about. I believe my background in aviation, technology and leadership will help me become an excellent software engineer!
+My fascination with technology began in 2003 when my elementary school launched its first website. I was captivated by the ability to share content and connect with others through this new medium. That early experience sparked a belief that technology's greatest power lies in its ability to bring people together – a principle that still guides my work today.
 
-**What is here?**
+Choosing to attend the Royal Military College of Canada was a pivotal decision shaped by both practical considerations and a desire to serve. Coming from an immigrant family, the fully subsidized education offered a path to pursue my dreams without the burden of student debt. The unique combination of military service and technical education has proven invaluable, equipping me with both technical expertise and leadership skills that inform my approach to software engineering.
 
-This blog demonstrates many employable skills that I have:
+## What You'll Find Here
 
-1. Technical writing: technical writing has to do with documenting technical communication used in technical fields - specifically, software/computer engineering. This blog displays a good example of my documentation skills by talking about my life journey. Some of it have to do with my personal life with contents regarding gaming and others have to do with building towards a professional career. Technical writing is an important skill because it is a written form of technical communication with others. Sometimes, it has to do with leaving records for promulgation so others can obtain information without the need for the writer to individually disperse to interested parties. Also, it can be for presenting discussion topics and our technical opinion on certain subjects. This blog is a great way for readers - and potential recruiters - to observe my style for writing technical documents and not documents with amalgamated buzzwords used across the industry. The contents of this blog are also written entirely in Markdown files which are the defacto standard for how project and software documentation should be written. Learn more about technical writing at: https://developers.google.com/tech-writing
+This blog showcases my professional expertise across several key areas:
 
-2. Web Development: As the title suggests, I have implemented a personal blog using NextJS, React and TailwindCSS. I chose NextJS for the fastest server side rendering and easy template accesses and TailwindCSS for beautiful pre-made components that I felt was easy to imbed into this blog. The source code for this blog is available in my github where interested people can visit and view my coding writing practices.
+1. Cloud Architecture & DevOps: I share insights from my experience with Azure, AWS, and modern DevOps practices, including infrastructure as code, containerization, and CI/CD pipelines.
 
-3. Other contents: The contents of this blog contains information about how I develop myself throughout my career. I have documented information about full-stack web development, implementing cloud solutions and various DevSecOps topics. Continue reading this blog to hopefully some useful information!
+2. Technical Writing: Through detailed articles and documentation, I demonstrate my ability to communicate complex technical concepts clearly and effectively. All content is written in Markdown, reflecting industry best practices for technical documentation.
+
+3. Web Development: This blog itself is built using modern technologies like NextJS, React, and TailwindCSS, showcasing my full-stack development capabilities. The source code is available on my GitHub, demonstrating my coding practices and commitment to open source.
+
+4. Enterprise Java Development: I share insights about building robust enterprise applications using Spring Boot and its ecosystem. I cover topics including:
+   - Building efficient microservices with Spring Boot
+   - Data persistence strategies using Spring Data JPA
+   - Security implementation with Spring Security
+   - API development using Spring MVC and Spring WebFlux
+   - Performance optimization using Spring Cache
+   - Development efficiency with Lombok
+   - Application monitoring with Spring Actuator
+   - Data validation using Spring Validator
+
+Feel free to explore my posts about cloud solutions, DevSecOps, and full-stack development. I hope you'll find valuable insights that can help in your own technical journey!

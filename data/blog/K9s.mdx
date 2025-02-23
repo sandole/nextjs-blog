@@ -1,0 +1,55 @@
+---
+title: 'K9s: The Terminal-Based UI for Kubernetes Management'
+date: '2025-02-22'
+tags: ['kubernetes', 'devops', 'cli']
+summary: A comprehensive guide to using k9s for efficient Kubernetes cluster management
+---
+
+## Introduction
+
+K9s is a terminal-based UI for managing Kubernetes clusters. 
+It provides a real-time view of your cluster resources with powerful navigation and management capabilities.
+
+## Installation
+
+```bash
+brew install k9s
+
+Common Commands
+Access different resources:
+```
+:pods          # View pods
+:deployments   # View deployments
+:services      # View services
+:nodes         # View nodes
+:configmaps    # View configmaps
+:secrets       # View secrets
+```
+
+Productivity Tips
+
+1. Quick Resource Access
+- Use numbered shortcuts (0-9)
+- Create aliases for common views
+- Use fuzzy search with /
+
+2. Multi-cluster Management
+- Use context groups
+- Label contexts for easy identification
+- Create context-specific aliases
+
+3. Monitoring
+- Use port forwarding for metrics
+- Set up custom views for logs
+- Configure alerts
+
+# Common Troubleshooting
+1. Connection Issues
+- Verify kubeconfig
+- Check context
+- Validate cluster access
+
+2. Performance Problems
+- Limit resource views
+- Use filters effectively
+- Close unused port forwards

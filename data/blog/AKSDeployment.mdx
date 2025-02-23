@@ -1,0 +1,213 @@
+---
+title: 'Deploying a Spring Boot Airline Application to AKS with ArgoCD'
+date: '2025-02-21'
+tags: ['kubernetes', 'spring-boot', 'devops', 'azure', 'gitops']
+summary: A practical guide to deploying a Spring Boot airline application on AKS using GitOps with ArgoCD
+---
+
+## The Application
+
+Let's start with a simple Spring Boot application for airline operations. Our sample application will handle basic flight information:
+
+```java
+@RestController
+@RequestMapping("/api/flights")
+public class FlightController {
+    
+    @GetMapping
+    public List<Flight> getFlights() {
+        // Return flight list
+    }
+    
+    @PostMapping
+    public Flight createFlight(@RequestBody Flight flight) {
+        // Create new flight
+    }
+}
+
+@Entity
+public class Flight {
+    @Id
+    private String flightNumber;
+    private String origin;
+    private String destination;
+    private LocalDateTime departureTime;
+    private LocalDateTime arrivalTime;
+    // getters, setters
+}
+```
+## Project Structure
+Our GitOps repository structure:
+```
+airline-gitops/
+├── base/
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   ├── configmap.yaml
+│   ├── secret.yaml
+│   └── kustomization.yaml
+└── overlays/
+    ├── dev/
+    │   └── kustomization.yaml
+    └── prod/
+        └── kustomization.yaml
+```
+# Kubernetes Manifests
+## Base Deployment (deployment.yaml)
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airline-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: airline-app
+  template:
+    metadata:
+      labels:
+        app: airline-app
+    spec:
+      containers:
+      - name: airline-app
+        image: acr.azurecr.io/airline-app:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: airline-config
+              key: spring.profiles.active
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: airline-secrets
+              key: db-password
+```
+
+### Service (service.yaml)
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: airline-app
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: airline-app
+```
+
+## ConfigMap (configmap.yaml)
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: airline-config
+data:
+  spring.profiles.active: "prod"
+  application.properties: |
+    server.port=8080
+    management.endpoints.web.exposure.include=health,metrics
+```
+
+## ArgoCD Application Configuration (airline-app.yaml):
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: airline-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/your-org/airline-gitops.git
+    targetRevision: HEAD
+    path: overlays/prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: airline-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+```
+
+## Container Image Build Pipeline (azure-pipelines.yml):
+```
+trigger:
+  - main
+
+variables:
+  imageRepository: 'airline-app'
+  containerRegistry: 'your-acr.azurecr.io'
+  dockerfilePath: 'Dockerfile'
+  tag: '$(Build.BuildId)'
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'ACR'
+        repository: $(imageRepository)
+        command: 'buildAndPush'
+        Dockerfile: $(dockerfilePath)
+        tags: |
+          $(tag)
+          latest
+```
+
+## Pod Disruption Budget
+```yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: airline-app-pdb
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: airline-app
+```
+
+## Horizontal Pod Autoscaler
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: airline-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: airline-app
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+```
