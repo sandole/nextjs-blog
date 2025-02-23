@@ -1,5 +1,11 @@
 const projectsData = [
   {
+    title: 'Pension Plan Cauculator',
+    description: `A web application that calculates the pension plan for the Canadian government employees`,
+    imgSrc: '/static/images/calculator.png',
+    href: 'https://pension-plan-calculator.vercel.app/',
+  },
+  {
     title: 'Honeyjam',
     description: `Website development for a local restaurant using MERN stack and API to Square, Google Pay and etc`,
     imgSrc: '/static/images/Honeyjam.png',
