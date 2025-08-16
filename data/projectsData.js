@@ -2,6 +2,12 @@ import { description } from "./siteMetadata"
 
 const projectsData = [
   {
+    title: 'EthCert',
+    description: `EthCert is a production-ready smart contract system for issuing verifiable digital certificates as NFTs. Built with ThirdWeb's Solidity SDK and Hardhat, it enables educational institutions, training companies, and professional organizations to issue tamper-proof, verifiable certificates on the blockchain.`,
+    imgSrc: '/static/images/ethcert.png',
+    href: `https://sepolia.etherscan.io/address/0xBff478FDcD8667e28648B7381B4476f01A9072Cf`
+  },
+  {
     title: 'MissionManager',
     description: `MissionManager is a Expo (cross-platform) application designed to streamline the management of DJI drone missions.`,
     imgSrc: '/static/images/missionmanager.png',
