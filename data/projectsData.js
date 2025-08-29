@@ -23,7 +23,7 @@ const projectsData = [
     title: 'Azure DevOps Metrics',
     description: `A Python script that analyzes your contributions across Azure DevOps repositories, providing insights into commits, pull requests, and work items for performance reviews and impact assessment.`,
     imgSrc: '/static/images/azure_devops_metrics.png',
-    href: 'https://github.com/sandole/azure_devops_metrics'
+    href: 'https://marketplace.visualstudio.com/manage/publishers/johnseonghttps://marketplace.visualstudio.com/items?itemName=JohnSeong.azure-devops-impact-metrics'
   },
   {
     title: 'Pension Plan Calculator',
