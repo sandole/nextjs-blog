@@ -20,10 +20,10 @@ const projectsData = [
     href: 'https://github.com/sandole/polyassist',
   },
   {
-    title: 'Azure DevOps Metrics',
-    description: `A Python script that analyzes your contributions across Azure DevOps repositories, providing insights into commits, pull requests, and work items for performance reviews and impact assessment.`,
+    title: 'Azure DevOps Impact Metrics',
+    description: `Azure DevOps extension for analyzing your development impact across Azure DevOps repositories, pull requests, and work items and get a percentile ranking`,
     imgSrc: '/static/images/azure_devops_metrics.png',
-    href: 'https://marketplace.visualstudio.com/manage/publishers/johnseonghttps://marketplace.visualstudio.com/items?itemName=JohnSeong.azure-devops-impact-metrics'
+    href: 'https://marketplace.visualstudio.com/items?itemName=JohnSeong.azure-devops-impact-metrics'
   },
   {
     title: 'Pension Plan Calculator',
