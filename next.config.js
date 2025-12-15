@@ -54,7 +54,12 @@ const securityHeaders = [
 
 module.exports = withBundleAnalyzer({
   images: {
-    domains: ['img.buymeacoffee.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'img.buymeacoffee.com',
+      },
+    ],
     disableStaticImages: true,
   },
   pageExtensions: ['js', 'jsx', 'md', 'mdx'],

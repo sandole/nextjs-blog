@@ -1,0 +1,128 @@
+---
+title: 'Next.js 12 to 15.5.9: Patching CVE-2025-55182 (React2Shell)'
+date: '2025-12-14'
+tags: ['development', 'nextjs', 'security']
+summary: Three years of technical debt and a CVSS 10.0 RCE vulnerability being actively exploited in the wild
+---
+
+When I finally decided to update my blog's dependencies today, I didn't expect to be staring at 17 security vulnerabilities and a jump from Next.js 12 to 15. But here we are.
+
+The starting point was brutal. React 17, Next.js 12.1.4, and a package.json file that screamed "2022 called, they want their dependencies back." Running `npm audit` revealed the damage:
+
+```
+17 vulnerabilities (4 low, 8 moderate, 4 high, 1 critical)
+```
+
+The critical one? A form-data vulnerability using unsafe random functions for boundary selection. Not great when you're running a public-facing website.
+
+## The upgrade path
+
+Upgrading React was straightforward - bumped from 17.0.2 to 18.3.1. Next.js handles the new React 18 root API internally, so no code changes needed there. The real challenge was Next.js itself.
+
+Going from 12 to 15 meant dealing with:
+- Deprecated `images.domains` config (replaced with `images.remotePatterns`)
+- The death of `next export` command
+- Breaking changes in prettier (3.x now returns Promises instead of strings)
+
+Here's what the next.config.js update looked like:
+
+```javascript
+// Before
+images: {
+  domains: ['img.buymeacoffee.com'],
+  disableStaticImages: true,
+}
+
+// After
+images: {
+  remotePatterns: [
+    {
+      protocol: 'https',
+      hostname: 'img.buymeacoffee.com',
+    },
+  ],
+  disableStaticImages: true,
+}
+```
+
+The build script also needed a trim. Removed the deprecated `next export` since Next.js 15 handles static exports differently now.
+
+## The prettier problem
+
+The most annoying bug was in my sitemap generation script. After the upgrade, it started throwing:
+
+```
+TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string
+or an instance of Buffer, TypedArray, or DataView. Received an instance of Promise
+```
+
+Prettier 3.x changed `prettier.format()` from synchronous to async. A simple `await` fixed it:
+
+```javascript
+// Before
+const formatted = prettier.format(sitemap, {
+  ...prettierConfig,
+  parser: 'html',
+})
+
+// After
+const formatted = await prettier.format(sitemap, {
+  ...prettierConfig,
+  parser: 'html',
+})
+```
+
+## What about those vulnerabilities?
+
+After the upgrade, we're down from Next.js 12's ecosystem of deprecated packages to a mostly clean Next.js 15 setup. Some highlights of what got fixed:
+
+- **Babel RegExp complexity issues**: Updated to 7.26.10+
+- **cross-spawn ReDoS**: Patched in newer versions
+- **KaTeX attribute validation**: Fixed with latest katex
+- **esbuild dev server exposure**: Still has issues due to mdx-bundler dependency constraints
+
+The esbuild vulnerability is interesting. It would require `npm audit fix --force` which would install esbuild 0.27.1, but mdx-bundler has peer dependency constraints. Since the vulnerability only affects the development server (not production builds), I'm holding off on forcing that update until mdx-bundler catches up.
+
+## Update: CVE-2025-55182 (React2Shell) - CRITICAL
+
+I saved the most important dependency update till the end. I discovered **CVE-2025-55182**, a CVSS 10.0 severity vulnerability affecting Next.js 15.0.3. This is as serious as it gets.
+
+### What is it?
+
+[CVE-2025-55182](https://react.dev/blog/2025/12/03/critical-security-vulnerability-in-react-server-components) (also known as "React2Shell") is a remote code execution vulnerability in React Server Components. An attacker can send a specially crafted HTTP request to any React Server Function endpoint and execute arbitrary code **without authentication**.
+
+The vulnerability stems from insecure deserialization in the RSC Flight protocol. According to [Wiz Research](https://www.wiz.io/blog/critical-vulnerability-in-react-cve-2025-55182), [Amazon Threat Intelligence, Datadog](https://securitylabs.datadoghq.com/articles/cve-2025-55182-react2shell-remote-code-execution-react-server-components/), and [Unit 42](https://unit42.paloaltonetworks.com/cve-2025-55182-react-and-cve-2025-66478-next/), this vulnerability is being **actively exploited in the wild**.
+
+### What's affected?
+
+- Next.js versions 14.3.0-canary.77 through 16.x (before patches)
+- React 19 with Server Components enabled
+
+### The patch
+
+I immediately upgraded from Next.js 15.0.3 to **15.5.9** (released December 11, 2025). The patched versions are:
+- 15.0.5, 15.0.7 (for 15.0.x)
+- 15.1.9, 15.2.6, 15.3.6, 15.4.8, 15.5.7, 15.5.9 (for other 15.x)
+- 16.0.7 (for 16.x)
+
+The upgrade was straightforward since I had just migrated from 12 to 15. One `npm install --legacy-peer-deps` later (mdx-bundler peer dependency conflicts again), and I was patched.
+
+### Why this matters
+
+This isn't like the esbuild dev server exposure where the risk is limited to local development. CVE-2025-55182 allows **unauthenticated remote code execution on production servers**. If you're running any Next.js application with Server Components on 15.0.3 or earlier unpatched versions, you need to update immediately.
+
+According to [Vercel's advisory](https://vercel.com/changelog/cve-2025-55182), there is **no workaround**—upgrading to a patched version is required.
+
+## Lessons learned
+
+1. **Don't wait three years to update dependencies.** The jump from 12 to 15 was manageable, but it would have been easier as incremental updates (12→13→14→15).
+
+2. **Read the migration guides.** Next.js has excellent upgrade documentation. The `images.domains` deprecation was clearly documented, but I only found it after the build failed.
+
+3. **Test your build scripts.** Custom scripts like sitemap generation can break in unexpected ways when you upgrade dependencies that change their async behavior.
+
+4. **Not all vulnerabilities are critical.** The esbuild issue only affects local development. Understanding the actual risk helps prioritize what to fix immediately versus what can wait.
+
+5. **Security updates don't wait for convenience.** CVE-2025-55182 dropped the day after I upgraded. With active exploitation in the wild, I had no choice but to patch immediately. Subscribe to security advisories for your frameworks.
+
+P.S. If you're running Next.js 15.0.3 or earlier unpatched versions, **stop what you're doing and upgrade now**. CVE-2025-55182 is not a drill—it's CVSS 10.0 with active exploitation. The performance improvements are nice (build times dropped from ~30 seconds to sub-3 seconds), but the RCE patch is why you should update today, not tomorrow.
