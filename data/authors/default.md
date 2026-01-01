@@ -1,7 +1,8 @@
 ---
 name: John Seong
 avatar: /static/images/hello.png
-company: WestJet
+occupation: Tech Lead, Software Engineer III
+company: BCI (British Columbia Investment Management Corporation)
 email: sandole97@gmail.com
 github: https://github.com/sandole
 slogan: Thinker's tinkers
@@ -11,13 +12,15 @@ slogan: Thinker's tinkers
 
 ## Who Am I?
 
-I'm John Seong, a Senior Software Developer at WestJet where I lead the Integration and API Management team. With a background spanning cloud engineering, DevOps, and backend development, I've dedicated my career to building robust, scalable systems that make a difference.
+I'm John Seong, a Tech Lead (Software Engineer III) at BCI (British Columbia Investment Management Corporation) where I lead AI application development for private markets. With a Master's degree in AI from the University of Ottawa and extensive experience building AI applications, I bring deep technical expertise in artificial intelligence to the financial sector. My background also spans cloud engineering, DevOps, and backend development, and I've dedicated my career to building robust, scalable systems that make a difference.
 
 My journey began in 2015 at the Royal Military College of Canada, where I pursued computer engineering through a unique military-subsidized program. This opportunity allowed me to combine academic studies with hands-on IT support for military operations, laying a strong foundation for my technical career.
 
 What sets my path apart is my commitment to service. I spent seven enriching years as a military officer in the Canadian Armed Forces, supporting critical IT infrastructure and operations. This experience taught me invaluable lessons about soft skills like leadership, resilience, and the importance of being a reliable team. Thanks to Avanade, I successfully transitioned to the private sector, where I've continued to grow and innovate in cloud technology.
 
-As a Senior Software Developer at WestJet, I lead the Integration and API Management team, where I focus on optimizing our cloud infrastructure and API ecosystem. One of my key achievements has been implementing an API management layer that fronts our internal APIs hosted on Kubernetes. As the technical SME, I help drive architectural decisions that shape WestJet's digital transformation journey, focusing on scalable and efficient solutions that enhance our airline's operational capabilities.
+As a Tech Lead at BCI, I lead the development of AI applications for private markets, focusing on building sophisticated agent ecosystems. My work centers on leveraging cutting-edge technologies like MCP (Model Context Protocol), custom skills development, and LangGraph to create intelligent systems that support investment decision-making. As a technical leader, I drive architectural decisions that shape how AI can transform private markets investment strategies, focusing on scalable and efficient solutions that deliver measurable value.
+
+Prior to BCI, I served as a Senior Software Developer at WestJet, where I led the Integration and API Management team. During my time there, I implemented an API management layer that fronted internal APIs hosted on Kubernetes, driving architectural decisions that shaped the airline's digital transformation journey.
 
 Beyond my professional work, I'm passionate about continuous learning and community involvement. I actively contribute to the Green Software Foundation, focusing on optimized infrastructure provisioning. I maintain an active lifestyle through competitive basketball and ground myself through participation in local Christian services.
 
