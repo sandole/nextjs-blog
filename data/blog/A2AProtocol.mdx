@@ -38,7 +38,7 @@ I built two agents: PRO (argues for topics) and CON (argues against). Each runs 
                      └─────────────┘
 ```
 
-Both agents use Ollama with a local LLM (`llama3.2-uncensored`), so no API costs - just my laptop's GPU doing the heavy lifting.
+Both agents use Ollama with a local LLM (`llama3.2-uncensored`).
 
 ## The Implementation
 
@@ -81,39 +81,9 @@ Messages flow as JSON-RPC requests:
 }
 ```
 
-## The Bug I Found
-
-Here's where it got interesting. My agents kept ignoring the topic and arguing about random subjects like "Basic Income Guarantee" instead of the topic I provided.
-
-After adding debug logging, I discovered the issue. The A2A SDK wraps message parts in a `Part` object with a `root` attribute:
-
-```python
-# What I expected:
-part.text  # Direct access
-
-# What actually exists:
-part.root.text  # Wrapped in TextPart
-```
-
-The original code checked `hasattr(part, 'text')` which returned `False`, so it fell back to a default prompt. The fix:
-
-```python
-# Before (broken):
-if hasattr(part, 'text'):
-    user_text += part.text
-
-# After (fixed):
-if hasattr(part, 'root') and hasattr(part.root, 'text'):
-    user_text += part.root.text
-elif hasattr(part, 'text'):
-    user_text += part.text
-```
-
-A subtle SDK quirk that caused hours of debugging. Classic.
-
 ## The Debate
 
-Once fixed, the agents actually debated the topic. Here's a snippet from an AI regulation debate:
+Here's a snippet from an AI regulation debate:
 
 **PRO**: "The primary concern with unregulated AI is not the stifle of innovation, but rather the lack of accountability and oversight that can lead to devastating consequences. As AI systems become increasingly sophisticated, they are also becoming more autonomous, which raises significant questions about their decision-making processes and potential biases."
 
@@ -165,14 +135,13 @@ cd agent_con && python main.py
 python debate_coordinator.py "AI should be regulated" 2
 ```
 
-Watch two AI agents argue with each other. It's oddly entertaining.
+Watch two AI agents argue with each other. It's hilariously entertaining.
 
 ## Takeaways
 
 1. **A2A is not revolutionary tech** - It's JSON-RPC with conventions. But standards matter.
-2. **SDK quirks will bite you** - Always check the actual object structure, not just the docs.
-3. **Local LLMs are good enough** - A 2GB model on a laptop can hold a coherent debate.
-4. **Multi-agent systems are coming** - The infrastructure is being built now.
+2. **Local LLMs are good enough** - A 2GB model on a laptop can hold a coherent debate.
+3. **Multi-agent systems are coming** - The infrastructure is being built now.
 
 The era of isolated AI assistants is ending. The future is agents that collaborate, delegate, and argue with each other. A2A is one piece of that puzzle.
 
