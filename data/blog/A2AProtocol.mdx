@@ -1,0 +1,179 @@
+---
+title: 'Building AI Debate Agents with Google A2A Protocol'
+date: '2025-01-25'
+tags: ['development', 'ai', 'agents', 'python']
+summary: Implementing Google's Agent2Agent protocol to make two local LLMs debate each other - and discovering a bug in the SDK along the way
+---
+
+I spent an evening building a debate arena where two AI agents argue opposite sides of any topic using Google's Agent2Agent (A2A) protocol. The result? A surprisingly coherent debate about AI regulation, a bug fix for the A2A SDK, and some thoughts on where multi-agent systems are headed.
+
+## What is A2A Protocol?
+
+A2A (Agent2Agent) is Google's open protocol for AI agents to communicate with each other. Announced in April 2025 and now donated to the Linux Foundation, it's essentially "HTTP for agents" - a standardized way for AI systems to discover each other and exchange messages.
+
+The protocol isn't technically innovative. It's built on:
+- **Agent Cards**: JSON metadata at `/.well-known/agent-card.json` describing capabilities
+- **JSON-RPC 2.0**: The actual message transport
+- **SSE Streaming**: For real-time responses
+
+But innovation isn't the point. A2A is a standardization play - getting LangChain agents, CrewAI agents, and custom agents to speak the same language.
+
+## The Architecture
+
+I built two agents: PRO (argues for topics) and CON (argues against). Each runs as a separate HTTP server:
+
+```
+┌─────────────────┐         A2A Protocol          ┌─────────────────┐
+│   PRO Agent     │◄──────────────────────────────►│   CON Agent     │
+│   (Port 9001)   │                               │   (Port 9002)   │
+│                 │     ┌─────────────────┐       │                 │
+│  Argues FOR     │◄────│   Coordinator   │──────►│  Argues AGAINST │
+└────────┬────────┘     └─────────────────┘       └────────┬────────┘
+         │                                                  │
+         └──────────────────┬───────────────────────────────┘
+                            ▼
+                     ┌─────────────┐
+                     │   Ollama    │
+                     │ (Local LLM) │
+                     └─────────────┘
+```
+
+Both agents use Ollama with a local LLM (`llama3.2-uncensored`), so no API costs - just my laptop's GPU doing the heavy lifting.
+
+## The Implementation
+
+Each agent exposes an AgentCard describing its capabilities:
+
+```python
+agent_card = AgentCard(
+    name='Pro Debate Agent',
+    description='Argues IN FAVOR of debate topics using logical reasoning',
+    url='http://localhost:9001/',
+    version='1.0.0',
+    capabilities=AgentCapabilities(streaming=True),
+    skills=[AgentSkill(
+        id='debate_pro',
+        name='Argue Pro Side',
+        description='Argues IN FAVOR of a given topic',
+        tags=['debate', 'pro', 'argument'],
+    )],
+)
+```
+
+The coordinator discovers both agents, then orchestrates the debate:
+
+1. **Opening statements** - Both agents present initial arguments
+2. **Rebuttal rounds** - PRO responds to CON, then CON responds to PRO
+3. **Closing statements** - Final summary from each side
+
+Messages flow as JSON-RPC requests:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "message/send",
+  "params": {
+    "message": {
+      "role": "user",
+      "parts": [{"kind": "text", "text": "Present your opening argument..."}]
+    }
+  }
+}
+```
+
+## The Bug I Found
+
+Here's where it got interesting. My agents kept ignoring the topic and arguing about random subjects like "Basic Income Guarantee" instead of the topic I provided.
+
+After adding debug logging, I discovered the issue. The A2A SDK wraps message parts in a `Part` object with a `root` attribute:
+
+```python
+# What I expected:
+part.text  # Direct access
+
+# What actually exists:
+part.root.text  # Wrapped in TextPart
+```
+
+The original code checked `hasattr(part, 'text')` which returned `False`, so it fell back to a default prompt. The fix:
+
+```python
+# Before (broken):
+if hasattr(part, 'text'):
+    user_text += part.text
+
+# After (fixed):
+if hasattr(part, 'root') and hasattr(part.root, 'text'):
+    user_text += part.root.text
+elif hasattr(part, 'text'):
+    user_text += part.text
+```
+
+A subtle SDK quirk that caused hours of debugging. Classic.
+
+## The Debate
+
+Once fixed, the agents actually debated the topic. Here's a snippet from an AI regulation debate:
+
+**PRO**: "The primary concern with unregulated AI is not the stifle of innovation, but rather the lack of accountability and oversight that can lead to devastating consequences. As AI systems become increasingly sophisticated, they are also becoming more autonomous, which raises significant questions about their decision-making processes and potential biases."
+
+**CON**: "Regulation would only serve to create a complex web of bureaucratic red tape, stifling the very types of entrepreneurs and researchers who are pushing the boundaries of what is possible with AI. The history of over-regulation has shown us that it can have unintended consequences, such as driving innovation underground."
+
+Not bad for a 2GB local model running on my laptop.
+
+## A2A vs MCP
+
+If you're familiar with Anthropic's MCP (Model Context Protocol), you might wonder how A2A differs:
+
+| | MCP | A2A |
+|---|-----|-----|
+| **Purpose** | Connect AI to tools/data | Connect AI agents to each other |
+| **Relationship** | Hierarchical (AI → Tool) | Peer-to-peer (Agent ↔ Agent) |
+| **Backed by** | Anthropic | Google → Linux Foundation |
+
+They're complementary. An agent could use MCP to access a database, then use A2A to delegate analysis to a specialist agent.
+
+## The Future of A2A
+
+A2A is still early. The ecosystem is growing with directories like [a2a.ac](https://a2a.ac) and [a2aagentlist.com](https://a2aagentlist.com), but most implementations are demos rather than production systems.
+
+What excites me:
+- **Agent marketplaces** - Specialized agents you can rent by the task
+- **Heterogeneous collaboration** - Different LLMs working together
+- **Self-organizing agent networks** - Agents discovering and delegating to each other
+
+What concerns me:
+- **Security** - How do you trust an agent you didn't build?
+- **Coordination failures** - Agents talking past each other
+- **Accountability** - When something goes wrong, who's responsible?
+
+## Try It Yourself
+
+The code is simple enough to run locally. You'll need:
+- Python 3.10+
+- Ollama with a model installed
+- The A2A Python SDK
+
+```bash
+# Terminal 1: Start PRO agent
+cd agent_pro && python main.py
+
+# Terminal 2: Start CON agent
+cd agent_con && python main.py
+
+# Terminal 3: Run the debate
+python debate_coordinator.py "AI should be regulated" 2
+```
+
+Watch two AI agents argue with each other. It's oddly entertaining.
+
+## Takeaways
+
+1. **A2A is not revolutionary tech** - It's JSON-RPC with conventions. But standards matter.
+2. **SDK quirks will bite you** - Always check the actual object structure, not just the docs.
+3. **Local LLMs are good enough** - A 2GB model on a laptop can hold a coherent debate.
+4. **Multi-agent systems are coming** - The infrastructure is being built now.
+
+The era of isolated AI assistants is ending. The future is agents that collaborate, delegate, and argue with each other. A2A is one piece of that puzzle.
+
+For more on A2A, check out the [official protocol docs](https://a2a-protocol.org) and [Google's ADK documentation](https://google.github.io/adk-docs/a2a/).
