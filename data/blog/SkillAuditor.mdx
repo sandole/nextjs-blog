@@ -1,0 +1,186 @@
+---
+title: 'Building a Security Scanner for AI Agent Skills'
+date: '2026-01-30'
+tags: ['development', 'ai', 'security', 'agents']
+summary: Why I built a paid security auditor for Clawdbot skills after seeing supply chain attack discussions in the AI agent community
+---
+
+After watching debates on Moltbook (the Reddit for AI agents) about SKILL.md supply chain attacks, I built a security scanner. It's live at [skill-auditor-saas.vercel.app](https://skill-auditor-saas.vercel.app) and costs $2 USDC per audit.
+
+Here's why this matters and how it works.
+
+## The Problem: Skills Are Just Markdown
+
+Clawdbot skills are SKILL.md files - markdown documents that tell an AI agent how to use tools. They're powerful because they can include shell commands, API calls, and arbitrary instructions.
+
+They're also dangerous for the same reason.
+
+A malicious skill could instruct an agent to:
+- Download and execute remote code (`curl | bash`)
+- Exfiltrate data to external servers
+- Delete files (`rm -rf`)
+- Open backdoors
+
+And because skills are often shared via GitHub or skill marketplaces, you're essentially running untrusted code. Sound familiar? It's npm supply chain attacks, but for AI agents.
+
+## The Architecture
+
+The auditor is a simple Next.js app with two API routes:
+
+```
+┌─────────────────┐
+│  Landing Page   │  User pastes skill URL
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│  Payment Flow   │  Send $2 USDC on Base
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│  /api/verify    │  Check on-chain payment
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│  /api/audit     │  Run security analysis
+└────────┬────────┘
+         ▼
+┌─────────────────┐
+│  Results Page   │  Risk level + findings
+└─────────────────┘
+```
+
+No database. No accounts. Paste URL, pay, get report.
+
+## Threat Detection
+
+The auditor scans for patterns that indicate malicious intent:
+
+```typescript
+const THREAT_PATTERNS = [
+  // Remote code execution
+  { pattern: /curl\s+.*\|\s*(ba)?sh/gi, severity: 'HIGH', 
+    message: 'Remote code execution: curl piped to shell' },
+  
+  // Dynamic execution
+  { pattern: /eval\s*\(/gi, severity: 'HIGH', 
+    message: 'Dynamic code execution via eval()' },
+  
+  // Destructive commands
+  { pattern: /rm\s+-rf\s+[\/~]/gi, severity: 'HIGH', 
+    message: 'Destructive file deletion' },
+  
+  // Backdoors
+  { pattern: /nc\s+-[el]/gi, severity: 'HIGH', 
+    message: 'Netcat listener (potential backdoor)' },
+  { pattern: /\/dev\/tcp\//gi, severity: 'HIGH', 
+    message: 'Bash TCP socket (potential reverse shell)' },
+  
+  // Secrets
+  { pattern: /\b(api[_-]?key|secret).*=.*['"][^'"]+['"]/gi, 
+    severity: 'MEDIUM', message: 'Hardcoded secret' },
+];
+```
+
+It also flags suspicious domains (pastebin, file.io, etc.) and extracts all URLs for manual review.
+
+## Payment Verification
+
+I wanted zero friction. No Stripe, no accounts. Just crypto.
+
+Users send USDC to my wallet on Base (low gas), then paste the transaction hash. The API verifies it on-chain using viem:
+
+```typescript
+const receipt = await client.getTransactionReceipt({ hash: txHash });
+
+for (const log of receipt.logs) {
+  // Check for USDC Transfer event to our wallet
+  if (log.address === USDC_BASE && 
+      decodedTo === WALLET && 
+      value >= 2_000_000n) { // 2 USDC (6 decimals)
+    return { verified: true };
+  }
+}
+```
+
+Used transactions are tracked to prevent replay attacks. Simple, permissionless, and works globally.
+
+## Example Output
+
+Here's what a malicious skill scan looks like:
+
+```json
+{
+  "riskLevel": "HIGH",
+  "findings": [
+    {
+      "severity": "HIGH",
+      "message": "Remote code execution: curl piped to shell (line 12)"
+    },
+    {
+      "severity": "HIGH", 
+      "message": "Netcat listener (potential backdoor) (line 15)"
+    },
+    {
+      "severity": "MEDIUM",
+      "message": "Hardcoded API key (line 8)"
+    }
+  ],
+  "urls": ["http://evil.com/payload.sh"],
+  "stats": {
+    "threats": 2,
+    "warnings": 1,
+    "lines": 45
+  }
+}
+```
+
+A clean skill returns `"riskLevel": "LOW"` with empty findings.
+
+## Why Crypto Payments?
+
+A few reasons:
+
+1. **Global access** - Anyone with USDC can pay, no credit card required
+2. **No middleman** - Stripe takes 2.9% + $0.30. On-chain is ~$0.01
+3. **Privacy** - No PII collected, just a transaction hash
+4. **Composability** - Could add token-gating, loyalty rewards, etc.
+
+Base was the obvious choice - same USDC, 100x cheaper gas than Ethereum mainnet.
+
+## Limitations
+
+This is static analysis. It catches obvious patterns but won't detect:
+- Obfuscated payloads (base64 encoded commands that get decoded at runtime)
+- Logic bombs (malicious behavior triggered by specific conditions)
+- Semantic attacks (instructions that are technically benign but manipulate the agent)
+
+For high-stakes skills, you'd want sandbox execution - actually running the skill in an isolated environment and monitoring behavior. That's on the roadmap.
+
+## The Bigger Picture
+
+AI agents are becoming a new attack surface. We're giving them access to our files, emails, and APIs. Skills are the entry point.
+
+The agent ecosystem needs:
+- **Skill signing** - Verify who authored a skill
+- **Sandboxed execution** - Limit what skills can do
+- **Reputation systems** - Track which skills are safe
+- **Automated auditing** - Scan before install
+
+This auditor is one small piece. But if it prevents one compromised agent, it's worth it.
+
+## Try It
+
+[skill-auditor-saas.vercel.app](https://skill-auditor-saas.vercel.app)
+
+Paste a skill URL, pay $2 USDC on Base, get a security report. Takes about 30 seconds.
+
+If you're building AI agents, audit your skills before deploying them. And definitely audit third-party skills before trusting them with access to your systems.
+
+## Takeaways
+
+1. **Skills are attack vectors** - Treat them like npm packages, not config files
+2. **Static analysis catches the obvious** - But determined attackers will evade it
+3. **Crypto payments just work** - Zero friction, global, no accounts
+4. **The agent security space is wide open** - Build the tools you wish existed
+
+The era of "just trust the skill" is ending. Audit everything.
