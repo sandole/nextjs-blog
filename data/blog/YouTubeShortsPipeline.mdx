@@ -1,0 +1,191 @@
+---
+title: 'Automating YouTube Shorts: A Podcast Clipping Pipeline'
+date: '2026-02-04'
+tags: ['development', 'ai', 'automation', 'youtube', 'python']
+summary: Building an end-to-end pipeline that turns podcast episodes into viral YouTube Shorts using WhisperX, FFmpeg, and local LLMs
+---
+
+I built a fully automated pipeline that monitors comedy podcasts, downloads new episodes, transcribes them, identifies the funniest moments, and uploads them as YouTube Shorts. Here's how it works.
+
+## The Problem
+
+Podcast clips dominate YouTube Shorts. Channels like "Bad Friends Clips" or "JRE Clips" get millions of views by extracting the best 30-60 second moments. But doing this manually is tedious:
+
+1. Watch/listen to 2+ hour episodes
+2. Note timestamps of funny moments
+3. Cut clips in video editor
+4. Add captions
+5. Convert to vertical format
+6. Write titles and descriptions
+7. Upload
+
+I wanted to automate all of it.
+
+## The Architecture
+
+The pipeline has 8 stages:
+
+**Stage 1: Discover** — Monitor 30+ podcast channels for new uploads using yt-dlp's playlist extraction.
+
+**Stage 2: Download** — Pull 720p MP4 (~200-400MB per episode).
+
+**Stage 3: Transcribe** — WhisperX generates word-level timestamps with ~20ms precision.
+
+**Stage 4: Extract** — Score transcript segments and cut the highest-scoring moments.
+
+**Stage 5: Caption** — Burn animated subtitles into the video.
+
+**Stage 6: Metadata** — Generate titles and descriptions using a local LLM.
+
+**Stage 7: Queue** — Add clips to upload queue with metadata.
+
+**Stage 8: Upload** — Push to YouTube via Data API v3.
+
+## Transcription: WhisperX
+
+The magic starts with transcription. Regular Whisper gives you text with rough timestamps. WhisperX adds two critical improvements:
+
+```
+Pass 1: Whisper ASR → text + chunk timestamps (~1s granularity)
+Pass 2: wav2vec2 alignment → word-level timestamps (10-20ms precision)
+Pass 3: (optional) pyannote → speaker diarization
+```
+
+This precision matters. When cutting clips, I need to know exactly when a word starts and ends to avoid awkward cuts.
+
+Running on CPU (M-series Mac), a 45-minute podcast takes about 60 minutes to transcribe. GPU would be 5-10x faster.
+
+## Comedy Detection: Scoring Segments
+
+The clip extractor scores each transcript segment based on keywords that correlate with funny moments:
+
+```javascript
+const highValueWords = {
+  laughter: ['haha', 'hahaha', 'laughing'],
+  exclamations: ['oh my god', 'oh shit', 'what the', 'holy shit', 'no way'],
+  intensity: ['fuck', 'shit', 'crazy', 'insane', 'wild', 'unbelievable'],
+  questions: ['why', 'what', 'how', 'really', 'seriously'],
+  storytelling: ['so then', 'and then', 'one time', 'remember when']
+};
+```
+
+Segments score higher when they contain:
+- Multiple high-value keywords
+- Questions (often setups for punchlines)
+- Longer text (more context = better moment)
+
+The algorithm finds "peaks" — clusters of high-scoring segments — and extracts clips around them.
+
+## Video Processing: FFmpeg
+
+Each clip goes through FFmpeg for:
+
+1. **Cutting** — Extract the segment with precise timestamps
+2. **Vertical conversion** — 9:16 aspect ratio with blurred background
+3. **Caption burn-in** — ASS subtitles with pop-in animation
+
+The blur background filter:
+
+```bash
+ffmpeg -i input.mp4 \
+  -vf "split[bg][fg];[bg]scale=1080:1920,boxblur=20[blur];[fg]scale=1080:-2[main];[blur][main]overlay=(W-w)/2:(H-h)/2" \
+  -c:v libx264 -preset fast -crf 23 \
+  output.mp4
+```
+
+This creates the "podcast on phone" aesthetic that performs well on Shorts.
+
+## Title Generation: Local LLM
+
+Generic titles like "This is CRAZY 😂" don't cut it. I use Ollama with llama3.2 to generate content-specific titles:
+
+```javascript
+const prompt = `Write a viral YouTube Shorts title (max 60 chars) for this podcast clip. 
+Be specific to the content. Keep it clean.
+
+Podcast: ${channelName}
+Transcript: "${transcript.slice(0, 500)}"
+
+Reply with ONLY the title:`;
+```
+
+Results like:
+- "Bert's Desperate Instagram Withdrawal Tantrum 🚫"
+- "Tom Segura's Wild Dinner Party Exposed"
+- "Shoe Game Weak? Tom & Bert's Sole-Mate Sins 👠"
+
+A profanity filter catches anything the LLM misses.
+
+## Upload: YouTube Data API
+
+The final stage uses YouTube's Data API v3 with OAuth:
+
+```javascript
+const res = await youtube.videos.insert({
+  part: 'snippet,status',
+  requestBody: {
+    snippet: {
+      title, description, tags,
+      categoryId: '23', // Comedy
+    },
+    status: {
+      privacyStatus: 'public',
+      selfDeclaredMadeForKids: false,
+    },
+  },
+  media: { body: fs.createReadStream(videoPath) },
+});
+```
+
+The video ID is saved for tracking, allowing future metadata updates.
+
+## File Structure
+
+```
+podcast_2bears_SsqkxyUcS9A.mp4           # Downloaded episode
+podcast_2bears_SsqkxyUcS9A.json          # WhisperX transcript
+podcast_2bears_SsqkxyUcS9A_smart_001.mp4 # Extracted clip
+podcast_2bears_SsqkxyUcS9A_smart_001_captioned.mp4      # With captions
+podcast_2bears_SsqkxyUcS9A_smart_001_captioned.meta.json # Metadata
+upload-queue.json                         # Queue + history
+```
+
+## Performance
+
+On an M2 MacBook Air:
+
+| Stage | Time |
+|-------|------|
+| Download | 2-5 min |
+| Transcribe | 45-90 min |
+| Extract (5-10 clips) | 5-10 min |
+| Caption (per clip) | 30s |
+| Metadata (per clip) | 10s |
+| Upload (per clip) | 30s |
+
+**Total: 60-120 minutes per episode → 5-10 Shorts**
+
+## What I Learned
+
+1. **Word-level timestamps are essential** — Chunk-level (~1s) creates awkward cuts. WhisperX's wav2vec2 alignment is worth the extra processing time.
+
+2. **Keyword scoring is surprisingly effective** — Simple heuristics catch most funny moments. No need for complex sentiment analysis.
+
+3. **Local LLMs are good enough** — llama3.2 (3B params) generates decent titles in ~10 seconds. No API costs.
+
+4. **Profanity filtering is mandatory** — Both in titles and captions. YouTube's algorithm and advertisers don't like f-bombs in titles.
+
+5. **Vertical blur background works** — The "podcast on phone" aesthetic consistently outperforms simple letterboxing.
+
+## Future Improvements
+
+- **GPU acceleration** — MPS support for WhisperX would cut transcription time 5-10x
+- **Better comedy detection** — Fine-tuned classifier instead of keyword matching
+- **A/B test titles** — Generate multiple titles, test which performs better
+- **Automated thumbnail generation** — Extract the most expressive frame
+
+The code is running 24/7, monitoring podcasts and generating clips. Fully hands-off content creation.
+
+---
+
+*Stack: Node.js, Python, WhisperX, FFmpeg, Ollama, YouTube Data API v3*
