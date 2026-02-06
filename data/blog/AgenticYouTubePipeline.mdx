@@ -1,0 +1,202 @@
+---
+title: 'Building an Agentic AI Pipeline: Autonomous Content Creation with Human-in-the-Loop'
+date: '2026-02-06'
+tags: ['development', 'ai', 'agentic-ai', 'automation', 'llm']
+summary: How I built an AI agent that autonomously extracts, captions, and uploads YouTube Shorts — with me as the quality gate, not the operator
+---
+
+## The Agentic AI Paradigm Shift
+
+Traditional automation is brittle: write scripts, handle edge cases, pray nothing breaks. **Agentic AI** flips this model. Instead of programming every decision tree, you give an AI agent:
+
+1. **Goals** — "Create engaging YouTube Shorts from this content"
+2. **Tools** — FFmpeg, WhisperX, YouTube API, file system access
+3. **Autonomy** — The agent decides *how* to achieve the goal
+4. **Guardrails** — Human review for quality-critical decisions
+
+The agent isn't following a script. It's *reasoning* about what to do next, *using tools* to accomplish subtasks, and *adapting* when things go wrong.
+
+## My Setup: Jarvis, the Content Agent
+
+I run [Clawdbot](https://github.com/clawdbot/clawdbot), an agentic AI framework that gives Claude persistent memory, tool access, and the ability to operate autonomously. My instance — Jarvis — handles everything from code reviews to calendar management.
+
+For this project, Jarvis became my **content creation agent**:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         JARVIS (AI Agent)                       │
+│                                                                 │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐            │
+│  │ Analyze │  │ Extract │  │ Caption │  │ Upload  │            │
+│  │  Tool   │  │  Tool   │  │  Tool   │  │  Tool   │            │
+│  └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘            │
+│       │            │            │            │                  │
+│       └────────────┴─────┬──────┴────────────┘                  │
+│                          │                                      │
+│                    ┌─────▼─────┐                                │
+│                    │  Planner  │  ← Decides what to do next     │
+│                    │ (Claude)  │                                │
+│                    └─────┬─────┘                                │
+│                          │                                      │
+└──────────────────────────┼──────────────────────────────────────┘
+                           │
+                    ┌──────▼──────┐
+                    │   Human     │  ← Quality gate (Telegram)
+                    │   Review    │
+                    └─────────────┘
+```
+
+The key difference from traditional automation: **the agent plans its own execution path**.
+
+## Agentic Capabilities in Action
+
+### 1. Autonomous Planning
+
+When I say "process this movie into Shorts," Jarvis doesn't execute a fixed script. It *reasons*:
+
+```
+User: Process tears_of_steel.mp4 into YouTube Shorts
+
+Jarvis (thinking):
+- First, I need to analyze the video for high-engagement moments
+- The video is 12 minutes, so I'll look for 30-60 second segments
+- I should check if WhisperX transcription exists... it doesn't
+- I'll transcribe first, then use the transcript to find interesting dialogue
+- After extraction, each clip needs vertical conversion and captions
+- Finally, I'll queue them for human review before upload
+```
+
+This planning happens in natural language, visible in the agent's reasoning traces. If something fails (quota exceeded, file missing), it re-plans.
+
+### 2. Tool Use & Composition
+
+The agent has access to shell commands, file operations, and APIs. It *composes* these tools dynamically:
+
+```javascript
+// Agent's tool calls (simplified)
+exec("whisperx tears_of_steel.mp4 --output_format json")
+read("tears_of_steel.json")  // Parse transcript
+// Agent reasons: "Timestamp 3:42 has high-energy dialogue"
+exec("ffmpeg -ss 222 -t 45 -i tears_of_steel.mp4 clip_001.mp4")
+exec("node add-captions-ass.js clip_001.mp4")
+// Agent decides: "Clip looks good, sending for review"
+message({ action: "send", buttons: [["✅ Approve", "❌ Reject"]] })
+```
+
+The agent doesn't need a pre-built pipeline script. It understands the *goal* and selects appropriate tools.
+
+### 3. Human-in-the-Loop as a Design Pattern
+
+Full autonomy is dangerous for public-facing content. Bad titles, copyrighted clips, or low-quality extracts could hurt the channel. The solution: **human-in-the-loop (HITL)**.
+
+The agent operates autonomously *until* a quality-critical decision point:
+
+```
+AUTONOMOUS                    HUMAN REVIEW                AUTONOMOUS
+     │                              │                          │
+     ▼                              ▼                          ▼
+┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐
+│ Analyze │───▶│ Extract │───▶│ Caption │───▶│ Review  │───▶│ Upload  │
+│         │    │         │    │         │    │ (Human) │    │         │
+└─────────┘    └─────────┘    └─────────┘    └─────────┘    └─────────┘
+```
+
+I receive clips via Telegram with inline buttons:
+
+```
+🎬 Review: Tears of Steel Clip #3
+
+Title: "The Robot's Memory Hack" 🤖
+
+[✅ Approve] [❌ Reject] [✏️ Edit]
+```
+
+One tap. The agent handles everything else.
+
+This pattern — **automate the tedious, gate the critical** — is central to production agentic systems. The agent does 95% of the work; I provide the 5% that requires judgment.
+
+### 4. Memory & State Management
+
+Agents need memory to operate over time. Jarvis maintains:
+
+- **Session memory** — Current task context, what's been tried
+- **Persistent memory** — `MEMORY.md` file with long-term learnings
+- **State files** — `upload-queue.json`, `pipeline-status.json`
+
+When I return hours later, Jarvis knows:
+- Which clips are pending review
+- What's been uploaded
+- Rate limit status (6 uploads/hour)
+- Any errors that need attention
+
+```markdown
+# From Jarvis's MEMORY.md
+
+## YouTube Pipeline Learnings
+- Clips under 30s perform better
+- Avoid extracting segments with music (copyright risk)
+- Upload queue rate: 6/hour to avoid shadowbans
+- Telegram review flow working well — 10-15 clips reviewed in ~3 min
+```
+
+### 5. Error Handling & Recovery
+
+Traditional scripts crash on unexpected errors. Agentic systems *reason* about failures:
+
+```
+Error: YouTube API quota exceeded
+
+Jarvis (reasoning):
+- Upload failed due to quota
+- I should mark this clip as "pending_retry"
+- Check when quota resets... midnight UTC
+- Update the queue status
+- Notify John that uploads are paused
+- Set a reminder to retry tomorrow
+```
+
+The agent doesn't just log an error — it *adapts* its plan.
+
+## Why This Matters
+
+### The Agent Advantage
+
+| Traditional Automation | Agentic AI |
+|------------------------|------------|
+| Fixed scripts | Dynamic planning |
+| Fails on edge cases | Adapts to failures |
+| Manual error handling | Self-correcting |
+| One-shot execution | Persistent operation |
+| Requires developer intervention | Human-in-the-loop for quality |
+
+### Production Readiness
+
+This isn't a demo. The pipeline has processed **100+ clips** across multiple source videos with:
+- Zero manual script intervention
+- ~5 min total review time per batch
+- Automatic retry on failures
+- Rate limiting preventing platform issues
+
+## Lessons Learned
+
+1. **Agents need clear tool boundaries.** Don't give an agent raw `exec` without sandboxing. Scope tools to specific capabilities.
+
+2. **Human-in-the-loop isn't a crutch — it's a feature.** For content creation, human judgment at key points prevents costly mistakes.
+
+3. **Memory is essential.** Without persistent state, agents lose context and repeat work. File-based memory works surprisingly well.
+
+4. **Natural language planning > rigid workflows.** The agent's ability to reason in English about what to do next makes debugging trivial.
+
+5. **Start autonomous, add gates.** Build the fully automated version first, then identify where human review adds value.
+
+## What's Next
+
+- **Feedback loops**: Use YouTube analytics to teach the agent what clips perform well
+- **Multi-agent collaboration**: Separate agents for analysis, editing, and distribution
+- **A/B testing**: Agent generates title variants, learns from click-through rates
+
+---
+
+*The future of content creation isn't "AI generates everything" — it's AI agents that handle the 95% that's tedious, with humans providing the 5% that requires taste.*
+
+*Built with [Clawdbot](https://github.com/clawdbot/clawdbot) and Claude.*
