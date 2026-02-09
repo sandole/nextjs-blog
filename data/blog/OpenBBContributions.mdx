@@ -1,0 +1,94 @@
+---
+title: 'My First Contributions to OpenBB'
+date: '2026-02-09'
+tags: ['development', 'open-source', 'python', 'fintech']
+summary: Contributing to OpenBB Platform with ISO 3166 Country standardization and migrating from deprecated pydocstyle to Ruff
+---
+
+I recently merged my first couple of pull requests into [OpenBB](https://github.com/OpenBB-finance/OpenBB), the open-source investment research platform. Here's what I contributed and why it matters.
+
+## PR #7333: Standardizing Country Inputs with ISO 3166
+
+**[feat(platform): standardize country inputs with ISO 3166 Country type](https://github.com/OpenBB-finance/OpenBB/pull/7333)**
+
+OpenBB has dozens of data providers, each with their own way of handling country inputs. Some expect `US`, others `USA`, some want `United States`. This inconsistency creates friction for users and extra work for provider developers.
+
+### The Solution
+
+I added a custom `Country` type backed by a static ISO 3166 JSON dataset. It accepts:
+
+- **Alpha-2 codes**: `US`, `CA`, `GB`
+- **Alpha-3 codes**: `USA`, `CAN`, `GBR`
+- **Full names**: `United States`, `Canada`, `United Kingdom`
+- **Snake case**: `united_states`, `united_kingdom`
+
+All inputs normalize to alpha-2 codes internally, with access to full country metadata via properties.
+
+```python
+from openbb_core.provider.abstract.data import Country
+
+# All of these work:
+country = Country("US")
+country = Country("USA")
+country = Country("United States")
+country = Country("united_states")
+
+# Access metadata
+country.alpha_2    # "US"
+country.alpha_3    # "USA"
+country.name       # "United States"
+country.numeric    # "840"
+```
+
+### Why It Matters
+
+This partially addresses [issue #6969](https://github.com/OpenBB-finance/OpenBB/issues/6969) and gives provider developers a reusable type for consistent country handling. No more hardcoded mapping dictionaries scattered across the codebase.
+
+---
+
+## PR #7346: Migrating from pydocstyle to Ruff
+
+**[chore(lint): migrate from pydocstyle to ruff](https://github.com/OpenBB-finance/OpenBB/pull/7346)**
+
+This one's a cleanup contribution. [pydocstyle](https://github.com/PyCQA/pydocstyle) was deprecated and archived in November 2023, but OpenBB was still running it in CI alongside Ruff.
+
+### The Problem
+
+- pydocstyle has known bugs that will never be fixed (like D402 false positives)
+- Ruff already has full parity with pydocstyle's rules
+- Running both tools was redundant
+
+### The Fix
+
+```toml
+# ruff.toml - Added "D" rules (pydocstyle equivalent)
+select = [
+    "D",  # pydocstyle
+    # ... other rules
+]
+```
+
+Changes:
+1. Added `"D"` (pydocstyle) rules to `ruff.toml`
+2. Migrated ignore rules from `.pydocstyle.ini` to `ruff.toml`
+3. Removed pydocstyle from CI workflow
+4. Deleted `.pydocstyle.ini`
+
+One less deprecated tool in the chain, same linting coverage.
+
+---
+
+## Why OpenBB?
+
+OpenBB is building what Bloomberg Terminal could have been if it started today — open-source, extensible, and community-driven. Their platform aggregates data from dozens of financial data providers into a unified API.
+
+As someone working on investment tooling at BCI, contributing upstream to OpenBB felt like a natural fit. The codebase is well-organized, the maintainers are responsive, and there's plenty of room for meaningful contributions.
+
+If you're interested in fintech or quantitative finance, I'd recommend checking out their [good first issues](https://github.com/OpenBB-finance/OpenBB/labels/good%20first%20issue).
+
+---
+
+**Links:**
+- [PR #7333 - Country Type](https://github.com/OpenBB-finance/OpenBB/pull/7333)
+- [PR #7346 - pydocstyle to Ruff](https://github.com/OpenBB-finance/OpenBB/pull/7346)
+- [OpenBB GitHub](https://github.com/OpenBB-finance/OpenBB)
