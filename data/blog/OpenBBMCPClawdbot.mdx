@@ -1,0 +1,158 @@
+---
+title: 'Building a Personal AI Financial Analyst with OpenBB MCP'
+date: '2026-02-14'
+tags: ['ai-agents', 'mcp', 'fintech', 'openbb', 'clawdbot']
+summary: Connecting OpenBB's 113 financial tools to an AI agent via Model Context Protocol — real-time macro analysis from a Telegram chat at midnight
+---
+
+What if your AI assistant could pull real-time GDP data, check your stock positions, and analyze crypto markets — all through natural conversation? Not through a web UI. Not through a Jupyter notebook. Through a chat message on your phone at midnight.
+
+I built this. Here's how.
+
+## The Stack
+
+- **[OpenBB](https://github.com/OpenBB-finance/OpenBB)** — Open-source investment research platform with 113+ financial data tools
+- **[Clawdbot](https://github.com/clawdbot/clawdbot)** — AI agent framework that connects Claude to tools, memory, and messaging channels
+- **[MCP (Model Context Protocol)](https://modelcontextprotocol.io/)** — Anthropic's open standard for connecting AI models to external tools and data sources
+
+The result: an AI agent on Telegram that can query macroeconomic indicators, pull stock fundamentals, analyze crypto prices, and synthesize it all into an investment outlook — on demand, from my phone.
+
+## Why MCP Changes Everything
+
+Before MCP, connecting an AI model to external data meant building custom integrations for every data source. REST wrappers, prompt engineering for API calls, brittle parsing logic. It was the "build a new adapter for every API" problem all over again.
+
+MCP standardizes this. A tool server exposes capabilities in a uniform format. Any MCP-compatible client can discover and call those tools. It's USB for AI tools — plug in a server, and the model knows how to use it.
+
+```
+┌──────────┐     MCP      ┌──────────────┐     APIs      ┌──────────┐
+│  Claude   │◄────────────►│  OpenBB MCP  │◄─────────────►│ FMP/FRED │
+│ (Clawdbot)│  Tool calls  │   Server     │  Data queries │ OECD/etc │
+└──────────┘              └──────────────┘               └──────────┘
+```
+
+OpenBB's MCP server exposes 113 financial tools across three categories:
+
+- **Equity** (71 tools) — Quotes, fundamentals, earnings, screeners, price targets
+- **Economy** (24 tools) — GDP, CPI, unemployment, interest rates, consumer sentiment
+- **Crypto** (17 tools) — Historical prices, market data, pair search
+
+Each tool is discoverable by the AI model, with typed parameters and descriptions. The model decides which tools to call based on the user's request.
+
+## Setting It Up
+
+### 1. Install OpenBB MCP Server
+
+```bash
+# Create a virtual environment
+python -m venv openbb-venv
+source openbb-venv/bin/activate
+
+# Install OpenBB with MCP server
+pip install openbb openbb-mcp-server
+```
+
+### 2. Configure API Keys
+
+OpenBB works with free providers (YFinance), but for better coverage, add API keys:
+
+```json
+// ~/.openbb_platform/user_settings.json
+{
+  "credentials": {
+    "fmp_api_key": "your_key_here",
+    "fred_api_key": "your_key_here"
+  }
+}
+```
+
+[FMP](https://financialmodelingprep.com/) gives you stock fundamentals and crypto. [FRED](https://fred.stlouisfed.org/) gives you every macroeconomic indicator the US government publishes. Both have free tiers.
+
+### 3. Start the Server
+
+```bash
+openbb-mcp --default-categories equity,economy,crypto --port 8002
+```
+
+That's it. 113 financial tools exposed via MCP on `http://localhost:8002/mcp`.
+
+### 4. Connect to Your AI Agent
+
+Any MCP-compatible client can connect. For Clawdbot, add it to your MCP server configuration:
+
+```json
+{
+  "openbb": {
+    "url": "http://localhost:8002/mcp",
+    "transport": "streamable-http"
+  }
+}
+```
+
+Claude can now discover and call any of those 113 tools in conversation.
+
+## What It Actually Looks Like
+
+Here's a real interaction. I asked my agent for an economic outlook at midnight:
+
+> "Give me the economic outlook based on data from all the tools"
+
+**What the agent did autonomously:**
+1. Called `economy_cpi` for US and Canada inflation data
+2. Called `economy_unemployment` for both countries
+3. Called `economy_interest_rates` for Fed and BoC rates
+4. Called `economy_survey_university_of_michigan` for consumer sentiment
+5. Called `economy_composite_leading_indicator` for leading indicators
+6. Called `economy_house_price_index` for US and Canada housing
+7. Called `crypto_price_historical` for ETH and BTC
+8. Called `equity_price_historical` for SPY, GLD, GDX, TLT
+
+15+ data queries, orchestrated autonomously. No prompting for which tools to use. The model read the request, searched its available tools, and built a comprehensive analysis.
+
+The output included real data points — not summaries scraped from news articles:
+
+```
+US CPI:             2.3% (trending down from 3.0%)
+Canada CPI:         2.3% (settled after tariff spike)
+US Unemployment:    4.6% (jumped from 4.1%)
+BoC Rate:           2.19% (cut aggressively from 2.65%)
+Consumer Sentiment: 52.9 (recessionary territory)
+ETH:                $2,056 (recovered from $1,823 flash crash)
+Gold (GLD):         $462 (near all-time highs)
+Canada Housing:     127.81 (declining 4 straight quarters)
+```
+
+Actual data from FRED, OECD, FMP, and YFinance — pulled in real-time and synthesized into a coherent macro picture with trade recommendations.
+
+## The Agentic Future is Here
+
+This isn't a demo. This is my daily workflow. I ask questions in Telegram, and my agent pulls real data, runs analysis, and gives me actionable insights. It remembers previous conversations. It knows my portfolio. It tracks positions over time.
+
+What excites me about the agentic future:
+
+**1. Tools are becoming commoditized.** MCP means any data source can be plugged into any AI model. The value isn't in the tools themselves — it's in the orchestration layer that knows which tools to use and when.
+
+**2. Context windows make synthesis possible.** With 1M+ token context windows, the model can ingest data from 15 different sources in a single turn and produce a coherent analysis. This was impossible two years ago.
+
+**3. Persistent memory changes the game.** My agent knows my portfolio, my risk tolerance, my investment thesis. It doesn't start from zero each conversation. This is the difference between a search engine and an analyst.
+
+**4. The interface disappears.** I'm not opening Bloomberg Terminal, logging into a dashboard, or writing Python scripts. I'm sending a text message. The best interface is no interface.
+
+## What's Next
+
+The current setup has limitations. OpenBB's MCP server loads all 113 tool definitions into the model's context upfront, consuming tokens on every interaction. Anthropic's [Tool Search Tool](https://www.anthropic.com/engineering/advanced-tool-use) beta could reduce this overhead by ~85% by deferring tool loading until needed.
+
+I'm also contributing upstream to OpenBB — standardizing country inputs ([PR #7333](https://github.com/OpenBB-finance/OpenBB/pull/7333)), updating exchange data ([PR #7351](https://github.com/OpenBB-finance/OpenBB/pull/7351)), and improving developer tooling ([PR #7346](https://github.com/OpenBB-finance/OpenBB/pull/7346)).
+
+The bigger picture: we're moving from AI as a chatbot to AI as an operating system. MCP is the driver model. Tool servers are the peripherals. The model is the CPU that orchestrates everything. And the user just talks.
+
+The Bloomberg Terminal costs $24,000/year. My setup costs the price of a Claude API subscription and some free API keys. The democratization of financial intelligence is happening right now, and it's being built on open protocols.
+
+---
+
+**Links:**
+- [OpenBB Platform](https://github.com/OpenBB-finance/OpenBB)
+- [OpenBB MCP Server](https://pypi.org/project/openbb-mcp-server/)
+- [Model Context Protocol](https://modelcontextprotocol.io/)
+- [Clawdbot](https://github.com/clawdbot/clawdbot)
+- [Anthropic Tool Search Tool](https://www.anthropic.com/engineering/advanced-tool-use)
+- [My OpenBB Contributions](/blog/OpenBBContributions)
