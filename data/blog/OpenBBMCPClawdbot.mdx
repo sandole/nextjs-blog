@@ -24,10 +24,11 @@ Before MCP, connecting an AI model to external data meant building custom integr
 MCP standardizes this. A tool server exposes capabilities in a uniform format. Any MCP-compatible client can discover and call those tools. It's USB for AI tools — plug in a server, and the model knows how to use it.
 
 ```
-┌──────────┐     MCP      ┌──────────────┐     APIs      ┌──────────┐
-│  Claude   │◄────────────►│  OpenBB MCP  │◄─────────────►│ FMP/FRED │
-│ (Clawdbot)│  Tool calls  │   Server     │  Data queries │ OECD/etc │
-└──────────┘              └──────────────┘               └──────────┘
+Claude (Clawdbot)  <-- MCP Tool Calls -->  OpenBB MCP Server  <-- APIs -->  FMP / FRED / OECD
+      |                                          |                                |
+  User asks a                             113 tools exposed                 Real-time financial
+  question on                             via MCP protocol                  data providers
+  Telegram                                                                  (free tiers available)
 ```
 
 OpenBB's MCP server exposes 113 financial tools across three categories:
