@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Head from 'next/head'
 
-const POLYMARKET_API = 'https://gamma-api.polymarket.com'
+const POLYMARKET_API = '/api/polymarket'
 
 const WATCHLIST_MARKETS = [
   { query: 'fed chair', label: '🏦 Fed Chair' },
@@ -81,15 +81,9 @@ export default function MiniApp() {
     for (const item of WATCHLIST_MARKETS) {
       try {
         const res = await fetch(
-          `${POLYMARKET_API}/markets?limit=20&active=true&closed=false`
+          `${POLYMARKET_API}?q=${encodeURIComponent(item.query)}`
         )
-        const data = await res.json()
-        const keywords = item.query.toLowerCase().split(' ')
-        const filtered = data.filter((m) => {
-          const q = (m.question || '').toLowerCase()
-          const d = (m.description || '').toLowerCase()
-          return keywords.some((k) => q.includes(k) || d.includes(k))
-        })
+        const filtered = await res.json()
         results[item.label] = filtered
       } catch (e) {
         results[item.label] = []
