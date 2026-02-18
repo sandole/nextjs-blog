@@ -5,6 +5,7 @@ occupation: Tech Lead, Software Engineer III
 company: BCI (British Columbia Investment Management Corporation)
 email: sandole97@gmail.com
 github: https://github.com/sandole
+linkedin: https://www.linkedin.com/in/minjunseong
 slogan: Thinker's tinkers
 ---
 

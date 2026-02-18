@@ -24,7 +24,7 @@ export default async function handler(req, res) {
               const parsed = typeof prices === 'string' ? JSON.parse(prices) : prices
               const yesPct = parseFloat(parsed[0]) * 100
               outcomes.push({ question: q, yes: yesPct })
-            } catch (e) { // ignore parse errors }
+            } catch (e) { /* ignore parse errors */ }
           }
         }
 
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
               try {
                 const parsed = typeof prices === 'string' ? JSON.parse(prices) : prices
                 outcomes.push({ question: m.question, yes: parseFloat(parsed[0]) * 100 })
-              } catch (e) { // ignore parse errors }
+              } catch (e) { /* ignore parse errors */ }
             }
           }
 

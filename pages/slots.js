@@ -142,6 +142,7 @@ export default function Slots() {
       <Head>
         <title>Jarvis Slots</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="https://telegram.org/js/telegram-web-app.js" />
       </Head>
 
