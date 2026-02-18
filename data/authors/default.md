@@ -39,7 +39,7 @@ This blog showcases my professional expertise across several key areas:
 
 2. Technical Writing: Through detailed articles and documentation, I demonstrate my ability to communicate complex technical concepts clearly and effectively. All content is written in Markdown, reflecting industry best practices for technical documentation.
 
-3. Web Development: This blog itself is built using modern technologies like NextJS, React, and TailwindCSS, showcasing my full-stack development capabilities. The source code is available on my GitHub, demonstrating my coding practices and commitment to open source.
+3. Web Development: This blog itself is built using NextJS and TailwindCSS, showcasing my full-stack development capabilities. The source code is available on my GitHub, demonstrating my coding practices and commitment to open source.
 
 4. Enterprise Java Development: Insights about building microservices with Spring Boot, including security, API development, and performance optimization.
 
