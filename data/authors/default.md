@@ -13,7 +13,7 @@ slogan: Thinker's tinkers
 
 ## Who Am I?
 
-I'm John Seong, a Tech Lead (Software Engineer III) at BCI (British Columbia Investment Management Corporation) where I lead AI application development for private markets. With a Master's degree in AI from the University of Ottawa and extensive experience building AI applications, I bring deep technical expertise in artificial intelligence to the financial sector. My background also spans cloud engineering, DevOps, and backend development, and I've dedicated my career to building robust, scalable systems that make a difference.
+I'm John Seong, a Tech Lead (Software Engineer III) at BCI (British Columbia Investment Management Corporation) where I lead AI application development for private markets. I hold a Master's in Artificial Intelligence from the University of Ottawa (MIAI) and an MBA in progress at UBC Sauder. My background spans cloud engineering, DevOps, and backend development, and I've dedicated my career to building robust, scalable systems that make a difference.
 
 My journey began in 2015 at the Royal Military College of Canada, where I pursued computer engineering through a unique military-subsidized program. This opportunity allowed me to combine academic studies with hands-on IT support for military operations, laying a strong foundation for my technical career.
 
@@ -23,7 +23,7 @@ As a Tech Lead at BCI, I lead the development of AI applications for private mar
 
 Prior to BCI, I served as a Senior Software Developer at WestJet, where I led the Integration and API Management team. During my time there, I implemented an API management layer that fronted internal APIs hosted on Kubernetes, driving architectural decisions that shaped the airline's digital transformation journey.
 
-Beyond my professional work, I'm passionate about continuous learning and community involvement. I actively contribute to the Green Software Foundation, focusing on optimized infrastructure provisioning. I maintain an active lifestyle through competitive basketball and ground myself through participation in local Christian services.
+Beyond my professional work, I'm an active open source contributor. I contribute to [OpenBB](https://github.com/OpenBB-finance/OpenBB), the open-source financial data platform, where I've worked on standardizing exchange taxonomy data (ISO 10383), country membership group mappings, and CI infrastructure improvements. I also maintain an active lifestyle through competitive basketball.
 
 ## My Story
 
@@ -41,14 +41,8 @@ This blog showcases my professional expertise across several key areas:
 
 3. Web Development: This blog itself is built using modern technologies like NextJS, React, and TailwindCSS, showcasing my full-stack development capabilities. The source code is available on my GitHub, demonstrating my coding practices and commitment to open source.
 
-4. Enterprise Java Development: I share insights about building robust enterprise applications using Spring Boot and its ecosystem. I cover topics including:
-   - Building efficient microservices with Spring Boot
-   - Data persistence strategies using Spring Data JPA
-   - Security implementation with Spring Security
-   - API development using Spring MVC and Spring WebFlux
-   - Performance optimization using Spring Cache
-   - Development efficiency with Lombok
-   - Application monitoring with Spring Actuator
-   - Data validation using Spring Validator
+4. Enterprise Java Development: Insights about building microservices with Spring Boot, including security, API development, and performance optimization.
 
-Feel free to explore my posts about cloud solutions, DevSecOps, and full-stack development. I hope you'll find valuable insights that can help in your own technical journey!
+5. AI & Financial Technology: RAG systems, AI agents, MCP integrations, and open source fintech tooling.
+
+Feel free to explore my posts and projects. I hope you'll find valuable insights that can help in your own technical journey!
