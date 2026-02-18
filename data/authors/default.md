@@ -13,7 +13,7 @@ slogan: Thinker's tinkers
 
 ## Who Am I?
 
-I'm John Seong, a Tech Lead (Software Engineer III) at BCI (British Columbia Investment Management Corporation) where I lead AI application development for private markets. I hold a Master's in Artificial Intelligence from the University of Ottawa (MIAI) and an MBA in progress at UBC Sauder. My background spans cloud engineering, DevOps, and backend development, and I've dedicated my career to building robust, scalable systems that make a difference.
+I'm John Seong, a Tech Lead (Software Engineer III) at BCI (British Columbia Investment Management Corporation) where I lead AI application development for private markets. I hold a Master's in Artificial Intelligence from the University of Ottawa (MIAI). My background spans cloud engineering, DevOps, and backend development, and I've dedicated my career to building robust, scalable systems that make a difference.
 
 My journey began in 2015 at the Royal Military College of Canada, where I pursued computer engineering through a unique military-subsidized program. This opportunity allowed me to combine academic studies with hands-on IT support for military operations, laying a strong foundation for my technical career.
 

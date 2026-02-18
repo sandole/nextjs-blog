@@ -2,7 +2,7 @@ const siteMetadata = {
   title: 'John Seong',
   author: 'John Seong',
   headerTitle: 'John Seong',
-  description: 'Tech Lead | AI Systems | Cloud Infrastructure',
+  description: 'Tech Lead | AI Systems',
   language: 'en-us',
   siteUrl: 'https://johnseong.ca',
   siteRepo: 'https://github.com/sandole/nextjs-blog',
