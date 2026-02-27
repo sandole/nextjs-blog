@@ -1,0 +1,115 @@
+---
+title: 'The Shift to Agentic Coding and the Future of Software Engineering'
+date: '2026-02-27'
+tags: ['development', 'ai', 'agents', 'devtools']
+summary: How AI agents are reshaping software development, why git history alone isn't enough anymore, and what tools like Entire mean for engineering teams
+---
+
+Six months ago, I used Claude Code to scaffold a project in 20 minutes that would have taken me a day. Last week, I had an agent build, test, and publish an Azure DevOps extension end-to-end while I reviewed the output. The shift happened faster than I expected.
+
+We're not talking about autocomplete anymore. We're talking about agents that read your codebase, make architectural decisions, write tests, and ship code. The question isn't whether agentic coding will change software engineering - it already has. The question is what breaks when it does.
+
+## The Context Problem
+
+Git was designed for humans. Every commit tells a story: what changed, why, and who did it. Code review works because reviewers can reconstruct the author's reasoning from the diff, the commit message, and maybe a PR description.
+
+With agents, that breaks down. An agent can generate hundreds of lines in a single session. The "why" lives in a context window that evaporates the moment the session ends. The prompts, the iteration, the dead ends, the constraints you gave the agent - all gone.
+
+This matters more than it sounds. When you're debugging code an agent wrote three weeks ago, you don't just need to know *what* it did. You need to know what you *asked* it to do, what constraints you gave it, and what alternatives it considered.
+
+## Enter Entire
+
+[Entire](https://entire.io) is a new developer tool that solves this by introducing **checkpoints** - a primitive that captures AI agent sessions as first-class, versioned data in Git.
+
+Here's what it actually does:
+
+1. **Hooks into your Git workflow.** Run `entire enable` in any repo. It installs Git hooks that run transparently.
+2. **Captures full agent sessions.** Every prompt, response, file modification, tool call, and token count is recorded.
+3. **Links sessions to commits.** When you commit, a checkpoint ID is appended as a Git trailer. The full session context is stored on a separate branch (`entire/checkpoints/v1`) and pushed alongside your code.
+4. **Nested session support.** If your agent spawns sub-agents (like Claude Code's Task tool), those are captured as nested sessions within the parent.
+5. **Line attribution.** It calculates how many lines were written by humans vs. agents in each session.
+
+The key design choice: **no extra commits on your branch.** Checkpoints live on a shadow branch, so your Git history stays clean. Your PR diffs don't get polluted with metadata commits.
+
+### What a Checkpoint Contains
+
+- Full conversation transcript (prompts + responses)
+- All file modifications made during the session
+- Token usage (input/output, cache hits, API calls)
+- Timestamps, agent type, and configuration
+- A 12-character hex ID for referencing
+
+### Setup
+
+Two commands:
+
+```bash
+brew install entireio/tap/entire
+cd your-project && entire enable
+```
+
+That's it. Use your agent as normal. Commits automatically get checkpoints.
+
+## Why This Matters for Teams
+
+The solo developer benefit is obvious - you can rewind to any point in an agent session and understand what happened. But the team implications are bigger.
+
+**Code review changes fundamentally.** When reviewing agent-generated code, you can now click through to the full session that produced it. You see what the developer asked for, what constraints they set, how the agent iterated. The review shifts from "does this code look right?" to "was this the right prompt and were the constraints appropriate?"
+
+**Onboarding gets easier.** New team members can browse checkpoint history to understand not just what the codebase does, but how it was built and what decisions were made along the way.
+
+**Debugging agent code.** When something breaks in agent-generated code, you can trace back to the exact session, see what context the agent had, and understand why it made a particular choice.
+
+## The Bigger Picture: What Agentic Coding Changes
+
+Entire is solving an immediate, practical problem. But zoom out and the shift to agentic coding has deeper implications for the profession.
+
+### The Role of the Engineer is Shifting
+
+The traditional model: engineer reads requirements, designs solution, writes code, tests, ships.
+
+The emerging model: engineer defines constraints, prompts agents, reviews output, orchestrates multiple agents, and focuses on architecture and system design.
+
+This isn't "engineers are obsolete." It's closer to how a senior engineer already works - less time writing boilerplate, more time on design, integration, and making sure the system holds together. Agents amplify that shift.
+
+### Prompt Engineering is System Design
+
+The prompts you give an agent are increasingly important artifacts. They encode architectural decisions, constraints, coding standards, and domain knowledge. A good prompt is closer to a design document than a search query.
+
+Tools that capture these prompts alongside the code they produce (like Entire does) are preserving what will become the most important part of the development record.
+
+### The 10x Engineer Becomes the 100x Engineer
+
+If you're already a strong engineer who understands architecture, security, and system design, agents are a force multiplier. You can ship more, faster, with higher quality - because you know what to ask for and how to validate the output.
+
+If you don't have those fundamentals, agents are a liability. They'll generate plausible-looking code that's subtly wrong, and you won't catch it.
+
+The gap between strong and weak engineers is about to get much wider.
+
+## My Setup
+
+I've been running this stack for the past few months:
+
+- **Claude Code** for complex coding tasks (architecture, refactoring, full features)
+- **OpenClaw** for orchestration (my AI assistant that delegates to sub-agents)
+- **Entire** for session capture and checkpoint history
+- **GitHub** for the standard Git workflow
+
+The combination means I can spin up an agent, give it a task, review the output, and have the full context preserved automatically. When I come back to code weeks later, I can trace exactly how and why it was written.
+
+## What's Next
+
+The tooling around agentic coding is still early. Entire is solving the context preservation problem. Other tools are emerging for agent evaluation, prompt testing, and multi-agent orchestration.
+
+The engineers who thrive in this era will be the ones who:
+
+1. **Master the fundamentals** - architecture, security, distributed systems. Agents amplify your knowledge.
+2. **Learn to prompt effectively** - treat prompts as engineering artifacts, not throwaway text.
+3. **Build review muscle for agent output** - different from reviewing human code. You need to validate assumptions, not just logic.
+4. **Adopt tooling that preserves context** - your future self (and your team) will thank you.
+
+The shift is happening whether we're ready or not. The question is whether you're building the habits and tooling to make it work for you.
+
+---
+
+*I set up Entire on this blog's repo. You can see the checkpoint history at [entire.io/gh/sandole/nextjs-blog](https://entire.io/gh/sandole/nextjs-blog/checkpoints/main).*
