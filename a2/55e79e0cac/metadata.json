@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.4.8",
+  "checkpoint_id": "a255e79e0cac",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "data/blog/AgenticCoding.mdx"
+  ],
+  "sessions": [
+    {
+      "metadata": "/a2/55e79e0cac/0/metadata.json",
+      "transcript": "/a2/55e79e0cac/0/full.jsonl",
+      "context": "/a2/55e79e0cac/0/context.md",
+      "content_hash": "/a2/55e79e0cac/0/content_hash.txt",
+      "prompt": "/a2/55e79e0cac/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 5,
+    "cache_creation_tokens": 12352,
+    "cache_read_tokens": 62360,
+    "output_tokens": 28,
+    "api_call_count": 3
+  }
+}
