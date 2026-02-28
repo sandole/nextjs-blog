@@ -1,0 +1,30 @@
+{
+  "cli_version": "0.4.8",
+  "checkpoint_id": "f6ff3af0ea8d",
+  "session_id": "430462da-f218-4c66-b1bd-64d0ab879f10",
+  "strategy": "manual-commit",
+  "created_at": "2026-02-28T01:50:43.513763Z",
+  "branch": "main",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "data/blog/ClaudeCodeReviewADO.mdx"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "63e5405873e2",
+  "token_usage": {
+    "input_tokens": 5,
+    "cache_creation_tokens": 12416,
+    "cache_read_tokens": 62734,
+    "output_tokens": 46,
+    "api_call_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-28T01:50:43.48178Z",
+    "agent_lines": 116,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 116,
+    "agent_percentage": 100
+  }
+}

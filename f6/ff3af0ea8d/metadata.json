@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.4.8",
+  "checkpoint_id": "f6ff3af0ea8d",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "data/blog/ClaudeCodeReviewADO.mdx"
+  ],
+  "sessions": [
+    {
+      "metadata": "/f6/ff3af0ea8d/0/metadata.json",
+      "transcript": "/f6/ff3af0ea8d/0/full.jsonl",
+      "context": "/f6/ff3af0ea8d/0/context.md",
+      "content_hash": "/f6/ff3af0ea8d/0/content_hash.txt",
+      "prompt": "/f6/ff3af0ea8d/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 5,
+    "cache_creation_tokens": 12416,
+    "cache_read_tokens": 62734,
+    "output_tokens": 46,
+    "api_call_count": 3
+  }
+}
