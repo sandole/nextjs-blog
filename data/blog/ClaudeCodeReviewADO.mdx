@@ -1,0 +1,116 @@
+---
+title: 'Building an AI Code Review Extension for Azure DevOps'
+date: '2026-02-27'
+tags: ['development', 'ai', 'azure-devops', 'security', 'devtools']
+summary: Why enterprise teams on Azure DevOps are underserved by AI code review tools, and how I built a Claude-powered extension to fill the gap
+---
+
+If you're on GitHub, AI code review is a solved problem. CodeRabbit, Codacy, Qodo -- dozens of tools will review your PRs automatically. Install a GitHub App, authorize it, and you're done.
+
+If you're on Azure DevOps, you're mostly on your own.
+
+## The ADO Gap
+
+Azure DevOps is where enterprises live. Banks, government agencies, defense contractors, large retailers -- organizations that chose Microsoft's ecosystem for compliance, Entra ID integration, and the Azure cloud. Microsoft reports over 100,000 organizations on Azure DevOps.
+
+But the AI code review ecosystem has largely ignored them. Most tools are GitHub-first, with ADO support that's either nonexistent, recently bolted on, or requires significant organizational overhead to set up.
+
+Take CodeRabbit, arguably the best AI code review tool available. Their Azure DevOps integration requires:
+
+- Entra ID enabled for the organization
+- Organizational email addresses (no personal accounts)
+- SaaS onboarding through their platform
+- Your code diffs sent to their servers for analysis
+
+For a startup or small team, that's fine. For an enterprise with data sovereignty requirements, security policies, and change management processes? That's a procurement cycle, a security review, and three months of meetings.
+
+## A Different Approach
+
+I built [Claude Code Review](https://marketplace.visualstudio.com/items?itemName=JohnSeong.claude-code-review) as a native Azure DevOps pipeline task. The design philosophy is simple: **your code stays in your pipeline.**
+
+Here's the entire setup:
+
+```yaml
+trigger: none
+
+pr:
+  branches:
+    include:
+      - main
+      - develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: ClaudeCodeReview@1
+    inputs:
+      anthropicApiKey: $(ANTHROPIC_API_KEY)
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+```
+
+That's it. No GitHub App. No SaaS platform. No Entra ID prerequisites. Store your Anthropic API key as a pipeline secret, add the task, and every PR gets reviewed.
+
+## How It Works
+
+The task runs inside your Azure DevOps pipeline agent -- the same place your builds and tests run. Here's the flow:
+
+1. **Detects PR context.** The task checks if it's running in a pull request build. If not (e.g., a CI push), it skips gracefully.
+2. **Fetches the diff.** Uses the Azure DevOps REST API with the build service token to get the PR's changed files.
+3. **Sends to Claude.** The diff goes to Anthropic's API with a specialized code review prompt.
+4. **Confidence scoring.** Claude scores every finding from 0-100. Only findings above your threshold (default: 80) get posted.
+5. **Posts as PR comment.** Results appear as a comment thread on the PR, formatted with severity, file, and line numbers.
+
+### Why Confidence Scoring Matters
+
+The biggest problem with AI code review isn't finding issues -- it's finding too many. Every developer has seen the AI reviewer that flags 47 "issues" on a 10-line change, most of which are style preferences or false positives.
+
+Confidence scoring flips this. Claude evaluates how certain it is about each finding. A SQL injection via string concatenation? That's a 95. A variable name that could be slightly more descriptive? That's a 30 and gets filtered out.
+
+The result is **zero noise**. When the bot comments, it's worth reading.
+
+## What It Catches
+
+In testing against intentionally buggy code, the extension found:
+
+- **Security issues** -- SQL injection, hardcoded secrets, missing auth checks, data exposure
+- **Bugs** -- null pointer dereferences, off-by-one errors, race conditions, resource leaks
+- **Logic errors** -- incorrect conditions, wrong variable usage, missing edge cases
+- **Missing error handling** -- unhandled exceptions, silent failures, missing validation
+
+All scored 85-98 confidence. No false positives.
+
+## The Enterprise Angle
+
+This approach has specific advantages for enterprise teams:
+
+**Data stays in your environment.** The only external call is to Anthropic's API with the diff. Your code never touches a third-party SaaS platform. For teams with data classification policies, this is the difference between "approved" and "six months of security review."
+
+**No organizational setup.** A team lead can install this in 10 minutes without involving IT, security, or procurement. It's a pipeline task, not a platform integration.
+
+**Configurable model.** Default is Claude Sonnet, but you can point it at any Claude model. When Opus makes sense for critical repos, switch with one line. When cost matters, use Haiku.
+
+**Works with existing permissions.** Uses the standard `System.AccessToken` that every Azure DevOps pipeline already has. No new service connections, no OAuth flows, no PAT management.
+
+## The Agentic Code Review Future
+
+As more code gets written by AI agents, the review bottleneck shifts. Human reviewers can't keep up with agent-generated PRs that touch 50 files across 3 services. But an AI reviewer running in CI can review every PR in seconds, flagging only the high-confidence issues that need human attention.
+
+The pattern I see emerging:
+
+1. **Agent writes code** (Claude Code, Copilot, Cursor)
+2. **AI reviews code** (catches bugs, security issues, logic errors)
+3. **Human reviews the review** (validates findings, approves architecture)
+
+Layer 2 is where this extension lives. It's the automated gate that ensures agent-generated code meets a baseline quality bar before a human ever looks at it.
+
+## Try It
+
+Install from the [Azure DevOps Marketplace](https://marketplace.visualstudio.com/items?itemName=JohnSeong.claude-code-review). MIT licensed, open source, no strings.
+
+If you're on an enterprise ADO instance and want AI code review without the procurement headache, this is the fastest path I've found.
+
+---
+
+*Built this extension with Claude Code and published it via the Azure DevOps CLI. The whole thing -- task logic, packaging, testing, publishing -- took about 30 minutes with an AI agent doing the heavy lifting. Which is kind of the point.*
