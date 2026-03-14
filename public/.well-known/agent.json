@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "name": "John Seong",
+  "description": "Technical blog covering AI systems, cloud architecture, DevOps, and security. Written by a Tech Lead building RAG and MCP systems for institutional investment.",
+  "url": "https://johnseong.ca",
+  "author": {
+    "name": "John Seong",
+    "url": "https://johnseong.ca/about",
+    "github": "https://github.com/sandole",
+    "linkedin": "https://linkedin.com/in/minjunseong"
+  },
+  "endpoints": [
+    {
+      "path": "/api/digest",
+      "method": "GET",
+      "description": "Token-optimized site digest. Returns all blog posts with metadata, summaries, and direct links.",
+      "accepts": ["application/json", "text/markdown", "application/problem+json"],
+      "parameters": {
+        "tag": {
+          "type": "string",
+          "description": "Filter posts by tag (e.g. ai, devops, kubernetes)"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of posts to return"
+        },
+        "since": {
+          "type": "string",
+          "format": "date",
+          "description": "Only return posts published on or after this date (YYYY-MM-DD)"
+        }
+      },
+      "rate_limit": {
+        "requests_per_minute": 30,
+        "retry_after": 60
+      }
+    }
+  ],
+  "content": {
+    "type": "technical_blog",
+    "topics": [
+      "ai",
+      "agents",
+      "azure",
+      "cloud",
+      "devops",
+      "kubernetes",
+      "nextjs",
+      "python",
+      "security"
+    ],
+    "format": "mdx",
+    "license": "All rights reserved"
+  },
+  "errors": {
+    "format": "RFC 9457",
+    "content_negotiation": true,
+    "fields": ["error_code", "error_name", "error_category", "retryable", "retry_after", "owner_action_required"]
+  }
+}
