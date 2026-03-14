@@ -149,16 +149,8 @@ The Cloudflare blog put it well: "Error pages stop being decoration and become e
 
 RFC 9457 gives us a standard shape for errors. YAML frontmatter in Markdown gives us a standard shape for content. Content negotiation via `Accept` headers gives us the routing layer. The pieces exist. We just need to assemble them.
 
-## What's Next
-
-The discovery file is already live at [`/.well-known/agent.json`](https://johnseong.ca/.well-known/agent.json). Next steps:
-
-1. **Per-post Markdown endpoint** (`/api/digest/[slug]`) that returns full post content in clean Markdown, skipping all React components and layout markup
-2. **Rate limiting with RFC 9457 errors** so agents get structured `retry_after` guidance instead of opaque 429 HTML pages
-3. **Structured error responses site-wide** — not just the digest endpoint, but every route
-
 The agentic web needs sites that can talk to machines as fluently as they talk to humans. This is a start.
 
 ---
 
-*The endpoint is live at [johnseong.ca/api/digest](https://johnseong.ca/api/digest). Try it with `curl -H "Accept: text/markdown" https://johnseong.ca/api/digest`.*
+*The endpoint is live at [johnseong.ca/api/digest](https://johnseong.ca/api/digest). Agent discovery at [/.well-known/agent.json](https://johnseong.ca/.well-known/agent.json).*
