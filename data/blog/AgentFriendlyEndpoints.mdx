@@ -128,36 +128,13 @@ GET /api/digest?tag=devops&since=2025-06-01&limit=10
 
 This lets an agent ask precise questions without downloading the entire catalog.
 
-## Implementation
+## How It Works
 
-The whole thing is a single Next.js API route. Here's the core pattern:
+Content negotiation via the `Accept` header. Agents that send `Accept: text/markdown` get Markdown with YAML frontmatter. `Accept: application/json` gets RFC 9457-shaped JSON. Browsers never see it — they keep getting the normal HTML site.
 
-```javascript
-function negotiateFormat(acceptHeader) {
-  if (!acceptHeader) return 'json'
-  const accept = acceptHeader.toLowerCase()
-  if (accept.includes('text/markdown')) return 'markdown'
-  if (accept.includes('application/problem+json')) return 'problem+json'
-  if (accept.includes('application/json')) return 'json'
-  return 'json'
-}
+The Markdown format uses YAML frontmatter for machine-parseable keys (`post_count`, `topics`, `content_type`) and Markdown body for LLM-readable content. The JSON format follows RFC 9457's `type`/`title`/`status`/`detail` base members with extension fields for the blog-specific data.
 
-export default function handler(req, res) {
-  const posts = getAllPosts()           // Read frontmatter from MDX files
-  const format = negotiateFormat(req.headers.accept)
-
-  if (format === 'markdown') {
-    res.setHeader('Content-Type', 'text/markdown; charset=utf-8')
-    return res.status(200).send(buildMarkdownDigest(posts))
-  }
-
-  return res.status(200).json(buildJsonDigest(posts))
-}
-```
-
-The `buildMarkdownDigest` function generates YAML frontmatter (machine-parseable metadata) plus Markdown body (LLM-readable content). The `buildJsonDigest` follows the RFC 9457 `type`/`title`/`status`/`detail` structure with extension members for the blog-specific fields.
-
-Content negotiation via the `Accept` header means browsers still get the normal HTML site. Only clients that explicitly ask for Markdown or JSON get the structured response. Zero impact on existing users.
+Agent discovery happens at `/.well-known/agent.json` — a metadata file describing available endpoints, accepted formats, and query parameters. An agent hits the discovery URL, reads the contract, then calls `/api/digest` with the right headers. Two requests, full site knowledge, under 3KB of tokens.
 
 ## Why This Matters
 
@@ -174,11 +151,11 @@ RFC 9457 gives us a standard shape for errors. YAML frontmatter in Markdown give
 
 ## What's Next
 
-A few extensions I'm considering:
+The discovery file is already live at [`/.well-known/agent.json`](https://johnseong.ca/.well-known/agent.json). Next steps:
 
-1. **Per-post Markdown endpoint** (`/api/digest/[slug]`) that returns the full post content in clean Markdown, skipping all React components and layout markup
-2. **`/.well-known/agent.json`** metadata file (similar to A2A Agent Cards) describing what endpoints are available for agents
-3. **Rate limiting with RFC 9457 errors** so agents get structured `retry_after` guidance instead of opaque 429 HTML pages
+1. **Per-post Markdown endpoint** (`/api/digest/[slug]`) that returns full post content in clean Markdown, skipping all React components and layout markup
+2. **Rate limiting with RFC 9457 errors** so agents get structured `retry_after` guidance instead of opaque 429 HTML pages
+3. **Structured error responses site-wide** — not just the digest endpoint, but every route
 
 The agentic web needs sites that can talk to machines as fluently as they talk to humans. This is a start.
 
