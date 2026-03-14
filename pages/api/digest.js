@@ -151,8 +151,57 @@ Change your request method to GET. Do not retry as-is.
 
   // Optional query filters
   const tagFilter = req.query.tag
-  const limit = parseInt(req.query.limit) || 0
+  const limitRaw = req.query.limit
   const since = req.query.since // ISO date string
+
+  // Validate limit
+  if (limitRaw !== undefined) {
+    const limit = parseInt(limitRaw)
+    if (isNaN(limit) || limit < 0) {
+      const errPayload = {
+        type: `${baseUrl}/api/digest`,
+        title: 'Invalid Parameter',
+        status: 400,
+        detail: 'limit must be a non-negative integer.',
+        error_code: 1400,
+        error_name: 'invalid_parameter',
+        error_category: 'unsupported',
+        retryable: false,
+        owner_action_required: false,
+      }
+      if (format === 'markdown') {
+        res.setHeader('Content-Type', 'text/markdown; charset=utf-8')
+        return res.status(400).send(
+          `---\nerror_code: 1400\nerror_name: invalid_parameter\nerror_category: unsupported\nstatus: 400\nretryable: false\nowner_action_required: false\n---\n\n# Error 1400: Invalid Parameter\n\n## What Happened\nThe limit parameter must be a non-negative integer.\n\n## What You Should Do\nFix the limit value and retry.\n`
+        )
+      }
+      return res.status(400).json(errPayload)
+    }
+  }
+
+  // Validate since date
+  if (since !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(since)) {
+    const errPayload = {
+      type: `${baseUrl}/api/digest`,
+      title: 'Invalid Date Format',
+      status: 400,
+      detail: 'since must be in YYYY-MM-DD format.',
+      error_code: 1400,
+      error_name: 'invalid_date',
+      error_category: 'unsupported',
+      retryable: false,
+      owner_action_required: false,
+    }
+    if (format === 'markdown') {
+      res.setHeader('Content-Type', 'text/markdown; charset=utf-8')
+      return res.status(400).send(
+        `---\nerror_code: 1400\nerror_name: invalid_date\nerror_category: unsupported\nstatus: 400\nretryable: false\nowner_action_required: false\n---\n\n# Error 1400: Invalid Date Format\n\n## What Happened\nThe since parameter must be in YYYY-MM-DD format.\n\n## What You Should Do\nFix the date format and retry.\n`
+      )
+    }
+    return res.status(400).json(errPayload)
+  }
+
+  const limit = limitRaw !== undefined ? parseInt(limitRaw) : 0
 
   let filtered = posts
   if (tagFilter) {
@@ -168,14 +217,13 @@ Change your request method to GET. Do not retry as-is.
   res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400')
 
   if (format === 'markdown') {
-    res.setHeader('Content-Type', 'text/markdown; charset=utf-8')
-    return res.status(200).send(buildMarkdownDigest(filtered, baseUrl))
+    const body = buildMarkdownDigest(filtered, baseUrl)
+    res.writeHead(200, { 'Content-Type': 'text/markdown; charset=utf-8' })
+    return res.end(body)
   }
 
   if (format === 'problem+json') {
     res.setHeader('Content-Type', 'application/problem+json; charset=utf-8')
-  } else {
-    res.setHeader('Content-Type', 'application/json; charset=utf-8')
   }
 
   return res.status(200).json(buildJsonDigest(filtered, baseUrl))
