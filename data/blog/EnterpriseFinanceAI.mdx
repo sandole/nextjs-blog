@@ -1,0 +1,130 @@
+---
+title: 'Why Enterprise Finance AI Strategy Is Failing (And What Actually Works)'
+date: '2026-03-14'
+tags: ['ai', 'fintech', 'development', 'agents']
+summary: Most financial institutions are getting AI adoption wrong. The problem isn't the technology — it's the organizational architecture around it. Lessons from building AI systems at a large institutional investor.
+---
+
+Every major financial institution has an AI strategy now. Most of them are failing. Not because the technology doesn't work — it does. They're failing because the organizational structures built for SOA-era governance can't handle a paradigm that changes every quarter.
+
+I build AI systems at a large institutional investor. RAG pipelines, agentic workflows, LLM-powered tooling for investment teams managing hundreds of billions in assets. Here's what I've learned about what actually works — and what's actively slowing the industry down.
+
+## The Governance Trap
+
+Financial institutions love governance. For good reason — when you're managing pension money or processing billions in transactions, you need controls. Nobody's arguing against that.
+
+The problem is that most firms applied their existing governance frameworks to AI without adapting them. Enterprise Architecture teams trained on TOGAF run AI initiatives through the same Architecture Development Method cycle they'd use for a database migration. Security teams evaluate RAG systems using checklists designed for CRUD applications. Change Advisory Boards that meet biweekly review deployments for systems that need to iterate daily.
+
+The result: a 6-month approval cycle for something that took 2 weeks to build and will be architecturally obsolete by the time it ships.
+
+This isn't hypothetical. I've watched AI projects die in committee while the underlying technology moved two generations forward. The team that finally gets approval to deploy LangChain 0.1 discovers the ecosystem has moved to agent frameworks entirely.
+
+## Five Teams, One Problem
+
+At most large financial institutions, AI responsibility is fragmented across multiple teams:
+
+- An **AI Center of Excellence** that sets strategy but doesn't build
+- A **Data Science** team that builds models but doesn't own production
+- A **Platform/MLOps** team that provides infrastructure but doesn't understand the use cases
+- An **Innovation Lab** that builds demos that never make it to production
+- And somewhere, one or two **embedded engineering teams** that actually deliver end-to-end
+
+The teams with the authority to set direction don't have the technical depth to make good decisions. The teams with the technical depth don't have the authority to ship without approval from three other groups.
+
+I've seen this pattern at multiple institutions. The team that delivers real value is almost always the smallest one — the embedded engineers who sit close to the business, understand the domain, and can go from prototype to production without a handoff.
+
+## What Actually Works
+
+### 1. End-to-End Ownership
+
+The single biggest predictor of AI project success in finance is whether one team owns the full lifecycle: problem identification, data pipeline, model/prompt engineering, production deployment, and monitoring.
+
+Every handoff between teams is a failure point. Quant builds model, throws it over the wall to engineering, engineering deploys it, operations monitors it — and nobody owns the outcome. When something breaks, it's a blame game.
+
+The alternative: small, senior teams (3-5 engineers) that own a domain end-to-end. They talk to the portfolio managers. They build the pipeline. They deploy it. They wake up when it breaks. This is how the best hedge funds have operated for years. Large institutions are slowly learning the same lesson.
+
+### 2. Lightweight Architecture Reviews, Not TOGAF Cycles
+
+AI systems don't need 40-page architecture documents reviewed by a board. They need:
+
+- **Threat model**: What data does this touch? What's the blast radius if the model hallucinates? What's the cost of a wrong answer?
+- **Data lineage**: Where does the training/retrieval data come from? Is it licensed? Is it PII-safe?
+- **Cost model**: What's the token/compute cost at scale? Is there a runaway risk?
+- **Rollback plan**: How do we revert if this goes wrong?
+
+That's it. Four questions. If the team can answer them convincingly, ship it. Review the results in production, not the design in committee.
+
+Architecture Decision Records (ADRs) — short, timestamped documents that capture what was decided and why — are infinitely more useful than TOGAF deliverables. They're searchable, version-controlled, and written by the people who actually made the decisions.
+
+### 3. Security as a Collaboration, Not a Gate
+
+AI systems in finance need serious security. Data exfiltration through prompt injection, unauthorized access to sensitive financial data through RAG retrieval, model outputs that leak proprietary investment strategies — these are real risks.
+
+But the security review should be a conversation between the security team and the engineering team, not a one-way checkbox exercise. The most productive security reviews I've been part of looked like this:
+
+- Engineer presents architecture with defense-in-depth already built in: private networking, zero trust, proper auth/authz, data classification
+- Security team focuses on the delta: what's specific to AI that their existing controls don't cover?
+- They collaboratively identify 2-3 genuine risks and agree on mitigations
+- Total time: 90 minutes, not 6 weeks
+
+This requires security teams that understand AI-specific attack vectors: prompt injection, retrieval poisoning, training data extraction, jailbreaking. Most enterprise security teams don't have this expertise yet. The fix isn't to slow everything down — it's to upskill the security team or embed a security-minded engineer in the AI team.
+
+### 4. Platform Teams, Not Review Boards
+
+Instead of an Architecture Review Board that approves or rejects designs, build a platform team that provides guardrails by default:
+
+- Pre-approved LLM endpoints with rate limiting and content filtering
+- Managed vector databases with access controls and audit logging
+- Standardized deployment pipelines with security scanning built in
+- Cost monitoring and alerting at the project level
+
+If the platform provides secure defaults, teams can build on top of it without asking permission for every decision. The governance is baked into the infrastructure, not bolted on through process.
+
+### 5. Measure Outcomes, Not Activity
+
+Most enterprise AI metrics are vanity metrics: number of models deployed, number of use cases identified, percentage of employees "trained on AI." None of these measure value.
+
+What actually matters:
+
+- **Time saved**: How many hours per week does this save the investment team?
+- **Decision quality**: Are better decisions being made with AI-assisted analysis?
+- **Cycle time**: How long from "we have an idea" to "it's in production"?
+- **Adoption rate**: Are the target users actually using it, or did they go back to Excel?
+
+That last one is the killer. I've seen AI tools launched with executive fanfare that have single-digit daily active users three months later. The tool worked. The change management didn't.
+
+## The Agentic Shift Changes Everything
+
+Most enterprise AI strategies were written for the chatbot era — a user types a question, an LLM generates an answer. That's already outdated.
+
+Agentic AI changes the architecture fundamentally:
+
+- **Agents act autonomously.** They don't just answer questions — they execute multi-step workflows, call APIs, read and write data, and make decisions within defined guardrails.
+- **Agents need tool access.** MCP (Model Context Protocol) and similar standards are making it possible for agents to discover and use enterprise tools dynamically. An agent that can query your portfolio management system, pull market data, and generate an investment memo is fundamentally different from a chatbot.
+- **Agents blur the lines between systems.** When an agent can orchestrate across your CRM, your data warehouse, and your document management system, traditional enterprise architecture boundaries stop making sense.
+
+This is where most governance frameworks completely break down. An agent that calls 15 different APIs in a single user request doesn't fit neatly into any architecture diagram. It crosses every team boundary simultaneously.
+
+The institutions that figure out agentic governance first — lightweight, outcome-focused, platform-enabled — will have a massive advantage. The ones that try to review every agent workflow through a Change Advisory Board will watch their competitors lap them.
+
+## What I'd Tell a CIO
+
+If I had 10 minutes with the CIO of a large financial institution:
+
+1. **Your AI strategy is an org design problem, not a technology problem.** The models work. The cloud infrastructure exists. Your bottleneck is organizational.
+
+2. **Consolidate ownership.** Five overlapping AI teams with unclear mandates will produce politics, not products. Pick one team, give them end-to-end ownership of a high-value domain, and let them ship.
+
+3. **Fire your governance process, not your people.** Replace 6-month review cycles with lightweight, continuous security and architecture reviews. Trust your engineers — you hired them for a reason.
+
+4. **Invest in platforms, not process.** Every dollar spent on an AI governance document is a dollar not spent on secure, self-service AI infrastructure.
+
+5. **Measure what matters.** If your AI team can't point to specific hours saved, decisions improved, or revenue generated, your strategy is a PowerPoint deck, not a strategy.
+
+6. **Move now.** Meta just cut 16,000 people to fund AI. Oracle is cutting 20,000-30,000. The companies that replace human workflows with AI workflows first don't get a head start — they get a structural cost advantage that compounds every quarter.
+
+The technology is ready. The question is whether the organization is.
+
+---
+
+*The views in this post are my own and don't represent any employer. I write about building AI systems in finance at [johnseong.ca](https://johnseong.ca).*

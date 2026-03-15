@@ -66,6 +66,18 @@ module.exports = withBundleAnalyzer({
   eslint: {
     dirs: ['pages', 'components', 'lib', 'layouts', 'scripts'],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/llms.txt',
+        destination: '/api/llms',
+      },
+      {
+        source: '/llms-full.txt',
+        destination: '/api/digest',
+      },
+    ]
+  },
   async headers() {
     return [
       {
