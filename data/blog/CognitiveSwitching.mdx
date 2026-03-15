@@ -15,11 +15,11 @@ The benefit to organizations is real: fewer handoffs means fewer bugs, faster de
 
 This isn't opinion. It's measured.
 
-Gloria Mark at the University of California, Irvine spent nearly two decades studying interruptions in the workplace. Her [research](https://www.ics.uci.edu/~gmark/) found that it takes an average of **23 minutes and 15 seconds** to fully return to a task after an interruption. Not 30 seconds. Not "just a quick check." Twenty-three minutes.
+Gloria Mark at the University of California, Irvine spent nearly two decades studying interruptions in the workplace. Her paper ["The Cost of Interrupted Work: More Speed and Stress"](https://ics.uci.edu/~gmark/chi08-mark.pdf) (CHI 2008) found that it takes an average of **23 minutes and 15 seconds** to fully return to a task after an interruption. Not 30 seconds. Not "just a quick check." Twenty-three minutes.
 
 Sophie Leroy at the University of Minnesota [coined the term](https://www.sciencedirect.com/science/article/abs/pii/S0749597809000399) "attention residue" in 2009 — the phenomenon where part of your cognitive attention stays stuck on the previous task even after you've moved on. You're reviewing a PR, but your brain is still half-processing the architecture decision from the meeting you just left.
 
-The American Psychological Association's [research on multitasking](https://www.apa.org/topics/research/multitasking) consistently shows that task switching reduces productive efficiency by up to 40%. A [Carnegie Mellon study](https://www.cmu.edu/) found people interrupted during cognitive tasks performed 20% worse than uninterrupted controls.
+The American Psychological Association's [research on multitasking](https://www.apa.org/topics/research/multitasking) consistently shows that task switching reduces productive efficiency by up to 40%. A [Florida State University study](https://pubmed.ncbi.nlm.nih.gov/26121498/) (Stothart et al., 2015) found that even receiving phone notifications — without responding to them — reduced performance on cognitive tasks by roughly 20%.
 
 What's happening under the hood: your brain isn't "switching" — it's stopping one task, flushing working memory, loading new context, and rebuilding a mental model from scratch. It's a CPU context switch, except your cache reload takes minutes, not microseconds.
 
@@ -27,9 +27,9 @@ What's happening under the hood: your brain isn't "switching" — it's stopping 
 
 The brain has hard biological limits that no amount of willpower or productivity hacking can override.
 
-**Working memory** — the cognitive scratchpad you use for active problem-solving — holds roughly **4 items** simultaneously. Not 7, as the often-cited Miller (1956) paper suggested. [Nelson Cowan's 2001 revision](https://pubmed.ncbi.nlm.nih.gov/11515286/) brought that number down, and subsequent research has confirmed it. Four items. That's it.
+**Working memory** — the cognitive scratchpad you use for active problem-solving — holds roughly **4 items** simultaneously. Not 7, as the often-cited Miller (1956) paper suggested. [Nelson Cowan's 2001 paper "The Magical Number 4 in Short-Term Memory"](https://pubmed.ncbi.nlm.nih.gov/11515286/) brought that number down, and subsequent research has confirmed it. Four items. That's it.
 
-**The prefrontal cortex** — responsible for executive function, planning, and task management — is metabolically expensive. It fatigues. This is the neurological basis of [decision fatigue](https://en.wikipedia.org/wiki/Decision_fatigue), documented by Roy Baumeister and others: decision quality measurably degrades throughout the day as the prefrontal cortex depletes glucose and neurotransmitter reserves.
+**The prefrontal cortex** — responsible for executive function, planning, and task management — is metabolically expensive. It fatigues. This is the neurological basis of decision fatigue, documented by Roy Baumeister in his work on [ego depletion](https://pmc.ncbi.nlm.nih.gov/articles/PMC6119549/) (Baumeister et al., 1998; Vohs et al., 2008): decision quality measurably degrades throughout the day as the prefrontal cortex depletes glucose and neurotransmitter reserves.
 
 **Attention is fundamentally serial for complex tasks.** You can walk and talk because those tasks use different brain regions (motor cortex vs language areas). You cannot write a design spec and debug a Kubernetes deployment simultaneously. They compete for the same prefrontal resources.
 
@@ -37,7 +37,7 @@ The brain has hard biological limits that no amount of willpower or productivity
 
 Here's where it gets interesting. Despite these constraints, brains are remarkably adaptive.
 
-Neuroplasticity — the brain's ability to rewire based on use — is well-documented. Eleanor Maguire's [famous 2000 study at UCL](https://pubmed.ncbi.nlm.nih.gov/11070055/) showed that London taxi drivers' hippocampi (the brain region responsible for spatial navigation) physically grew larger from years of memorizing routes. Pianists develop denser neural connections in motor cortex regions mapped to their fingers.
+Neuroplasticity — the brain's ability to rewire based on use — is well-documented. Eleanor Maguire's [2000 study "Navigation-related structural change in the hippocampi of taxi drivers"](https://www.pnas.org/doi/10.1073/pnas.070039597) (PNAS) showed that London taxi drivers' hippocampi (the brain region responsible for spatial navigation) physically grew larger from years of memorizing routes. Pianists develop denser neural connections in motor cortex regions mapped to their fingers.
 
 In this sense, the LLM analogy holds: neurons can adapt to represent almost anything. The brain doesn't have fixed "programming zones" and "infrastructure zones." It allocates resources based on demand.
 
@@ -59,7 +59,7 @@ The takeaway: some brains genuinely are better suited to breadth. But it comes w
 
 This is the real question. Is there a mathematical optimum?
 
-**Cognitive load theory** (Sweller, 1988) gives us a framework. Your total cognitive bandwidth per unit time is roughly fixed, split between:
+**Cognitive load theory** ([Sweller, 1988, "Cognitive Load During Problem Solving: Effects on Learning"](https://www.sciencedirect.com/science/article/abs/pii/0364021388900237)) gives us a framework. Your total cognitive bandwidth per unit time is roughly fixed, split between:
 
 - **Intrinsic load** — complexity inherent to the task
 - **Extraneous load** — overhead from switching, bad tooling, unclear requirements
@@ -73,7 +73,7 @@ Useful output = (Total bandwidth - Context switch cost) x Depth of engagement
 
 More breadth means more switches means higher cost means less depth per domain. But too narrow means you miss the cross-domain insights that create outsized value — the security vulnerability you catch because you understand the infrastructure, the architecture decision you make because you understand the operational constraints.
 
-Herbert Simon (Nobel laureate, Carnegie Mellon) estimated it takes approximately **10,000 hours** to build expert-level "chunks" — compressed mental models — in a domain. Your brain can realistically maintain deep chunk libraries in **3 to 5 domains** while keeping them current.
+Herbert Simon (Nobel laureate, Carnegie Mellon), in his work with William Chase on [chess expertise and chunking](https://pubmed.ncbi.nlm.nih.gov/9709441/) (Chase & Simon, 1973; Gobet & Simon, 1998), estimated it takes approximately **10,000 hours** to build expert-level "chunks" — compressed mental models — in a domain. Your brain can realistically maintain deep chunk libraries in **3 to 5 domains** while keeping them current.
 
 This aligns with what the most effective senior engineers actually look like: deep expertise in one core area, genuine competence across 3-4 adjacent areas. The "T-shaped engineer" model, or more accurately for senior roles, a "comb-shaped" profile with multiple teeth of varying depth.
 
@@ -101,4 +101,4 @@ The full-spectrum engineer isn't superhuman. They're someone who has built deep 
 
 ---
 
-*References: Mark (UCI), Leroy (UMN), Cowan (2001), Maguire et al. (2000), Sweller (1988), Simon (CMU), Baumeister (2011). Links inline where available.*
+*References: All studies linked inline to their original papers or PubMed entries. Key sources: Mark, CHI 2008 ([PDF](https://ics.uci.edu/~gmark/chi08-mark.pdf)); Leroy, OBHDP 2009 ([ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S0749597809000399)); Stothart et al., J. Exp. Psych. 2015 ([PubMed](https://pubmed.ncbi.nlm.nih.gov/26121498/)); Cowan, BBS 2001 ([PubMed](https://pubmed.ncbi.nlm.nih.gov/11515286/)); Maguire et al., PNAS 2000 ([DOI](https://www.pnas.org/doi/10.1073/pnas.070039597)); Sweller, Cognitive Science 1988 ([ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/0364021388900237)); Gobet & Simon, Memory 1998 ([PubMed](https://pubmed.ncbi.nlm.nih.gov/9709441/)); Baumeister et al. on ego depletion ([PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC6119549/)).*
