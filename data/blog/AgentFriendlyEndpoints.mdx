@@ -2,7 +2,7 @@
 title: 'Building Agent-Friendly Endpoints: RFC 9457 for the Agentic Web'
 date: '2026-03-13'
 tags: ['development', 'ai', 'agents', 'nextjs']
-summary: How I added an RFC 9457-compliant agent digest endpoint to my Next.js blog, cutting token costs by 98% for AI agents crawling my site.
+summary: How I added an RFC 9457-compliant agent digest endpoint and llms.txt to my Next.js blog, cutting token costs by 98% for AI agents crawling my site.
 ---
 
 Cloudflare just shipped something that should change how every web developer thinks about their API surface: [RFC 9457-compliant structured error responses for AI agents](https://blog.cloudflare.com/rfc-9457-agent-error-pages/). Their key insight is that when an AI agent hits your site, sending it 46KB of HTML with CSS and JavaScript is like handing someone a novel when they asked for directions.
@@ -135,6 +135,30 @@ Content negotiation via the `Accept` header. Agents that send `Accept: text/mark
 The Markdown format uses YAML frontmatter for machine-parseable keys (`post_count`, `topics`, `content_type`) and Markdown body for LLM-readable content. The JSON format follows RFC 9457's `type`/`title`/`status`/`detail` base members with extension fields for the blog-specific data.
 
 Agent discovery happens at `/.well-known/agent.json` — a metadata file describing available endpoints, accepted formats, and query parameters. An agent hits the discovery URL, reads the contract, then calls `/api/digest` with the right headers. Two requests, full site knowledge, under 3KB of tokens.
+
+## The llms.txt Standard
+
+There's a simpler, complementary approach gaining traction: [llms.txt](https://llmstxt.org/). The idea is dead simple — put a Markdown file at `/llms.txt` that gives LLMs a concise overview of your site with links to detailed pages.
+
+The format is structured enough for programmatic parsing but readable enough for LLMs to consume directly:
+
+```markdown
+# John Seong
+
+> Tech Lead | AI Systems
+
+## Blog Posts
+
+- [Building Agent-Friendly Endpoints](https://johnseong.ca/blog/AgentFriendlyEndpoints): RFC 9457 agent digest endpoint for Next.js
+- [AI Debate Agents with A2A Protocol](https://johnseong.ca/blog/A2AProtocol): Multi-agent debate system using local LLMs
+- [K9s for Kubernetes](https://johnseong.ca/blog/AKS): Terminal-based Kubernetes management
+```
+
+The spec also proposes `/llms-full.txt` — an expanded version where all the linked content is inlined into a single file. Instead of following links, an agent gets everything in one request. For a blog like this, `llms.txt` is the table of contents and `llms-full.txt` is the entire book.
+
+The key difference from `/api/digest`: llms.txt is a static convention (like `robots.txt`), not a dynamic API. No content negotiation, no query parameters, no filtering. It's the lowest common denominator — any agent can fetch a well-known URL and get useful context without understanding your API contract.
+
+They work well together. An agent discovers your site via `llms.txt` for a quick overview, then hits `/api/digest?tag=ai&limit=5` for targeted queries. Static discovery + dynamic filtering.
 
 ## Why This Matters
 
