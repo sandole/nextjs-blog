@@ -1,0 +1,181 @@
+---
+title: 'I Tried to Profit From Canadian Flight Delays'
+date: '2026-03-25'
+tags: ['development', 'data-science', 'python', 'machine-learning']
+summary: Can you exploit Canada's APPR flight delay compensation rules for profit? I built a data pipeline, trained two ML models, and ran the numbers on 650 flights.
+---
+
+A few weeks ago, I came across [a video](https://youtu.be/S1J8rx2Jw98) where someone analyzed European flight data to see if you could profit from delay compensation. Using EU regulations and budget airline data, they found a specific Ryanair route from Sicily with a **56% chance of a 3-hour delay** — enough to make booking the cheapest ticket mathematically profitable.
+
+Naturally, I had to ask - does this work in Canada?
+
+As a former airline software engineer who tackled this problem from the other side (Air Passenger Protection Regulations (APPR) validation engine + automated passenger rebooking), I have some opinions about airline operations. But opinions aren't data. So I built a pipeline, scraped some flights, trained two models, and ran the numbers.
+
+Spoiler: the answer is no. But the _why_ is still interesting.
+
+## Canada's Delay Compensation Rules
+
+Under the APPR, Canadian airlines must compensate passengers for delays of 3 hours or more:
+
+| Delay Duration | Large Carrier (AC, WS, PD) | Small Carrier (Flair) |
+|---|---|---|
+| 3-6 hours | $400 | $125 |
+| 6-9 hours | $700 | $250 |
+| 9+ hours | $1,000 | $500 |
+
+That $400 minimum is actually more generous than the EU's 250 euros for short flights. There's just one massive catch: The delay must be **"within the airline's control and not related to safety."**
+
+That three-part classification is where the whole scheme falls apart. Airlines have three buckets:
+
+1. **Within control** (crew scheduling, overbooking) — _compensation owed_
+2. **Within control, safety-related** (mechanical found during inspection) — _no compensation_
+3. **Outside control** (weather, ATC) — _no compensation_
+
+Bucket 2 is the loophole and single biggest factor on why this won't work in Canada. Any mechanical issue becomes "safety-related" and the airline walks. The Canadian Transportation Agency's complaint backlog hit 70,000+ cases in 2025 (yes, dealing with CTA complaints was a regular part of the job at WestJet) because airlines aggressively classify delays into buckets 2 and 3. 
+
+For context, Canada ranks **40th out of 46 countries** in on-time performance. We're not the best at this.
+
+## The Data
+
+I wanted to prove this with absolutely no cost other than local compute and data so this had to be entirely free (no FlightRadar24 subscriptions, no paid APIs). I cobbled together three data sources:
+
+**Flight data:** 650 individual flight records scraped from FlightAware's public history pages, covering Air Canada (504 flights), Porter (64), WestJet (64), and Flair (18). About two weeks of history across 39 high-frequency flight numbers.
+
+**Weather data:** 350,000 hourly observations from Environment Canada's Open-Meteo archive, covering 10 major Canadian airports from 2022-2025. Temperature, precipitation, snowfall, wind, visibility — everything you'd need to flag weather-related delays.
+
+**Ticket prices:** 250 fare records scraped from Google Flights using headless Chromium, covering 5 major routes with prices ranging from $100 (Flair sales) to $950 (last-minute Air Canada).
+
+Not exactly Big Data but enough to answer the question: is there EV here? (you see the finance part of me kick in here)
+
+## What the Data Shows
+
+### The Baseline: 1.85% of Flights Hit the 3-Hour Mark
+
+Out of 650 flights, exactly **12 crossed the 3-hour delay threshold** — the minimum for APPR compensation. That's a 1.85% rate, which is actually _higher_ than the 0.62% rate found in the European study. 
+
+Canadian airlines are worse at being on time, but the difference is partly because we have inclement weather.
+
+### The Carriers
+
+| Carrier | Avg Delay | 3hr+ Rate | Flights |
+|---|---|---|---|
+| **Porter (PD)** | 66.7 min | 4.69% | 64 |
+| **Air Canada (AC)** | 35.5 min | 1.59% | 504 |
+| **WestJet (WS)** | 18.9 min | 1.56% | 64 |
+| **Flair (F8)** | 6.8 min | 0.00% | 18 |
+
+Porter stands out as Canada's answer to the European study's WizzAir — nearly 3x the delay rate of Air Canada and WestJet. If you were hunting for delays, Porter is your carrier.
+
+Flair's numbers look great, but 18 flights is a tiny sample. Don't read too much into it.
+
+### The Routes
+
+| Route | 3hr+ Rate | Avg Delay | Flights |
+|---|---|---|---|
+| YYZ-YEG (Porter) | 4.69% | 67 min | 64 |
+| YUL-YYZ (Air Canada) | 3.42% | 44 min | 117 |
+| YOW-YYZ (Air Canada) | 3.17% | 29 min | 63 |
+| YVR-YYZ (WestJet) | 3.12% | 23 min | 32 |
+| YYZ-YVR (Air Canada) | 2.22% | 35 min | 90 |
+
+Porter's Toronto-Edmonton route is the worst offender. Montreal and Ottawa feeding into Pearson are next — classic hub congestion cascading into delays.
+
+Meanwhile, every Calgary route (YYC-YVR, YYC-YYZ, YYZ-YYC) posted a **0% rate** for 3-hour delays. If you want to arrive on time in Canada, fly through Calgary.
+
+## The Models
+
+I trained two models to predict whether a given flight would be delayed by 3+ hours:
+
+**Logistic Regression** — for interpretability. I needed human-readable coefficients to explain _why_ flights get delayed, not just predict it. L2 regularized, balanced class weights to handle the 98/2 imbalance.
+
+**XGBoost** — for accuracy. Gradient-boosted trees that capture non-linear interactions the logistic regression can't. If winter + evening + hub airport compound in ways a linear model misses, XGBoost finds it.
+
+### Results
+
+| Model | ROC AUC | Avg Precision |
+|---|---|---|
+| Logistic Regression | 0.832 | 0.053 |
+| XGBoost | **0.947** | **0.169** |
+
+The XGBoost model is strong (0.947 AUC), but the average precision is low (0.169) because the positive class is so rare — only 1.85% of flights qualify. This is the fundamental problem with trying to predict rare events.
+
+### What Predicts a 3-Hour Delay?
+
+From the logistic regression coefficients, the strongest predictors:
+
+**Increases delay probability:**
+- **Day of week** (+457% odds change) — mid-week flights are significantly more delay-prone
+- **Ottawa as origin** (+377%) — small airport feeding into congested Pearson
+- **Vancouver as destination** (+334%) — long-haul routes have more variance
+- **Porter as carrier** (+211%) — consistent with their higher delay rate
+
+**Decreases delay probability:**
+- **Calgary as origin** (-91%) — Calgary routes are reliably on time
+- **Calgary as destination** (-89%) — same pattern in reverse
+- **Weekend flights** (-59%) — less congestion on Saturday/Sunday
+
+The XGBoost model mostly agrees but weights airport-specific features more heavily — Calgary, Halifax, and Vancouver as the most important splits.
+
+## The Expected Value Calculation
+
+Here's where the rubber meets the tarmac. The EV formula:
+
+```
+EV = P(delay >= 3hr) x P(compensable) x $400 - ticket_price
+```
+
+**P(delay >= 3hr)** comes from our model. **P(compensable)** is the probability the airline actually pays out rather than claiming "safety-related." Based on CTA complaint outcomes and industry analysis, I estimated this conservatively at **35%**. The remaining 65% of qualifying delays get classified into the safety loophole.
+
+### The Results
+
+| Route | P(3hr+) | Expected Payout | Cheapest Ticket | **EV** |
+|---|---|---|---|---|
+| YYZ-YVR (AC) | 25.0% | $35 | $100 | **-$65** |
+| YOW-YYZ (AC) | 16.5% | $23 | $120 | **-$97** |
+| YUL-YYZ (AC) | 30.3% | $42 | $150 | **-$108** |
+| YYZ-YEG (PD) | 24.2% | $34 | $230 | **-$196** |
+| YVR-YYZ (WS) | 20.3% | $28 | $250 | **-$222** |
+
+**Every single route has negative expected value.**
+
+The "best" route — YYZ to Vancouver on Air Canada — gives you a 25% shot at a 3-hour delay (I actually personally experienced this Jan 2025). After accounting for the 35% compensable rate, your expected payout is $35 against a $100 minimum ticket. You lose $65 per attempt.
+
+## Why Canada Fails Where Europe (Almost) Works
+
+The European study found a Ryanair route with **56% delay probability**. Our best Canadian route is 25%. But the real killer isn't the delay rate — it's the compensation rate.
+
+**EU (EC261):** Airlines pay unless it's "extraordinary circumstances" (weather, strikes). The standard is strict. Most mechanical delays are compensable.
+
+**Canada (APPR):** Airlines pay unless it's "within control and safety-related." Mechanical issues found during maintenance checks? Safety. Crew rest requirements triggered? Safety. The bar for avoidance is dramatically lower. Yes, the airlines aren't exactly a profit churning business model (source: trust me bro I model businesses) let alone Canadian airlines so we give them benefit of the doubt on this.
+
+If Canada used EU rules (let's say 70% compensable instead of 35%), the YYZ-YVR route would have an expected payout of $70 — still negative against a $100 ticket, but close. If you could find a $49 Flair sale on a route with a 25% delay rate under EU rules, you'd be +EV.
+
+But we don't live in that timeline.
+
+## The Real Takeaway
+
+You can't get rich from Canadian flight delays. The math doesn't work.
+
+But here's what you _can_ do: **actually claim compensation when you're legitimately delayed.**
+
+The CTA estimates that the vast majority of eligible passengers never file claims. If your Air Canada flight from Montreal lands 4 hours late because of a crew scheduling error, that's $400 you're owed. Most people don't know this, don't bother, or give up when the airline pushes back.
+
+That's the real arbitrage — not booking flights hoping they'll be late, but knowing your rights when they inevitably are. At a 1.85% rate across roughly 400,000 daily Canadian air passengers, there are thousands of compensable events happening every month that go unclaimed.
+
+The data says you can't profit from delays. But the data also says you're probably leaving money on the table when delays happen to you.
+
+I guess next time you're looking to save some costs on flight tickets, you can rely on my findings here to save on your flight ticket costs with potential EV. Stack it with some travel insurance? You might be looking at +EV if you're okay with sleeping at the airport!
+
+---
+
+## Technical Details
+
+**Stack:** Python, pandas, scikit-learn, XGBoost, Playwright (browser automation), matplotlib
+
+**Data collection:** All free. FlightAware public pages (Playwright), Google Flights (Playwright), Environment Canada Open-Meteo API.
+
+**Models:** Logistic Regression (L2, balanced classes) and XGBoost (200 estimators, depth 4, AUCPR metric). Features include carrier, origin/destination airports, day of week, weekend flag, season, and weather variables.
+
+**Limitations:** 650 flights is a small sample concentrated in March 2026. A production version would need FlightRadar24 or FlightAware API access for 100K+ flights across multiple seasons. The delay computation uses duration variance as a proxy since FlightAware public pages don't show scheduled times. Weather features didn't merge cleanly due to date range gaps — with proper weather data, the model could better separate compensable from non-compensable delays.
+
+**Code:** [GitHub](https://github.com/sandole/flight-delay-canada)
