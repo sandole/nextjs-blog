@@ -1,8 +1,8 @@
 ---
 name: John Seong
 avatar: /static/images/hello.png
-occupation: Tech Lead, Software Engineer III
-company: BCI (British Columbia Investment Management Corporation)
+occupation: Lead Software Engineer
+company: CPP Investments
 email: sandole97@gmail.com
 github: https://github.com/sandole
 linkedin: https://www.linkedin.com/in/minjunseong
@@ -13,15 +13,15 @@ slogan: Thinker's tinkers
 
 ## Who Am I?
 
-I'm John Seong, a Tech Lead (Software Engineer III) at BCI (British Columbia Investment Management Corporation) where I lead AI application development for private markets. I hold a Master's in Artificial Intelligence from the University of Ottawa (MIAI). My background spans cloud engineering, DevOps, and backend development, and I've dedicated my career to building robust, scalable systems that make a difference.
+I'm John Seong, a Lead Software Engineer at CPP Investments (Canada Pension Plan Investment Board), where I build AI applications and agent systems for investment teams. I hold a Master's in Artificial Intelligence from the University of Ottawa (MIAI). My background spans cloud engineering, DevOps, and backend development, and I've dedicated my career to building robust, scalable systems that make a difference.
 
 My journey began in 2015 at the Royal Military College of Canada, where I pursued computer engineering through a unique military-subsidized program. This opportunity allowed me to combine academic studies with hands-on IT support for military operations, laying a strong foundation for my technical career.
 
 What sets my path apart is my commitment to service. I spent seven enriching years as a military officer in the Canadian Armed Forces, supporting critical IT infrastructure and operations. This experience taught me invaluable lessons about soft skills like leadership, resilience, and the importance of being a reliable team. Thanks to Avanade, I successfully transitioned to the private sector, where I've continued to grow and innovate in cloud technology.
 
-As a Tech Lead at BCI, I lead the development of AI applications for private markets, focusing on building sophisticated agent ecosystems. My work centers on leveraging cutting-edge technologies like MCP (Model Context Protocol), custom skills development, and LangGraph to create intelligent systems that support investment decision-making. As a technical leader, I drive architectural decisions that shape how AI can transform private markets investment strategies, focusing on scalable and efficient solutions that deliver measurable value.
+At CPP Investments, I lead the development of AI applications and agent ecosystems that support investment decision-making at one of the world's largest pension funds. My work centers on technologies like MCP (Model Context Protocol), custom skills development, and agentic workflows, with a focus on architectural decisions that make AI systems scalable, reliable, and genuinely useful to investment professionals.
 
-Prior to BCI, I served as a Senior Software Developer at WestJet, where I led the Integration and API Management team. During my time there, I implemented an API management layer that fronted internal APIs hosted on Kubernetes, driving architectural decisions that shaped the airline's digital transformation journey.
+Prior to CPP Investments, I was a Tech Lead (Software Engineer III) at BCI (British Columbia Investment Management Corporation), where I led AI application development for private markets and built agent ecosystems using MCP and LangGraph. Before that, I served as a Senior Software Developer at WestJet, where I led the Integration and API Management team and implemented an API management layer that fronted internal APIs hosted on Kubernetes, driving architectural decisions that shaped the airline's digital transformation journey.
 
 Beyond my professional work, I'm an active open source contributor. I contribute to [OpenBB](https://github.com/OpenBB-finance/OpenBB), the open-source financial data platform, where I've worked on standardizing exchange taxonomy data (ISO 10383), country membership group mappings, and CI infrastructure improvements. I also maintain an active lifestyle through competitive basketball.
 

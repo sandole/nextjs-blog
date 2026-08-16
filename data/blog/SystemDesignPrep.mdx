@@ -1,0 +1,45 @@
+---
+title: 'Shipping a Complete System Design Prep Site in One Afternoon'
+date: '2026-08-16'
+tags: ['development', 'nextjs', 'system-design', 'ai', 'interviews']
+summary: I built and deployed a full system design interview prep app - 25 topic deep dives, 28 worked case studies with runnable MVP code, a back-of-envelope calculator, and flashcards - in a single Saturday afternoon. Here is the architecture bet that made it basically free to run, and the agent fan-out that made it fast to build.
+---
+
+I have sat on both sides of the system design interview enough times to know the prep material problem: it is scattered. The good concept explanations live in one place, the worked case studies in another, the estimation math in a spreadsheet you made three jobs ago, and the "what would you actually build" part usually nowhere at all. So I built [System Design Prep](https://system-design-prep-inky.vercel.app), a single static site with all of it, and shipped it to production the same afternoon. The code is on [GitHub](https://github.com/sandole/system-design-prep).
+
+## The performance bet: static everything
+
+The reference point for the architecture was a video with a title I love: "50 Million HTTP Requests/Month ($15 Budget)". The punchline of that whole genre is the same: the cheapest request to serve is the one your server never sees. Push everything cacheable to the edge, keep origin compute near zero, and scale stops being a money problem.
+
+For a content site like this one, Next.js lets you take that idea to its logical conclusion:
+
+- **Every route is prerendered at build time.** All 28 case studies and 25 topic pages come from `generateStaticParams` with `dynamicParams = false`. There is no server rendering per request, ever. Vercel serves plain HTML off its CDN.
+- **Content lives in typed TypeScript data files, not a CMS.** A `CaseStudy` interface with requirements, estimation rows, API design, data model, deep dives, and bottlenecks. Adding a case study is adding an object to an array; the type system tells the content authors (more on who they were below) exactly what shape is expected.
+- **Client JavaScript only where there is actual interactivity.** The calculator, the flashcard deck, the topic search filter, and the mobile nav are client components. Everything else is React Server Components, so the topic and case study content never ships as JS. The topics index even passes a slimmed-down projection (slug, title, category, summary) to the search component instead of the full objects, because the full objects would be dead weight in the RSC payload.
+
+The result is a site that would hold up under a Hacker News front page hit without a single dashboard alert, on the free tier. The site preaches caching, sharding, and CDN economics, so it felt right that it should practice them.
+
+## The content: every feature the interview actually tests
+
+The site covers the full interview arc:
+
+1. **25 topic deep dives** across fundamentals, networking, data, architecture, and reliability - load balancing, caching, sharding, replication, consistency and CAP, consistent hashing, message queues, distributed transactions, observability, and friends. Each one ends with tradeoff tables and "in the interview" tips, because the tradeoff discussion is where senior signal actually comes from.
+2. **28 case studies** worked end to end: requirements, back-of-envelope math, API design, high-level design, data model, deep dives, bottlenecks. The classics (URL shortener, news feed, chat) plus the ones that show up in harder loops: ad click aggregation, distributed message queue, ticket booking, digital wallet, collaborative editing.
+3. **A back-of-envelope calculator** that turns DAU and usage assumptions into QPS, storage, bandwidth, and cache-size numbers live.
+4. **A 45-minute interview framework**, 50 flashcards, and a 70-term glossary with the classic latency numbers table.
+
+## Rapid implementation: the part I wanted for myself
+
+The feature I have not seen elsewhere: every case study ends with a **rapid implementation** section. Concrete budget stack, ordered weekend-MVP build steps, and the two or three core algorithms in real TypeScript, Python, or SQL - the Snowflake bit-packing function, the seat hold with `SELECT FOR UPDATE` and a TTL, the double-entry ledger insert in one transaction.
+
+I added this because reading about fan-out-on-write is one kind of knowing, and having once written the worker loop is another. Interviewers can tell the difference within about ninety seconds. The theory sections tell you what to say; the implementation sections are there so you have actually touched the thing you are describing.
+
+## Building it: a fan-out of agents
+
+Here is the honest part about the one-afternoon timeline. I did not type 25 topic deep dives and 28 case studies by hand. I built the app with Claude Code and treated content production like the distributed systems problem it is: define a strict interface, then fan out.
+
+I wrote the TypeScript types and the rendering shell myself, then launched parallel agents, each owning one data file with an exact list of slugs, a quality bar, and an instruction to run `tsc` on its own output before reporting done. Twelve agents across two waves produced the content library while I built the UI, the calculator, and the deploy pipeline in the foreground. The type system was the contract that made the merge trivial: if an agent's file compiled against the `CaseStudy` interface, it slotted in.
+
+It is the same lesson as the serving architecture, one layer up: strict interfaces plus parallelism beat heroic sequential effort. The whole thing - scaffold to production URL on Vercel with GitHub auto-deploys wired - fit inside an afternoon that also included writing this post.
+
+If you have a system design loop coming up, [start with the framework page](https://system-design-prep-inky.vercel.app/framework) and work through two case studies cold before reading the solutions. And if you think a case is missing, the content files are just typed arrays - PRs welcome.
