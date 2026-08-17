@@ -2,6 +2,7 @@ import '@/css/tailwind.css'
 
 import { ThemeProvider } from 'next-themes'
 import Head from 'next/head'
+import { Analytics } from '@vercel/analytics/next'
 import LayoutWrapper from '@/components/LayoutWrapper'
 
 export default function App({ Component, pageProps }) {
@@ -13,6 +14,7 @@ export default function App({ Component, pageProps }) {
       <LayoutWrapper>
         <Component {...pageProps} />
       </LayoutWrapper>
+      <Analytics />
     </ThemeProvider>
   )
 }
