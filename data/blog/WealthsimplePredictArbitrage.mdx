@@ -1,0 +1,77 @@
+---
+title: 'I Scanned Every Market on Wealthsimple Predict Looking for Free Money'
+date: '2026-09-02'
+tags: ['quant', 'prediction-markets', 'python', 'finance', 'trading']
+summary: Wealthsimple Predict routes to Kalshi's order books, and Kalshi has a public API. So I built a scanner to check all 8,047 eligible markets for risk-free arbitrage - sum-of-brackets, yes/no complements, and wide spreads. Here is the fee math, the market microstructure that kills the obvious plays, and the one edge that survived.
+---
+
+Wealthsimple launched Predict for Canadians this year, and the interesting part is what it actually is under the hood: a front-end onto [Kalshi](https://kalshi.com)'s order books. Same contracts, same liquidity, same prices. And Kalshi has a public REST API that will happily hand you every bid and ask on the exchange.
+
+That combination is catnip for anyone who has ever read about index arbitrage. If mutually exclusive outcomes of one event are each priced separately by retail flow, sometimes the sum of the asks should drift below \$1.00, and buying the whole basket is a guaranteed payout. So I spent an evening building a read-only scanner in Python to test whether any of that free money actually exists once you account for what it costs a Canadian to play. Spoiler: the arbitrage does not survive contact with the fee schedule or the microstructure, but the exercise taught me exactly where the real edge lives, and the negative results are more interesting than the positive ones.
+
+## The hurdle math comes first
+
+Before scanning anything, you need to know what "profitable" even means through this stack, because the frictions are brutal:
+
+- **Trading fees**: \$0.02 USD per contract per side, so \$0.04 for anything requiring a round trip. One nuance that matters: contracts held to settlement pay out at \$1.00 without a sell trade, so buy-and-hold plays only pay the entry fee.
+- **FX drag**: contracts are USD-denominated. Funding from CAD costs roughly 1.5% on the way in and 1.5% on the way out. Multiplicatively that is a factor of 0.9702, so about **2.98% of your capital evaporates on the round trip** before you have made a single trade.
+- **Regulatory filter**: CIRO rules mean Canadians only see markets with 30 or more days to maturity, in economics, financial, and climate categories. No politics, no sports, no dailies. This matters more than it sounds: it removes exactly the short-dated, high-churn markets where retail mispricing is most common.
+
+Put together: a CAD-funded play needs to clear roughly 3% plus fees to beat "do nothing." That is a high bar for something advertised as risk-free.
+
+## Building the scanner
+
+The scanner is four small modules: an async API client, a CIRO eligibility filter, a detection engine for three play types, and a CLI. A few things I learned about the Kalshi v2 API the hard way, all verified live rather than from docs:
+
+- **Prices are dollar strings now.** The current payloads return `"yes_ask_dollars": "0.4500"` instead of the integer cents the docs and older client libraries assume. My parser handles both generations.
+- **Category lives on the event, not the market.** A market object will not tell you it is a sports contract. You have to join markets to their parent events (or the series above those) to screen categories, and the `mutually_exclusive` flag you need for basket arbitrage is also event-level.
+- **`min_close_ts` is the parameter that makes this feasible.** Kalshi hosts well over 100,000 open contracts at any moment, most of them short-dated sports combinatorics. Filtering server-side to contracts closing 30+ days out cut the sweep to 61,910 markets in one shot.
+- **Some derived series tickers 404**, and the tempting `available_on_brokers` flag on events turned out to be `false` for every single eligible market, so it is useless as a "listed on Wealthsimple" signal. Actual availability still needs a manual check in the app.
+
+The funnel ended up: 61,910 long-dated markets, 2,965 unique series, 8,244 markets in approved categories across 1,026 events, and **8,047 CIRO-eligible contracts** after the maturity check. Those got tested for three play types.
+
+## Play one: complement arbitrage is structurally impossible
+
+The simplest textbook play: if `ask_yes + ask_no < 1.00` minus fees on a binary market, buy both sides and collect \$1.00 at settlement no matter what happens.
+
+Across all 8,047 markets, the tightest sum I found was **1.001**. Not one market below 1.00, let alone below the 0.96 the fees demand. And once I thought about it, this is not bad luck, it is architecture: Kalshi runs a single order book per market where a NO ask *is* the complement of a YES bid. The two numbers cannot sum below \$1.00 plus a tick, because they are the same order viewed from opposite sides. Any scanner checking this condition on a single-book exchange is checking whether the exchange's own matching engine has a bug.
+
+That was lesson one: **know whether your "two prices" are actually two prices.** Complement arbitrage exists between venues (Kalshi vs Polymarket, say), not within one book.
+
+## Play two: the cheap baskets are traps
+
+The sum-of-brackets play looked much more promising at first glance. Sort mutually exclusive event baskets by total cost and the top of the list is absurd: six recession-timing brackets for \$0.32 total, four acquisition-announcement outcomes for \$0.31. Buy them all, one must resolve YES, collect \$1.00 for a 200%+ return. Right?
+
+No. Every one of those cheap baskets failed one of two checks my detector enforces:
+
+1. **All legs must be quoted.** Several "cheap" events had legs with no ask at all. The sum of four quoted legs out of seven is not the price of the basket, it is the price of part of the basket.
+2. **Mutually exclusive is not collectively exhaustive.** Kalshi's flag guarantees at most one leg pays out, not that at least one does. "Which company announces the acquisition?" can resolve with *every* leg at zero if nobody does. Buying all outcomes of a non-exhaustive event is not arbitrage, it is a bet with a new name.
+
+The one basket in the entire eligible universe that was fully quoted, mutually exclusive, and plausibly exhaustive - which of five windows the first Atlantic hurricane arrives in - summed to exactly **\$1.000**. Zero edge before fees, negative after. Market makers police these books tighter than retail folklore suggests.
+
+## Play three: the spread is real, but it is not arbitrage
+
+The third detector looked for wide bid-ask spreads in eligible markets: quote inside an \$0.08+ spread, and if both sides fill you capture the spread minus \$0.04 in fees.
+
+The naive version of this scan produces garbage. Sorted by raw spread, the top of the list is all dead books: bid \$0.01, ask \$0.99, on things like "CPI in December 2034 above 0.5%?" A 0.98 spread on a market nobody trades is not an opportunity, it is an empty room. So the filter got stricter: bid at least 0.15, ask at most 0.85, real traded volume. That left **736 genuinely two-sided markets with spreads of \$0.08 or more**, and some of them are seriously active:
+
+| Market | Bid / Ask | Spread | Net after fees | Volume |
+|---|---|---|---|---|
+| Real GDP above 3.5% in Q1 2027 | 0.16 / 0.25 | 0.09 | \$0.05 | 54,938 |
+| Fed funds above 4.00% after Apr 2027 | 0.36 / 0.47 | 0.11 | \$0.07 | 15,477 |
+| Texas gas above \$4.20 by Dec 2026 | 0.26 / 0.49 | 0.23 | \$0.19 | 14,094 |
+| How high will CPI get this year (4.4 bracket) | 0.17 / 0.29 | 0.12 | \$0.08 | 23,771 |
+
+This is the honest surface. It is not risk-free: you are being paid the spread precisely because you are absorbing adverse selection (the counterparty who fills you may know something) and locking capital for months in slow markets. On the FX side the news is better than it first looks, because the ~3% drag is on the funding round trip, not per trade, so cycling several captures per conversion amortizes it quickly. But calling it arbitrage would be lying. It is compensation for providing liquidity where nobody else wants to, which is a job, not a loophole.
+
+## What I would tell past me
+
+- **Do the friction math before writing the scanner.** The 3% FX drag plus \$0.04 in fees defines the entire opportunity set. Most "found" edges die right there, and knowing the hurdle turns hours of analysis into a one-line filter.
+- **Single-book exchanges cannot mispay complements.** Cross-venue is where that play lives.
+- **Mutually exclusive and collectively exhaustive are different promises**, and the API only makes the first one. The gap between them is where the fake arbitrage hides.
+- **Sort by nothing until you filter for liveness.** Every screaming opportunity in the raw data was a market with no participants.
+- The regulator did retail a favour here. The 30-day CIRO floor removes the markets where unsophisticated flow gets picked off fastest, and, not coincidentally, the ones where my scanner would have found the most apparent edge.
+
+The scanner now dumps each sweep to CSV, so re-checking the whole exchange is one command. If a genuinely mispriced basket ever shows up in the eligible universe, I will know within a scan cycle. I am not holding my breath, and that is the finding.
+
+*None of this is financial advice. It is a systems post about market microstructure that happens to have prices in it.*
