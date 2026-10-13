@@ -1,0 +1,81 @@
+---
+title: 'What I Learned Benchmarking Laya on an M5 Pro'
+date: '2026-10-13'
+tags: ['ai', 'machine-learning', 'apple-silicon', 'open-source']
+summary: An evening reproducing an open-source decision model's published numbers on a laptop - which claims held, which did not, how Metal compared to a T4, and the one measurement that turned into an upstream pull request.
+---
+
+I keep a short list of open-source ML projects whose README claims I would like to check myself. [Laya](https://github.com/NandhaKishorM/laya) went on it the day I read it: a 322M to 421M parameter encoder that answers typed questions about a piece of text (pick a label, score on a rubric, yes or no with a probability) in a single forward pass, with calibrated confidences, in 33 ms on a T4. No token generation, so nothing to parse and nothing to hallucinate.
+
+That is a very specific set of claims. It is also the kind of project that is actually reproducible on a laptop: Apache 2.0, public weights on Hugging Face, a `verify/` folder full of scripts, and a `research/` folder with the harnesses behind every table. So I spent an evening running it on my MacBook Pro (M5 Pro, 24 GB) and writing down what happened.
+
+## Setup took ten minutes, with one gotcha
+
+```bash
+git clone https://github.com/NandhaKishorM/laya && cd laya
+uv venv --python 3.12 && source .venv/bin/activate
+uv pip install -e ".[serve]"
+```
+
+The gotcha: my system Python is 3.14 and the package pins 3.10 to 3.13. Pinning the venv to 3.12 avoided the problem entirely. The three checkpoints are one 2.2 GB download, and the repo ships SHA-256 hashes for them in `verify/checkpoints.json`, which I appreciated more than I expected. A truncated safetensors file does not fail loudly, it just gives you quietly wrong numbers.
+
+The smoke test ran all three checkpoints on Metal (MPS) and passed every check. Someone had already fixed the MPS autocast crash that an earlier contributor hit on an Intel Mac Pro, so I never saw it.
+
+## The published accuracy numbers reproduced exactly
+
+This was the part I was most skeptical about, and it is the part that held up best.
+
+The repo's `bench_local.py` runs a 2,000-decision "typed decisions" benchmark across four workflows (customer service, invoice processing, security incidents, agent trace observability) on all three checkpoints. The README quotes 0.362 accuracy for the base English checkpoint zero-shot and 0.766 for the fine-tuned one.
+
+| checkpoint | accuracy | ECE | mean confidence |
+|---|---|---|---|
+| english (zero-shot) | 0.362 | 0.17 | 0.54 |
+| multilingual (zero-shot) | 0.352 | 0.31 | 0.66 |
+| typed-decisions (fine-tuned) | 0.766 | 0.21 | 0.55 |
+
+**Both published figures reproduced to three decimal places** on my hardware, on MPS, with a different torch version than the one they were measured on. That is rarer than it should be. The pipeline is deterministic and the harness is the same code that produced the README, which is the whole reason it works.
+
+I also ran the MASSIVE intent benchmark (20-way intent classification) on the first eight languages alphabetically, which happens to be a brutal set: Afrikaans, Amharic, Arabic, Azerbaijani, Bengali, Welsh, Danish, German. The multilingual checkpoint scored 0.375 macro accuracy, in line with the README's 0.451 over its 13 easier languages. Amharic and Welsh were near chance. Everything else landed between 0.40 and 0.50.
+
+## The calibration claim is more complicated
+
+Laya's pitch leans hard on "statistically meaningful confidence scores". My numbers say: sometimes.
+
+On the multilingual intent task, **mean stated confidence was about 0.75 while accuracy was about 0.38**, and expected calibration error (ECE) was 0.42. That is a model that is confidently wrong a lot of the time, zero-shot, on a 20-option question. The repo already knows this. Issue 208 is a careful write-up by another contributor showing that the committed calibration columns predate a temperature clamp and no longer reproduce, and the maintainer accepted it and reprinted the tables with the caveat.
+
+What surprised me was the fine-tuned checkpoint going the other way. It is right 77 percent of the time on the typed-decisions set but reports 55 percent mean confidence. **Zero-shot is overconfident, fine-tuned is underconfident.** The practical lesson is the same one the project's own docs give: run the calibration step on your own data before you gate anything on a threshold. The default temperatures are a starting point, not a property of the model.
+
+## Metal beats a T4 for this workload
+
+The README's headline latency is 32.8 ms for one question on the multilingual checkpoint on a T4. On my M5 Pro:
+
+| checkpoint | CPU, 1 question | MPS, 1 question | MPS, 10 questions, per question |
+|---|---|---|---|
+| english (ModernBERT-large) | 154 ms | 43 ms | 14 ms |
+| multilingual (mmBERT-base) | 50 ms | 18 ms | 6 ms |
+
+**A laptop GPU at 18 ms is roughly half the T4 figure.** More interesting is what happens when you batch. Laya answers every question about a document in one forward pass, and on MPS the per-question cost drops 3.4x between one and ten questions per call. On CPU it only drops 1.4x. So on a Mac the right design is to pile every decision you need about a document into a single call, not loop over them.
+
+Two CPU observations for anyone running this on Apple silicon:
+
+- **torch defaults to five threads**, which is exactly the number of performance cores on this chip. Forcing more threads made things slower, and 56 threads was 60 percent slower than 4. The default is right, leave it.
+- **CPU cost scales linearly with question count.** Fifty questions cost a hundred milliseconds each, same as five. Batching is a GPU story only.
+
+## The measurement that became a pull request
+
+Laya has one Apple-specific knob: on MPS it switches the forward pass to fp16 autocast once a request has five or more question rows. The default of five was set from a single M5 in an early pull request, and a later contributor showed that on an M1 Pro fp16 is actually 10 to 30 ms slower on every row count. The repo had data at the old end of the lineup and nothing current.
+
+The project ships the exact script for this measurement (`benchmarks/bench_mps_autocast.py`). It runs every request once in fp32 and once in fp16 on the same loaded model, alternating order, so both modes see the same machine load, and reports the paired difference plus how many decisions changed. I ran it for both checkpoints.
+
+On the M5 Pro, fp16 wins almost immediately. On the English checkpoint it is 6 ms faster at two rows, 24 ms faster at four, and 51 ms faster at eight on short inputs. On long inputs it wins even for a single row, and at eight rows it is 177 ms faster, which is a 2.3x speedup. Across 1,248 decisions per checkpoint, fp16 flipped one English decision and none on multilingual, and the largest probability change was about 0.01.
+
+So the default of five is conservative on current Apple silicon and aggressive on older chips, and now the repo has measurements at both ends. I opened [a pull request](https://github.com/NandhaKishorM/laya/pull/1199) adding the M5 Pro tables beside the M1 Pro ones, in the same shape the maintainer had already merged: their script, the raw JSON committed, environment recorded, no code changes. Whether the gate should become chip-aware is a design decision for them, and a docs PR with data is a better way to raise it than a code PR with an opinion.
+
+## What I would tell someone else doing this
+
+- **Reproduce the headline number first.** If 0.766 had come back as 0.71, nothing else I measured would have been worth writing down.
+- **Use the project's own harness.** My first instinct was to write my own benchmark. The repo's scripts already handled the sampling seed, the prompt format, and the per-case report, and matching those is where reproductions usually fail.
+- **Look for the measurement nobody has run.** The accuracy sweep had already been done on an M5 by someone else. The autocast gate had not. Twenty minutes of GPU time filled a gap the maintainer had explicitly named.
+- **Pin your Python.** Boring, and it would have cost me the evening if I had not.
+
+The whole thing, from clone to pull request, fit in one evening on a laptop. That is a good sign for the project and a reminder that "reproducible" is a property you can actually test.
