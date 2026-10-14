@@ -2,6 +2,18 @@ import { description } from "./siteMetadata"
 
 const projectsData = [
   {
+    title: 'Claude Code Review for Azure DevOps',
+    description: `Azure DevOps pipeline task that reviews pull requests with Claude and posts findings as PR comments. Confidence-based scoring filters out low-signal noise so only high-confidence bugs, security issues, and logic errors surface. Published on the Visual Studio Marketplace.`,
+    imgSrc: '/static/images/claude-code-review.png',
+    href: 'https://marketplace.visualstudio.com/items?itemName=JohnSeong.claude-code-review',
+  },
+  {
+    title: 'jy-validator',
+    description: `Lightweight CLI that validates JSON and YAML files with automatic format detection, a manual override flag, and clear colourised error output. Published on npm.`,
+    imgSrc: '/static/images/jy-validator.png',
+    href: 'https://www.npmjs.com/package/jy-validator',
+  },
+  {
     title: 'EthCert',
     description: `EthCert is a production-ready smart contract system for issuing verifiable digital certificates as NFTs. Built with ThirdWeb's Solidity SDK and Hardhat, it enables educational institutions, training companies, and professional organizations to issue tamper-proof, verifiable certificates on the blockchain.`,
     imgSrc: '/static/images/ethcert.png',
